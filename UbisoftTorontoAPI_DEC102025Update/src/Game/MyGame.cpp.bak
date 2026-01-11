@@ -1,0 +1,673 @@
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+
+#include "../ContestAPI/app.h"
+#include "../ContestAPI/AppSettings.h"
+#include "System/Math.h"
+#include "System/Physics.h"
+#define NOMINMAX
+// -----------------------------
+// Minimal Top-Down Shooter
+// - Move: left thumbstick (keyboard emulation works via WASD by default in AppSettings.h)
+// - Shoot: Space
+// - Restart: R
+// -----------------------------
+
+//struct Vec2
+//{
+//    float x = 0, y = 0;
+//};
+//
+//static Vec2 operator+(Vec2 a, Vec2 b) { return {a.x + b.x, a.y + b.y}; }
+//static Vec2 operator-(Vec2 a, Vec2 b) { return {a.x - b.x, a.y - b.y}; }
+//static Vec2 operator*(Vec2 a, float s) { return {a.x * s, a.y * s}; }
+//
+//static float Dot(Vec2 a, Vec2 b) { return a.x * b.x + a.y * b.y; }
+//static float LenSq(Vec2 v) { return Dot(v, v); }
+//static float Len(Vec2 v) { return std::sqrt(LenSq(v)); }
+//
+//static Vec2 Normalize(Vec2 v)
+//{
+//    float l = Len(v);
+//    if (l <= 1e-6f) return {0, 0};
+//    return {v.x / l, v.y / l};
+//}
+//
+//static float Clamp(float v, float lo, float hi) { 
+//    if (v < lo) return lo;
+//    if (v > hi) return hi;
+//    return v;
+//}
+//
+//static float Rand01() { return float(std::rand()) / float(RAND_MAX); }
+//static float RandRange(float a, float b) { return a + (b - a) * Rand01(); }
+
+// --------- Render helpers (triangles only) ---------
+static void DrawQuad(Vec2 c, float half, float r, float g, float b)
+{
+    App::DrawTriangle(c.x - half, c.y - half, 0, 1,  c.x + half, c.y - half, 0, 1,  c.x + half, c.y + half, 0, 1,
+                      r,g,b, r,g,b, r,g,b, false);
+    App::DrawTriangle(c.x - half, c.y - half, 0, 1,  c.x + half, c.y + half, 0, 1,  c.x - half, c.y + half, 0, 1,
+                      r,g,b, r,g,b, r,g,b, false);
+}
+
+static void DrawPlayer(Vec2 p, float angleRad)
+{
+    // 一个朝向 angleRad 的小三角形（俯视角飞船）
+    const float s = 18.0f;
+    Vec2 f = { std::cos(angleRad), std::sin(angleRad) };
+    Vec2 r = { -f.y, f.x }; // right
+
+    Vec2 p1 = p + f * (s * 1.2f);
+    Vec2 p2 = p - f * (s * 0.8f) + r * (s * 0.8f);
+    Vec2 p3 = p - f * (s * 0.8f) - r * (s * 0.8f);
+
+    App::DrawTriangle(p1.x, p1.y, 0, 1,
+                      p2.x, p2.y, 0, 1,
+                      p3.x, p3.y, 0, 1,
+                      0.2f, 0.7f, 1.0f,
+                      0.2f, 0.7f, 1.0f,
+                      0.2f, 0.7f, 1.0f,
+                      false);
+}
+
+struct Bullet
+{
+    Vec2 pos;
+    Vec2 vel;
+    float radius = 4.0f;
+    float lifeMs = 1200.0f;
+};
+
+struct Enemy
+{
+    Vec2 pos;
+    float half = 16.0f; // AABB half extent (use circle approx for hit)
+};
+
+// --------- Game state ---------
+static Vec2  gPlayerPos;
+static Vec2  gPlayerVel;
+static float gPlayerAngle = 0.0f;
+static float gPlayerRadius = 14.0f;
+
+static std::vector<Bullet> gBullets;
+static std::vector<Enemy>  gEnemies;
+
+static float gShootCooldownMs = 0.0f;
+static float gSpawnTimerMs = 0.0f;
+
+static int   gScore = 0;
+static bool  gGameOver = false;
+
+static void ResetGame()
+{
+    gPlayerPos = { APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT * 0.5f };
+    gPlayerVel = { 0, 0 };
+    gPlayerAngle = 0.0f;
+    gBullets.clear();
+    gEnemies.clear();
+    gShootCooldownMs = 0.0f;
+    gSpawnTimerMs = 0.0f;
+    gScore = 0;
+    gGameOver = false;
+}
+
+static void SpawnEnemy()
+{
+    // 从屏幕边缘随机刷一个敌人
+    Enemy e;
+    float side = Rand01();
+    if (side < 0.25f)      { e.pos = { 0.0f, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
+    else if (side < 0.5f)  { e.pos = { APP_VIRTUAL_WIDTH, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
+    else if (side < 0.75f) { e.pos = { RandRange(0, APP_VIRTUAL_WIDTH), 0.0f }; }
+    else                   { e.pos = { RandRange(0, APP_VIRTUAL_WIDTH), APP_VIRTUAL_HEIGHT }; }
+
+    // 防止刷在玩家脸上
+    if (LenSq(e.pos - gPlayerPos) < 200.0f * 200.0f)
+        e.pos = e.pos + Normalize(e.pos - gPlayerPos) * 220.0f;
+
+    gEnemies.push_back(e);
+}
+
+void Init()
+{
+    std::srand((unsigned)std::time(nullptr));
+    ResetGame();
+}
+
+void Update(const float deltaTimeMs)
+{
+    const float dt = deltaTimeMs; // ms（本引擎里很多东西都用 ms，统一用 ms 也行）
+    const float dtSec = deltaTimeMs / 1000.0f;
+
+    if (App::IsKeyPressed(App::KEY_R))
+    {
+        ResetGame();
+        return;
+    }
+
+    if (gGameOver)
+        return;
+
+    // ----- Movement (left stick; keyboard emulation works per AppSettings.h) -----
+    Vec2 move;
+    move.x = App::GetController().GetLeftThumbStickX();
+    move.y = App::GetController().GetLeftThumbStickY();
+
+    const float accel = 1400.0f;     // px/s^2
+    const float damping = 6.5f;      // velocity damping
+
+    // 加速度驱动 + 阻尼
+    gPlayerVel.x += move.x * accel * dtSec;
+    gPlayerVel.y += move.y * accel * dtSec;
+
+    gPlayerVel.x -= gPlayerVel.x * damping * dtSec;
+    gPlayerVel.y -= gPlayerVel.y * damping * dtSec;
+
+    gPlayerPos = gPlayerPos + gPlayerVel * dtSec;
+
+    // 边界
+    gPlayerPos.x = Clamp(gPlayerPos.x, gPlayerRadius, APP_VIRTUAL_WIDTH - gPlayerRadius);
+    gPlayerPos.y = Clamp(gPlayerPos.y, gPlayerRadius, APP_VIRTUAL_HEIGHT - gPlayerRadius);
+
+    // 面向移动方向（静止时保持）
+    if (LenSq(move) > 0.15f * 0.15f)
+        gPlayerAngle = std::atan2(move.y, move.x);
+
+    // ----- Shooting (Space) -----
+    gShootCooldownMs = std::fmax(0.0f, gShootCooldownMs - dt);
+
+    const bool shoot = App::IsKeyPressed(App::KEY_SPACE); // 你也可以改成手柄 BTN_A
+    if (shoot && gShootCooldownMs <= 0.0f)
+    {
+        Vec2 dir = { std::cos(gPlayerAngle), std::sin(gPlayerAngle) };
+        Bullet b;
+        b.pos = gPlayerPos + dir * (gPlayerRadius + 6.0f);
+        b.vel = dir * 720.0f; // px/s
+        gBullets.push_back(b);
+        gShootCooldownMs = 120.0f;
+    }
+
+    // ----- Spawn enemies -----
+    gSpawnTimerMs += dt;
+    float spawnInterval = std::fmax(280.0f, 1200.0f - gScore * 20.0f); // 分数越高刷得越快
+    if (gSpawnTimerMs >= spawnInterval)
+    {
+        gSpawnTimerMs = 0.0f;
+        SpawnEnemy();
+    }
+
+    // ----- Update bullets -----
+    for (auto& b : gBullets)
+    {
+        b.pos = b.pos + b.vel * dtSec;
+        b.lifeMs -= dt;
+    }
+    gBullets.erase(std::remove_if(gBullets.begin(), gBullets.end(),
+                                 [](const Bullet& b)
+                                 {
+                                     if (b.lifeMs <= 0.0f) return true;
+                                     if (b.pos.x < -50 || b.pos.x > APP_VIRTUAL_WIDTH + 50) return true;
+                                     if (b.pos.y < -50 || b.pos.y > APP_VIRTUAL_HEIGHT + 50) return true;
+                                     return false;
+                                 }),
+                   gBullets.end());
+
+    // ----- Move enemies towards player -----
+    const float enemySpeed = 130.0f + gScore * 2.0f; // px/s
+    for (auto& e : gEnemies)
+    {
+        Vec2 dir = Normalize(gPlayerPos - e.pos);
+        e.pos = e.pos + dir * (enemySpeed * dtSec);
+    }
+
+    // ----- Bullet vs Enemy -----
+    for (int bi = (int)gBullets.size() - 1; bi >= 0; --bi)
+    {
+        bool bulletRemoved = false;
+        for (int ei = (int)gEnemies.size() - 1; ei >= 0; --ei)
+        {
+            float enemyHitR = gEnemies[ei].half; // 用半边长当近似半径
+            if (CircleHit(gBullets[bi].pos, gBullets[bi].radius, gEnemies[ei].pos, enemyHitR))
+            {
+                // remove enemy
+                gEnemies.erase(gEnemies.begin() + ei);
+                // remove bullet
+                gBullets.erase(gBullets.begin() + bi);
+                bulletRemoved = true;
+                gScore += 1;
+                break;
+            }
+        }
+        if (bulletRemoved) continue;
+    }
+
+    // ----- Player vs Enemy -----
+    for (const auto& e : gEnemies)
+    {
+        float enemyHitR = e.half;
+        if (CircleHit(gPlayerPos, gPlayerRadius, e.pos, enemyHitR))
+        {
+            gGameOver = true;
+            break;
+        }
+    }
+}
+
+void Render()
+{
+    // Player
+    DrawPlayer(gPlayerPos, gPlayerAngle);
+
+    // Bullets
+    for (const auto& b : gBullets)
+        DrawQuad(b.pos, b.radius, 1.0f, 1.0f, 0.3f);
+
+    // Enemies
+    for (const auto& e : gEnemies)
+        DrawQuad(e.pos, e.half, 1.0f, 0.2f, 0.2f);
+
+    // UI
+    char buf[128];
+    std::snprintf(buf, sizeof(buf), "Score: %d   Enemies: %d   Bullets: %d", gScore, (int)gEnemies.size(), (int)gBullets.size());
+    App::Print(20, APP_VIRTUAL_HEIGHT - 30, buf, 1,1,1);
+
+    App::Print(20, 20, "Move: LeftStick (WASD emulation)  Shoot: Space  Restart: R", 0.8f,0.8f,0.8f);
+
+    if (gGameOver)
+        App::Print(APP_VIRTUAL_WIDTH * 0.36f, APP_VIRTUAL_HEIGHT * 0.5f, "GAME OVER - Press R", 1.0f, 0.4f, 0.4f);
+}
+
+void Shutdown()
+{
+    // vector 会自动释放
+}
+
+//3D-----------------------------------------------------------
+
+//#include <algorithm>
+//#include <cstdio>
+//#include <ctime>
+//#include <vector>
+//
+//#include "../ContestAPI/app.h"
+//#include "../ContestAPI/AppSettings.h"
+//
+//#include "System/Math.h"
+//#include "System/Math3D.h"
+//#include "System/Physics.h"
+//#include "System/CameraIso.h"
+//#include "System/Render3DHelper.h"
+//
+////using Clamp;
+//using Math3D::Vec3;
+//struct CameraIso
+//{
+//	// 屏幕中心（虚拟分辨率坐标）
+//	Vec2 screenCenter{ 512.0f, 384.0f };
+//
+//	// 世界到屏幕的缩放
+//	float scale = 1.0f;
+//
+//	// 斜投影参数：决定“倾角”和“压扁程度”
+//	float kx = 0.6f;  // z 对 x 的影响
+//	float kz = 1.0f;  // z 对 y 的影响
+//	float ky = 1.0f;  // y(高度) 对 y 的影响
+//
+//	// 可选：世界原点偏移（相机跟随）
+//	Math3D::Vec3 focus{ 0,0,0 };
+//
+//	Vec2 Project(const Math3D::Vec3& world) const
+//	{
+//		const float x = world.x - focus.x;
+//		const float y = world.y - focus.y;
+//		const float z = world.z - focus.z;
+//
+//		Vec2 out;
+//		out.x = screenCenter.x + (x + z * kx) * scale;
+//		out.y = screenCenter.y + (-z * kz - y * ky) * scale;
+//		return out;
+//	}
+//};
+//struct Bullet3D
+//{
+//	Vec3 pos;
+//	Vec3 vel;
+//	float radius = 6.0f;   // 近似当圆
+//	float lifeMs = 1200.0f;
+//};
+//
+//struct Enemy3D
+//{
+//	Vec3 pos;
+//	float size = 18.0f;   // XZ 半边长
+//	float height = 40.0f;
+//};
+//
+//static CameraIso gCam;
+//
+//static Vec3  gPlayerPos;     // y=0
+//static Vec3  gPlayerVel;
+//static float gPlayerAngle = 0.0f;
+//static float gPlayerRadius = 16.0f;
+//
+//static std::vector<Bullet3D> gBullets;
+//static std::vector<Enemy3D>  gEnemies;
+//
+//static float gShootCooldownMs = 0.0f;
+//static float gSpawnTimerMs = 0.0f;
+//
+//static int  gScore = 0;
+//static bool gGameOver = false;
+//
+//// 简单随机（沿用 Math2D 的 rand）
+//static void SpawnEnemy()
+//{
+//	Enemy3D e{};
+//	const float side = Rand01();
+//	if (side < 0.25f)		 e.pos = { -60.0f, 0.0f, RandRange(0, APP_VIRTUAL_HEIGHT) };
+//	else if (side < 0.5f)	 e.pos = { (float)APP_VIRTUAL_WIDTH + 60.0f, 0.0f, RandRange(0, APP_VIRTUAL_HEIGHT) };
+//	else if (side < 0.75f)	 e.pos = { RandRange(0, APP_VIRTUAL_WIDTH), 0.0f, -60.0f };
+//	else					 e.pos = { RandRange(0, APP_VIRTUAL_WIDTH), 0.0f, (float)APP_VIRTUAL_HEIGHT + 60.0f };
+//
+//	gEnemies.push_back(e);
+//}
+//
+//static void ResetGame()
+//{
+//	gPlayerPos = { APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_HEIGHT * 0.5f };
+//	gPlayerVel = { 0,0,0 };
+//	gPlayerAngle = 0.0f;
+//
+//	gBullets.clear();
+//	gEnemies.clear();
+//
+//	gShootCooldownMs = 0.0f;
+//	gSpawnTimerMs = 0.0f;
+//
+//	gScore = 0;
+//	gGameOver = false;
+//}
+//
+//void Init()
+//{
+//	std::srand((unsigned)std::time(nullptr));
+//	ResetGame();
+//
+//	// 相机：屏幕中心 + 缩放 + 倾角参数
+//	gCam.screenCenter = { APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT * 0.55f };
+//	gCam.scale = 1.0f;
+//	gCam.kx = -0.55f; // 越大越“斜”
+//	gCam.kz = -0.95f;
+//	gCam.ky = -1.0f;
+//}
+//
+//void Update(const float deltaTimeMs)
+//{
+//	const float dtMs = deltaTimeMs;
+//	const float dtSec = deltaTimeMs / 1000.0f;
+//
+//	if (App::IsKeyPressed(App::KEY_R))
+//	{
+//		ResetGame();
+//		return;
+//	}
+//	if (gGameOver) return;
+//
+//	// 让相机跟随玩家（focus 是世界原点偏移）
+//	gCam.focus = gPlayerPos;
+//
+//	// 移动：把手柄XY映射到世界XZ
+//	const float inX = App::GetController().GetLeftThumbStickX();
+//	const float inZ = App::GetController().GetLeftThumbStickY();
+//
+//	// 面向输入方向
+//	if ((inX * inX + inZ * inZ) > 0.15f * 0.15f)
+//		gPlayerAngle = std::atan2(inZ, inX);
+//
+//	const float accel = 1500.0f;
+//	const float damping = 6.5f;
+//
+//	gPlayerVel.x += inX * accel * dtSec;
+//	gPlayerVel.z += inZ * accel * dtSec;
+//
+//	gPlayerVel.x -= gPlayerVel.x * damping * dtSec;
+//	gPlayerVel.z -= gPlayerVel.z * damping * dtSec;
+//
+//	gPlayerPos.x += gPlayerVel.x * dtSec;
+//	gPlayerPos.z += gPlayerVel.z * dtSec;
+//
+//	// 限制在世界边界（用虚拟宽高当作地面大小）
+//	gPlayerPos.x = Clamp(gPlayerPos.x, gPlayerRadius, APP_VIRTUAL_WIDTH - gPlayerRadius);
+//	gPlayerPos.z = Clamp(gPlayerPos.z, gPlayerRadius, APP_VIRTUAL_HEIGHT - gPlayerRadius);
+//
+//	// 开火
+//	gShootCooldownMs = std::fmax(0.0f, gShootCooldownMs - dtMs);
+//	if (App::IsKeyPressed(App::KEY_SPACE) && gShootCooldownMs <= 0.0f)
+//	{
+//		Bullet3D b{};
+//		b.pos = gPlayerPos; b.pos.y = 18.0f; // 子弹稍微离地
+//		b.vel = { std::cos(gPlayerAngle) * 760.0f, 0.0f, std::sin(gPlayerAngle) * 760.0f };
+//		gBullets.push_back(b);
+//		gShootCooldownMs = 110.0f;
+//	}
+//
+//	// 刷敌
+//	gSpawnTimerMs += dtMs;
+//	const float spawnInterval = std::fmax(280.0f, 1100.0f - gScore * 18.0f);
+//	if (gSpawnTimerMs >= spawnInterval)
+//	{
+//		gSpawnTimerMs = 0.0f;
+//		SpawnEnemy();
+//	}
+//
+//	// 更新子弹
+//	for (auto& b : gBullets)
+//	{
+//		b.pos.x += b.vel.x * dtSec;
+//		b.pos.z += b.vel.z * dtSec;
+//		b.lifeMs -= dtMs;
+//	}
+//	gBullets.erase(std::remove_if(gBullets.begin(), gBullets.end(),
+//		[](const Bullet3D& b)
+//		{
+//			if (b.lifeMs <= 0.0f) return true;
+//			if (b.pos.x < -100 || b.pos.x > APP_VIRTUAL_WIDTH + 100) return true;
+//			if (b.pos.z < -100 || b.pos.z > APP_VIRTUAL_HEIGHT + 100) return true;
+//			return false;
+//		}), gBullets.end());
+//
+//	// 敌人追玩家（XZ 平面）
+//	const float enemySpeed = 135.0f + gScore * 2.0f;
+//	for (auto& e : gEnemies)
+//	{
+//		const float dx = gPlayerPos.x - e.pos.x;
+//		const float dz = gPlayerPos.z - e.pos.z;
+//		const float l = std::sqrt(dx * dx + dz * dz);
+//		if (l > 1e-3f)
+//		{
+//			e.pos.x += (dx / l) * enemySpeed * dtSec;
+//			e.pos.z += (dz / l) * enemySpeed * dtSec;
+//		}
+//	}
+//
+//	// 碰撞：用圆形近似（XZ）
+//	auto hitCircleXZ = [](const Vec3& a, float ra, const Vec3& b, float rb)
+//		{
+//			Vec2 a2{ a.x, a.z };
+//			Vec2 b2{ b.x, b.z };
+//			return CircleHit(a2, ra, b2, rb);
+//		};
+//
+//	// 子弹 vs 敌人
+//	for (int bi = (int)gBullets.size() - 1; bi >= 0; --bi)
+//	{
+//		for (int ei = (int)gEnemies.size() - 1; ei >= 0; --ei)
+//		{
+//			const float enemyR = gEnemies[ei].size;
+//			if (hitCircleXZ(gBullets[bi].pos, gBullets[bi].radius, gEnemies[ei].pos, enemyR))
+//			{
+//				gEnemies.erase(gEnemies.begin() + ei);
+//				gBullets.erase(gBullets.begin() + bi);
+//				gScore += 1;
+//				break;
+//			}
+//		}
+//	}
+//
+//	// 玩家 vs 敌人
+//	for (const auto& e : gEnemies)
+//	{
+//		if (hitCircleXZ(gPlayerPos, gPlayerRadius, e.pos, e.size))
+//		{
+//			gGameOver = true;
+//			break;
+//		}
+//	}
+//}
+//
+//// 画一个“立方体柱子”：底面在 y = 0，上表面在 y = height
+//// size 表示在 XZ 平面上的半边长
+//void DrawBlock(const CameraIso & cam, Math3D::Vec3 centerXZ, float size, float height,
+//	float topR, float topG, float topB,
+//	float sideR, float sideG, float sideB);
+//
+//// 画玩家：一个在地面的“箭头”顶面 + 简单侧面
+//void DrawPlayer(const CameraIso& cam, Math3D::Vec3 posXZ, float radius, float angleRad);
+//static void Tri2D(Vec2 a, Vec2 b, Vec2 c,
+//	float r1, float g1, float b1,
+//	float r2, float g2, float b2,
+//	float r3, float g3, float b3,
+//	float z = 0.0f)
+//{
+//	// 这里把 z 统一传 0（你也可以用 z 做额外深度效果）
+//	App::DrawTriangle(a.x, a.y, z, 1, b.x, b.y, z, 1, c.x, c.y, z, 1,
+//		r1, g1, b1, r2, g2, b2, r3, g3, b3, false);
+//}
+//
+//void DrawBlock(const CameraIso& cam, Math3D::Vec3 c, float s, float h,
+//	float tr, float tg, float tb,
+//	float sr, float sg, float sb)
+//{
+//	// 8个角点（其实只需要顶面4点 + 两个侧面）
+//	// 底面 y=0，顶面 y=h
+//	Math3D::Vec3 p000{ c.x - s, 0.0f, c.z - s };
+//	Math3D::Vec3 p100{ c.x + s, 0.0f, c.z - s };
+//	Math3D::Vec3 p010{ c.x - s, 0.0f, c.z + s };
+//	Math3D::Vec3 p110{ c.x + s, 0.0f, c.z + s };
+//
+//	Math3D::Vec3 p001{ c.x - s, h, c.z - s };
+//	Math3D::Vec3 p101{ c.x + s, h, c.z - s };
+//	Math3D::Vec3 p011{ c.x - s, h, c.z + s };
+//	Math3D::Vec3 p111{ c.x + s, h, c.z + s };
+//
+//	auto A = cam.Project(p001);
+//	auto B = cam.Project(p101);
+//	auto C = cam.Project(p111);
+//	auto D = cam.Project(p011);
+//
+//	// 顶面（两三角）
+//	Tri2D(A, B, C, tr, tg, tb, tr, tg, tb, tr, tg, tb);
+//	Tri2D(A, C, D, tr, tg, tb, tr, tg, tb, tr, tg, tb);
+//
+//	// 选择两个“可见侧面”：朝屏幕的两个面（根据我们的投影，通常 z+ 方向更靠上）
+//	// 这里固定画 “+z 面” 和 “+x 面”，简单但有效
+//	auto E = cam.Project(p000); // bottom -x +z
+//	auto F = cam.Project(p100); // bottom +x +z
+//	auto G = cam.Project(p101); // top +x +z
+//	auto H = cam.Project(p001); // top -x +z
+//
+//	// +z 面
+//	Tri2D(E, F, G, sr, sg, sb, sr, sg, sb, sr, sg, sb);
+//	Tri2D(E, G, H, sr, sg, sb, sr, sg, sb, sr, sg, sb);
+//
+//	auto I = cam.Project(p000); // bottom +x -z
+//	auto J = cam.Project(p010); // bottom +x +z
+//	auto K = cam.Project(p011); // top +x +z
+//	auto L = cam.Project(p001); // top +x -z
+//
+//	// +x 面（稍微更暗一点更立体）
+//	Tri2D(I, J, K, sr * 0.85f, sg * 0.85f, sb * 0.85f, sr * 0.85f, sg * 0.85f, sb * 0.85f, sr * 0.85f, sg * 0.85f, sb * 0.85f);
+//	Tri2D(I, K, L, sr * 0.85f, sg * 0.85f, sb * 0.85f, sr * 0.85f, sg * 0.85f, sb * 0.85f, sr * 0.85f, sg * 0.85f, sb * 0.85f);
+//}
+//
+//void DrawPlayer(const CameraIso& cam, Math3D::Vec3 p, float r, float ang)
+//{
+//	// 顶面箭头（在 y = smallHeight）
+//	const float h = 18.0f; // 高度让它看起来像“立起来一点”
+//	Math3D::Vec3 f{ cos(ang), 0.0f, sin(ang) };
+//	Math3D::Vec3 right{ -f.z, 0.0f, f.x };
+//
+//	Math3D::Vec3 tip = p + f * (r * 1.4f); tip.y = h;
+//	Math3D::Vec3 left = p - f * (r * 0.8f) - right * (r * 0.9f); left.y = h;
+//	Math3D::Vec3 rgt = p - f * (r * 0.8f) + right * (r * 0.9f); rgt.y = h;
+//
+//	auto A = cam.Project(tip);
+//	auto B = cam.Project(rgt);
+//	auto C = cam.Project(left);
+//
+//	Tri2D(A, B, C, 0.2f, 0.7f, 1.0f, 0.2f, 0.7f, 1.0f, 0.2f, 0.7f, 1.0f);
+//
+//	// 简单画个侧面阴影（让它“3D”一点）：从顶面点拉到地面
+//	Math3D::Vec3 tip0 = tip; tip0.y = 0;
+//	Math3D::Vec3 rgt0 = rgt; rgt0.y = 0;
+//
+//	auto D = cam.Project(tip0);
+//	auto E = cam.Project(rgt0);
+//
+//	Tri2D(D, E, B, 0.12f, 0.35f, 0.5f, 0.12f, 0.35f, 0.5f, 0.12f, 0.35f, 0.5f);
+//	Tri2D(D, B, A, 0.12f, 0.35f, 0.5f, 0.12f, 0.35f, 0.5f, 0.12f, 0.35f, 0.5f);
+//}
+//void Render()
+//{
+//	// 画地面网格（用线条在 XZ 平面投影）
+//	for (int i = 0; i <= 16; i++)
+//	{
+//		float x = (APP_VIRTUAL_WIDTH / 16.0f) * i;
+//		auto a = gCam.Project({ x, 0, 0 });
+//		auto b = gCam.Project({ x, 0, (float)APP_VIRTUAL_HEIGHT });
+//		App::DrawLine(a.x, a.y, b.x, b.y, 0.15f, 0.15f, 0.18f);
+//
+//		float z = (APP_VIRTUAL_HEIGHT / 16.0f) * i;
+//		auto c = gCam.Project({ 0, 0, z });
+//		auto d = gCam.Project({ (float)APP_VIRTUAL_WIDTH, 0, z });
+//		App::DrawLine(c.x, c.y, d.x, d.y, 0.15f, 0.15f, 0.18f);
+//	}
+//
+//	// 敌人（红柱子）
+//	for (const auto& e : gEnemies)
+//	{
+//		DrawBlock(gCam, e.pos, e.size, e.height,
+//			1.0f, 0.25f, 0.25f,
+//			0.65f, 0.12f, 0.12f);
+//	}
+//
+//	// 子弹（黄小柱）
+//	for (const auto& b : gBullets)
+//	{
+//		Vec3 c = b.pos; c.y = 0.0f;
+//		DrawBlock(gCam, c, 5.0f, 16.0f,
+//			1.0f, 1.0f, 0.35f,
+//			0.65f, 0.65f, 0.2f);
+//	}
+//
+//	// 玩家
+//	DrawPlayer(gCam, gPlayerPos, 18.0f, gPlayerAngle);
+//
+//	// UI
+//	char buf[128];
+//	std::snprintf(buf, sizeof(buf), "3D Iso TopDown - Score: %d  Enemies: %d  R=Restart", gScore, (int)gEnemies.size());
+//	App::Print(20, APP_VIRTUAL_HEIGHT - 30, buf, 1, 1, 1);
+//
+//	if (gGameOver)
+//		App::Print(APP_VIRTUAL_WIDTH * 0.36f, APP_VIRTUAL_HEIGHT * 0.5f, "GAME OVER - Press R", 1.0f, 0.4f, 0.4f);
+//}
+//
+//void Shutdown()
+//{
+//}
