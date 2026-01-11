@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\GameTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderHelper.cpp">
+      <Filter>System\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\System\Physic\Collision.cpp">
+      <Filter>System\Physic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\System\Math\Vec2.cpp">
+      <Filter>System\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\System\System.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{727F3BA7-D654-347A-916B-28620D756338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{367feb2f-5579-4381-9271-ac35b0abc1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Math">
+      <UniqueIdentifier>{41ed64db-84ca-45e3-a611-70485d957f43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Render">
+      <UniqueIdentifier>{fd0e640e-1c3d-4fb5-b33b-0263a1af1835}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Physic">
+      <UniqueIdentifier>{0eb5f841-3079-4754-ab06-91f9f8944d3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Component">
+      <UniqueIdentifier>{b86edd61-50dc-4389-9a89-f8d554ac0e68}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\System\Math\Mat4.h">
+      <Filter>System\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Math\Vec2.h">
+      <Filter>System\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Math\Vec3.h">
+      <Filter>System\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Math\Vec4.h">
+      <Filter>System\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Render\RenderHelper.h">
+      <Filter>System\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Physic\Collision.h">
+      <Filter>System\Physic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Component\Enemy.h">
+      <Filter>System\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Component\Bullet.h">
+      <Filter>System\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\System.h">
+      <Filter>System</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

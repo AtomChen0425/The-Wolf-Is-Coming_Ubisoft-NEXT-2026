@@ -1,0 +1,10 @@
+^D:\CODING\GIT_REPOSITORIES\UBISOFT-NEXT-2026\UBISOFTTORONTOAPI_DEC102025UPDATE\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update -BD:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64 --check-stamp-file D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
