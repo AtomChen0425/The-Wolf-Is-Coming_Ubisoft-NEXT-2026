@@ -19,8 +19,8 @@ private:
     IsoRenderer m_renderer;
 
     // 玩家世界坐标（tile单位），在 XZ 平面移动
-    Vec3 m_playerPos { 0,0,0 };
-    Vec3 m_playerVel { 0,0,0 };
+    Vec3 m_playerPos{ 0,0,0 };
+    Vec3 m_playerVel{ 0,0,0 };
 
     CSimpleSprite* m_player = nullptr;
     CSimpleSprite* m_shadow = nullptr;

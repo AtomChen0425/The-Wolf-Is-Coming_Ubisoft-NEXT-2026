@@ -2,7 +2,6 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
-using namespace std;
 float Clamp(float v, float lo, float hi);
 float Rand01();
 float RandRange(float a, float b);

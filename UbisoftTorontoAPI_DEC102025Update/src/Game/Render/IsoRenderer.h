@@ -17,8 +17,8 @@ struct DrawItem
     // wall face
     Vec3 a, b;      // bottom edge in world (y=0)
     float height = 0.0f;
-    float r=1,g=1,bcol=1;
-    float sr=1,sg=1,sb=1; // side color
+    float r = 1, g = 1, bcol = 1;
+    float sr = 1, sg = 1, sb = 1; // side color
 
     // sprite/shadow
     CSimpleSprite* sprite = nullptr;
