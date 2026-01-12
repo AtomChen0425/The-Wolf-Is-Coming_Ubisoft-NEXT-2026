@@ -33,7 +33,7 @@ void GameSystem::SpawnEnemy()
 }
 void GameSystem::Update(const float deltaTimeMs)
 {
-    const float dt = deltaTimeMs; // ms（本引擎里很多东西都用 ms，统一用 ms 也行）
+    const float dt = deltaTimeMs; 
     const float dtSec = deltaTimeMs / 1000.0f;
 
     if (App::IsKeyPressed(App::KEY_R))
@@ -45,7 +45,7 @@ void GameSystem::Update(const float deltaTimeMs)
     if (gGameOver)
         return;
 
-    // ----- Movement (left stick; keyboard emulation works per AppSettings.h) -----
+
     Vec2 move;
     move.x = App::GetController().GetLeftThumbStickX();
     move.y = App::GetController().GetLeftThumbStickY();
@@ -53,7 +53,6 @@ void GameSystem::Update(const float deltaTimeMs)
     const float accel = 1400.0f;     // px/s^2
     const float damping = 6.5f;      // velocity damping
 
-    // 加速度驱动 + 阻尼
     gPlayerVel.x += move.x * accel * dtSec;
     gPlayerVel.y += move.y * accel * dtSec;
 
@@ -62,18 +61,16 @@ void GameSystem::Update(const float deltaTimeMs)
 
     gPlayerPos = gPlayerPos + gPlayerVel * dtSec;
 
-    // 边界
     gPlayerPos.x = Clamp(gPlayerPos.x, gPlayerRadius, APP_VIRTUAL_WIDTH - gPlayerRadius);
     gPlayerPos.y = Clamp(gPlayerPos.y, gPlayerRadius, APP_VIRTUAL_HEIGHT - gPlayerRadius);
 
-    // 面向移动方向（静止时保持）
     if (LenSq(move) > 0.15f * 0.15f)
         gPlayerAngle = std::atan2(move.y, move.x);
 
     // ----- Shooting (Space) -----
     gShootCooldownMs = std::fmax(0.0f, gShootCooldownMs - dt);
 
-    const bool shoot = App::IsKeyPressed(App::KEY_SPACE); // 你也可以改成手柄 BTN_A
+    const bool shoot = App::IsKeyPressed(App::KEY_SPACE); 
     if (shoot && gShootCooldownMs <= 0.0f)
     {
         Vec2 dir = { std::cos(gPlayerAngle), std::sin(gPlayerAngle) };
@@ -86,7 +83,7 @@ void GameSystem::Update(const float deltaTimeMs)
 
     // ----- Spawn enemies -----
     gSpawnTimerMs += dt;
-    float spawnInterval = std::fmax(280.0f, 1200.0f - gScore * 20.0f); // 分数越高刷得越快
+    float spawnInterval = std::fmax(280.0f, 1200.0f - gScore * 20.0f);
     if (gSpawnTimerMs >= spawnInterval)
     {
         gSpawnTimerMs = 0.0f;
@@ -123,7 +120,7 @@ void GameSystem::Update(const float deltaTimeMs)
         bool bulletRemoved = false;
         for (int ei = (int)gEnemies.size() - 1; ei >= 0; --ei)
         {
-            float enemyHitR = gEnemies[ei].half; // 用半边长当近似半径
+            float enemyHitR = gEnemies[ei].half; // 
             if (gCollision->Circle(gBullets[bi].pos, gBullets[bi].radius, gEnemies[ei].pos, enemyHitR))
             {
                 // remove enemy
@@ -171,4 +168,9 @@ void GameSystem::Render()
 
     if (gGameOver)
         App::Print(APP_VIRTUAL_WIDTH * 0.36f, APP_VIRTUAL_HEIGHT * 0.5f, "GAME OVER - Press R", 1.0f, 0.4f, 0.4f);
+}
+void GameSystem::Shutdown()
+{
+    gBullets.clear();
+    gEnemies.clear();
 }

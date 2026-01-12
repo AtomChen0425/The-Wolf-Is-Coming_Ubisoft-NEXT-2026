@@ -36,7 +36,7 @@
     <Filter Include="System\Physic">
       <UniqueIdentifier>{0eb5f841-3079-4754-ab06-91f9f8944d3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="System\Component">
+    <Filter Include="System\Access">
       <UniqueIdentifier>{b86edd61-50dc-4389-9a89-f8d554ac0e68}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -59,14 +59,14 @@
     <ClInclude Include="..\..\src\System\Physic\Collision.h">
       <Filter>System\Physic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\System\Component\Enemy.h">
-      <Filter>System\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\System\Component\Bullet.h">
-      <Filter>System\Component</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\System\System.h">
       <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Access\Bullet.h">
+      <Filter>System\Access</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Access\Enemy.h">
+      <Filter>System\Access</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

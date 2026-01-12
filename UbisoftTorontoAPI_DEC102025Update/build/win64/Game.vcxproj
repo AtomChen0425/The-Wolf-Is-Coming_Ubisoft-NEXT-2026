@@ -427,8 +427,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="RenderHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\System\Component\Bullet.h" />
-    <ClInclude Include="..\..\src\System\Component\Enemy.h" />
+    <ClInclude Include="..\..\src\System\Access\Bullet.h" />
+    <ClInclude Include="..\..\src\System\Access\Enemy.h" />
     <ClInclude Include="..\..\src\System\Math\Mat4.h" />
     <ClInclude Include="..\..\src\System\Math\Vec2.h" />
     <ClInclude Include="..\..\src\System\Math\Vec3.h" />

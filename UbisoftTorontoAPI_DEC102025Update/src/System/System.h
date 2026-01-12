@@ -1,7 +1,7 @@
 #pragma once
 #include "Math/Vec2.h"
-#include "Component/Bullet.h"
-#include "Component/Enemy.h"
+#include "Access/Bullet.h"
+#include "Access/Enemy.h"
 #include <vector>
 #include "../ContestAPI/app.h"
 #include "../ContestAPI/AppSettings.h"
@@ -29,4 +29,5 @@ public:
     void SpawnEnemy();
 	void Update(const float deltaTimeMs);
 	void Render();
+	void Shutdown();
 };
