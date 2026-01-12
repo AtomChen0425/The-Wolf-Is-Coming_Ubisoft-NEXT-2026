@@ -9,25 +9,27 @@
 #endif
 
 #include <iostream>
+#include <cassert>
 //------------------------------------------------------------------------
 #include <math.h> 
 //------------------------------------------------------------------------
 #include "../ContestAPI/app.h"
-#include "../System/System.h"
+//#include "../System/System.h"
+#include "../System/ECSSystem.h"
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
 // Example data....
 //------------------------------------------------------------------------
-CSimpleSprite* testSprite;
-GameSystem gameSystem;
-enum
-{
-	ANIM_FORWARDS,
-	ANIM_BACKWARDS,
-	ANIM_LEFT,
-	ANIM_RIGHT,
-};
+//GameSystem gameSystem;
+//enum
+//{
+//	ANIM_FORWARDS,
+//	ANIM_BACKWARDS,
+//	ANIM_LEFT,
+//	ANIM_RIGHT,
+//};
+EngineSystem engineSystem;
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
@@ -36,21 +38,21 @@ enum
 void Init()
 {
 	std::srand((unsigned)std::time(nullptr));
-	gameSystem.ResetGame();
+	engineSystem.ResetGame();
 }
 
 void Update(const float deltaTimeMs)
 {
     // Update game system
-    gameSystem.Update(deltaTimeMs);
+	engineSystem.Update(deltaTimeMs);
 }
 
 void Render()
 {
-	gameSystem.Render();
+	engineSystem.Render();
 }
 
 void Shutdown()
 {
-	gameSystem.Shutdown();
+	engineSystem.Shutdown();
 }

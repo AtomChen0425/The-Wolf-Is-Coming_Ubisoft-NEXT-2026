@@ -16,6 +16,9 @@
     <ClCompile Include="..\..\src\System\System.cpp">
       <Filter>System</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\System\ECSSystem.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\CMakeLists.txt" />
@@ -38,6 +41,12 @@
     </Filter>
     <Filter Include="System\Access">
       <UniqueIdentifier>{b86edd61-50dc-4389-9a89-f8d554ac0e68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\ECS">
+      <UniqueIdentifier>{d9359f4a-a6c8-4377-95a8-f991adcfe4cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Component">
+      <UniqueIdentifier>{cd408d6e-6be0-4ba5-99b2-8532333a4de6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\System\Access\Enemy.h">
       <Filter>System\Access</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\ECS\ECS.h">
+      <Filter>System\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Component\Component.h">
+      <Filter>System\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\ECSSystem.h">
+      <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

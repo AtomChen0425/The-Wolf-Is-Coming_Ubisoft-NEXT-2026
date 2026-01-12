@@ -420,6 +420,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\System\ECSSystem.cpp" />
     <ClCompile Include="..\..\src\System\Math\Vec2.cpp" />
     <ClCompile Include="..\..\src\System\Physic\Collision.cpp" />
     <ClCompile Include="..\..\src\System\System.cpp" />
@@ -429,6 +430,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClInclude Include="..\..\src\System\Access\Bullet.h" />
     <ClInclude Include="..\..\src\System\Access\Enemy.h" />
+    <ClInclude Include="..\..\src\System\Component\Component.h" />
+    <ClInclude Include="..\..\src\System\ECSSystem.h" />
+    <ClInclude Include="..\..\src\System\ECS\ECS.h" />
     <ClInclude Include="..\..\src\System\Math\Mat4.h" />
     <ClInclude Include="..\..\src\System\Math\Vec2.h" />
     <ClInclude Include="..\..\src\System\Math\Vec3.h" />
