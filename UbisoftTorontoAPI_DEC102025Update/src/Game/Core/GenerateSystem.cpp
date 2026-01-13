@@ -7,6 +7,8 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
 
     // A. 基础数据
     registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // 初始位置
+    registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
+	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
     registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // 初始速度
     registry.addComponent(entity, PlayerTag{});                // 标记为玩家
 	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // 刚体组件

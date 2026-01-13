@@ -28,3 +28,8 @@ void RenderHelper::DrawPlayer(Vec2 p, float angleRad)
         0.2f, 0.7f, 1.0f,
         false);
 }
+void RenderHelper::DrawShadow(float x,float y,float ShadowSize)
+{
+    App::DrawLine(x - ShadowSize, y, x + ShadowSize, y, 255, 0, 0);
+    App::DrawLine(x, y - ShadowSize / 2, x, y + ShadowSize / 2, 255, 0, 0);
+}

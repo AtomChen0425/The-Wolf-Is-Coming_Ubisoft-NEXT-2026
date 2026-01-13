@@ -40,3 +40,20 @@ struct Health {
     int currentHealth;
     int maxHealth;
 };
+
+// 世界坐标 (逻辑坐标)
+struct Position3D {
+    float x; // 左右移动
+    float z; // 前后移动 (屏幕上的上下，代表地板深度)
+    float y; // 上下移动 (跳跃高度，0代表在地面)
+};
+
+// 速度
+struct Velocity3D {
+    float vx, vz, vy;
+};
+
+// 阴影组件 (2.5D 的灵魂)
+struct Shadow {
+    float radius;
+};

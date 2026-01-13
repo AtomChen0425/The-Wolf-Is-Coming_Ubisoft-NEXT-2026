@@ -34,6 +34,9 @@
     <ClCompile Include="..\..\src\Game\Core\CollisionSystem.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Game\Core\PhysicsSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\CMakeLists.txt" />
@@ -117,6 +120,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Game\Core\CollisionSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Game\Core\PhysicsSystem.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

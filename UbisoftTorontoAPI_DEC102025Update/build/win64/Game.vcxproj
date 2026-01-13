@@ -424,6 +424,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\..\src\Game\Core\ControlSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\GenerateSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\MovementSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\PhysicsSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\RenderSystem.cpp" />
     <ClCompile Include="..\..\src\System\ECSSystem.cpp" />
     <ClCompile Include="..\..\src\System\Math\Vec2.cpp" />
@@ -437,6 +438,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\..\src\Game\Core\ControlSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\GenerateSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\MovementSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\PhysicsSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\RenderSystem.h" />
     <ClInclude Include="..\..\src\System\Access\Bullet.h" />
     <ClInclude Include="..\..\src\System\Access\Enemy.h" />

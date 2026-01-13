@@ -25,6 +25,28 @@ void SpriteMovementSystem(EntityManager& registry, float dtMs) {
         pos.pos = pos.pos + vel.vel * dtMs;
     }
 }
+void SpriteMovementSystem25D(EntityManager& registry, float dtMs) {
+    View<Position3D, Velocity3D, PlayerTag, Health, RigidBody> view(registry);
+    const float dtSec = dtMs / 1000.0f;
+    const float damping = 8.0f;
+    for (EntityID id : view)
+    {
+        auto& pos = view.get<Position3D>(id);
+        auto& vel = view.get<Velocity3D>(id);
+        auto& rb = view.get<RigidBody>(id);
+        if (rb.force.x != 0.0f || rb.force.y != 0.0f)
+        {
+            const float invMass = (rb.mass > 0.0001f) ? (1.0f / rb.mass) : 0.0f;
+            const Vec2 accel = rb.force * invMass;
+            vel.vx = vel.vx + accel.x * dtSec;
+            vel.vz = vel.vz + accel.y * dtSec;
+            // 2) force 是一次性的（冲击只在那一帧），用完必须清零
+            rb.force = { 0.0f, 0.0f };
+        }
+        pos.x = pos.x + vel.vx * dtSec;
+        pos.z = pos.z + vel.vz * dtSec;
+    }
+}
 void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
     Vec2 targetPos = { 0.0f, 0.0f };
     bool playerFound = false;
@@ -60,6 +82,7 @@ void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
     }
 }
 void MovementSystem::Update(EntityManager& registry, const float dt) {
-    SpriteMovementSystem(registry, dt);
-    EnemyMovementSystem(registry, dt);
+    SpriteMovementSystem25D(registry, dt);
+    /*SpriteMovementSystem(registry, dt);
+    EnemyMovementSystem(registry, dt);*/
 }
