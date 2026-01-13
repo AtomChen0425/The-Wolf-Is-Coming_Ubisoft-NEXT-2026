@@ -51,3 +51,53 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
         registry.addComponent(enemy, Health{ 100, 100 });
     }
 }
+
+void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,float& nextSpawnZ) {
+    float blockSize = 20.0f;      // 每个路块长度
+    float renderDistance = 3000.0f; // 在玩家前方多远生成
+    float deleteDistance = 500.0f;  // 在玩家后方多远销毁
+    int roadWidth = 4;
+    // --- 1. 生成 (Spawn) ---
+    // 只要 "下一个生成点" 在 "玩家视野" 内，就一直循环生成
+    while (nextSpawnZ < playerZ + renderDistance) {
+        for (int i = 0; i <= roadWidth; i++) {
+            Entity block = registry.createEntity();
+
+            // 简单的颜色交替，产生斑马线效果，体现速度感
+            //float color = (int(nextSpawnZ / blockSize) % 2 == 0) ? 0.7f : 0.4f;
+
+            registry.addComponent(block, Transform3D{
+                -40.0f+i*20.0f, -50.0f, nextSpawnZ,   // 位置 (Y在脚下, Z在前方)
+                50.0f, 10.0f, blockSize,   // 宽, 高, 深
+                0, 255, 0         // 灰色
+                });
+            registry.addComponent(block, MapBlockTag{}); // 打标签！
+        }
+        
+
+        nextSpawnZ += blockSize; // 推进生成点
+    }
+
+    // --- 2. 销毁 (Despawn) ---
+    View<MapBlockTag, Transform3D> view(registry);
+    std::vector<EntityID> toDestroy;
+
+    for (EntityID id : view) {
+        auto& t = view.get<Transform3D>(id);
+        // 如果路块的 Z 小于 玩家 Z 减去删除距离 (也就是说在玩家身后很远了)
+        if (t.z < playerZ - deleteDistance) {
+            toDestroy.push_back(id);
+        }
+    }
+    // 统一销毁
+    for (EntityID id : toDestroy) {
+        registry.destroyEntity(Entity{id,registry.getEntityVersion(id)});
+    }
+}
+void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
+    Entity entity = registry.createEntity();
+    // 玩家是个小红块，初始在 (0,0,0)
+    registry.addComponent(entity, Transform3D{ 0, 0, 0, 50, 50, 50, 255.0f, 0.0f, 0.0f });
+    registry.addComponent(entity, Velocity3D{});
+    registry.addComponent(entity, PlayerTag{});
+}

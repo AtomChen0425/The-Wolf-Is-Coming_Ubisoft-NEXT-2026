@@ -2,6 +2,7 @@
 #include "../ContestAPI/app.h"
 #include "../ContestAPI/AppSettings.h"
 #include "../System/Component/Component.h"
+#include "GenerateSystem.h"
 void PlayerControlSystem(EntityManager& registry) {
     const auto& controller = App::GetController();
     View<Velocity, SpriteComponent, PlayerTag> view(registry);
@@ -84,8 +85,46 @@ void PlayerControlSystem25D(EntityManager& registry) {
         }
     }
 }
+
+void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera,float& nextSpawnZ) {
+    float dtSec = dt / 1000.0f;
+    float playerCurrentZ = 0.0f;
+
+    View<PlayerTag, Transform3D, Velocity3D> view(registry);
+    for (EntityID id : view) {
+        auto& pos = view.get<Transform3D>(id);
+        auto& vel = view.get<Velocity3D>(id);
+
+        // 1. 处理输入 (简单的自动奔跑 + 左右移动)
+        vel.vz = 0.0f; // 永远向前跑！
+
+        vel.vx = 0.0f;
+        if (App::IsKeyPressed(App::KEY_A)) vel.vx = -1.0f;
+        if (App::IsKeyPressed(App::KEY_D)) vel.vx = 1.0f;
+        if (App::IsKeyPressed(App::KEY_W)) vel.vz = 1.0f;
+        if (App::IsKeyPressed(App::KEY_S)) vel.vz = -1.0f;
+        float forwardSpeed = 100.0f; // 前进速度
+        float strafeSpeed = 300.0f;  // 横移速度
+
+        // 2. 更新玩家位置
+        pos.z += vel.vz * forwardSpeed * dtSec; // Z 轴一直增加
+        pos.x += vel.vx * strafeSpeed * dtSec;
+
+        // 记录玩家当前的 Z，用于地图生成
+        playerCurrentZ = pos.z;
+
+    }
+
+    // 4. 驱动地图生成系统
+    // 传入玩家最新的 Z 坐标，让地图系统决定是否要生成新路
+    GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ);
+}
 void ControlSystem::Update(EntityManager& registry) 
 {
     //PlayerControlSystem(registry);
     PlayerControlSystem25D(registry);
+}
+void ControlSystem::Update(EntityManager& registry, float dt, Camera3D& camera, float& nextSpawnZ)
+{
+    PlayerControl3D(registry, dt, camera, nextSpawnZ);
 }

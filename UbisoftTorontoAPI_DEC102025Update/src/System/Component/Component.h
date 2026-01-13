@@ -57,3 +57,11 @@ struct Velocity3D {
 struct Shadow {
     float radius;
 };
+
+struct Transform3D {
+    float x, y, z;
+    float width, height, depth; // 物体的大小
+    float r, g, b; // 颜色
+};
+
+struct MapBlockTag {};

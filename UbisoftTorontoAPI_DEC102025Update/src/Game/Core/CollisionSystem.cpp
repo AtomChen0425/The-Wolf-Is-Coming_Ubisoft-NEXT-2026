@@ -1,7 +1,7 @@
 #include "CollisionSystem.h"
 #include "../System/Component/Component.h"
 #include "../System/Physic/Collision.h"
-extern Collision* gCollision;
+Collision* gCollision;
 void CheckPlayerEnemyCollision(EntityManager& registry) {
 	View<PlayerTag, Position,Velocity, RigidBody,Health> playerView(registry);
 	View<EnemyTag, Position> enemyView(registry);

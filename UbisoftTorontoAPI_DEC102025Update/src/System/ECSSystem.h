@@ -15,6 +15,16 @@ struct Camera25D {
     float worldMinZ = 0.0f;
     float worldMaxZ = 2000.0f; // 深度限制
 };
+
+struct Camera3D {
+    float x, y, z; // 相机在世界中的绝对位置
+
+    // 相机相对于玩家的固定偏移量 (配置项)
+    // 放在玩家上方 200，后方 300 的位置
+    float followOffsetY = 0.0f;
+    float followOffsetZ = -300.0f;
+    float followOffsetX = 0.0f;
+};
 class EngineSystem
 {
 public:
@@ -30,6 +40,7 @@ public:
     void ResetGame();
 private:
     std::unique_ptr<EntityManager> registry;
-    Camera25D camera; // 实例化
-    void UpdateCamera(EntityManager& registry, float dt); // 新增系统
+    Camera3D camera; // 实例化
+    float nextSpawnZ = 0.0f;
+    //void UpdateCamera(EntityManager& registry, float dt); // 新增系统
 };

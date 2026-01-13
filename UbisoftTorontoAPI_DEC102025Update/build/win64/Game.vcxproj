@@ -420,6 +420,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Game\Core\CameraSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\CollisionSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\ControlSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\GenerateSystem.cpp" />
@@ -429,11 +430,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\..\src\System\ECSSystem.cpp" />
     <ClCompile Include="..\..\src\System\Math\Vec2.cpp" />
     <ClCompile Include="..\..\src\System\Physic\Collision.cpp" />
-    <ClCompile Include="..\..\src\System\System.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\GameTest.cpp" />
     <ClCompile Include="RenderHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Game\Core\CameraSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\CollisionSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\ControlSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\GenerateSystem.h" />
@@ -451,7 +452,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\..\src\System\Math\Vec4.h" />
     <ClInclude Include="..\..\src\System\Physic\Collision.h" />
     <ClInclude Include="..\..\src\System\Render\RenderHelper.h" />
-    <ClInclude Include="..\..\src\System\System.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\ZERO_CHECK.vcxproj">

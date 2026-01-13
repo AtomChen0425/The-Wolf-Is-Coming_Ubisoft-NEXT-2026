@@ -13,9 +13,6 @@
     <ClCompile Include="..\..\src\System\Math\Vec2.cpp">
       <Filter>System\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\System\System.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\System\ECSSystem.cpp">
       <Filter>System</Filter>
     </ClCompile>
@@ -35,6 +32,9 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Game\Core\PhysicsSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Game\Core\CameraSystem.cpp">
       <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,9 +89,6 @@
     <ClInclude Include="..\..\src\System\Physic\Collision.h">
       <Filter>System\Physic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\System\System.h">
-      <Filter>System</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\System\Access\Bullet.h">
       <Filter>System\Access</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Game\Core\PhysicsSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Game\Core\CameraSystem.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
