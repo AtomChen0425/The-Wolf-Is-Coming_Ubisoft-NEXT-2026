@@ -1,23 +1,23 @@
 #include "GenerateSystem.h"
-#include "../System/Component/Component.h"
-#include "../ContestAPI/app.h"
+#include "../../System/Component/Component.h"
+#include "../../ContestAPI/app.h"
 void GenerateSystem::CreatePlayer(EntityManager& registry)
 {
     Entity entity = registry.createEntity();
 
-    // A. »ù´¡Êı¾İ
-    registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // ³õÊ¼Î»ÖÃ
+    // A. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // ï¿½ï¿½Ê¼Î»ï¿½ï¿½
     registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
 	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
-    registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // ³õÊ¼ËÙ¶È
-    registry.addComponent(entity, PlayerTag{});                // ±ê¼ÇÎªÍæ¼Ò
-	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // ¸ÕÌå×é¼ş
-	registry.addComponent(entity, Health{ 100, 100 });          // ÉúÃüÖµ×é¼ş
+    registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // ï¿½ï¿½Ê¼ï¿½Ù¶ï¿½
+    registry.addComponent(entity, PlayerTag{});                // ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½
+	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	registry.addComponent(entity, Health{ 100, 100 });          // ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½
 
-    // B. ´´½¨ Sprite (¸´ÖÆÄãµÄÊ¾Àı´úÂë)
+    // B. ï¿½ï¿½ï¿½ï¿½ Sprite (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     CSimpleSprite* pSprite = App::CreateSprite("data/TestData/Test.bmp", 8, 4);
 
-    // ÉèÖÃ¶¯»­ÅäÖÃ
+    // ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     const float speed = 1.0f / 15.0f;
     pSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
     pSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
@@ -25,8 +25,8 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
     pSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
     pSprite->SetScale(1.0f);
 
-    // C. ´æÈë×é¼ş
-    // ³õÊ¼¶¯»­ÉèÎª -1 »òÄ¬ÈÏ·½Ïò
+    // C. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª -1 ï¿½ï¿½Ä¬ï¿½Ï·ï¿½ï¿½ï¿½
     registry.addComponent(entity, SpriteComponent{ pSprite, 0 });
 }
 void GenerateSystem::SpawnEnemy(EntityManager& registry) {
@@ -47,57 +47,80 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
         registry.addComponent(enemy, Position{ pos });
         registry.addComponent(enemy, Velocity{ Vec2{ 0.0f, 0.0f } });
         registry.addComponent(enemy, EnemyTag{});
-        registry.addComponent(enemy, RigidBody{ 20.0f, 20.0f, Vec2{ 0.0f, 0.0f } }); // ¸ÕÌå×é¼ş
+        registry.addComponent(enemy, RigidBody{ 20.0f, 20.0f, Vec2{ 0.0f, 0.0f } }); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         registry.addComponent(enemy, Health{ 100, 100 });
     }
 }
 
-void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,float& nextSpawnZ) {
-    float blockSize = 20.0f;      // Ã¿¸öÂ·¿é³¤¶È
-    float renderDistance = 3000.0f; // ÔÚÍæ¼ÒÇ°·½¶àÔ¶Éú³É
-    float deleteDistance = 500.0f;  // ÔÚÍæ¼Òºó·½¶àÔ¶Ïú»Ù
-    int roadWidth = 4;
-    // --- 1. Éú³É (Spawn) ---
-    // Ö»Òª "ÏÂÒ»¸öÉú³Éµã" ÔÚ "Íæ¼ÒÊÓÒ°" ÄÚ£¬¾ÍÒ»Ö±Ñ­»·Éú³É
+void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ) {
+    const float blockSize = 20.0f;       // Length of each road block
+    const float renderDistance = 1000.0f; // How far ahead to render
+    const float deleteDistance = 200.0f;  // How far behind to delete
+    const int roadWidth = 5;             // Number of blocks wide (5 blocks = 100 units)
+    
+    // --- 1. Spawn road blocks ahead of player ---
     while (nextSpawnZ < playerZ + renderDistance) {
-        for (int i = 0; i <= roadWidth; i++) {
+        for (int i = 0; i < roadWidth; i++) {
             Entity block = registry.createEntity();
 
-            // ¼òµ¥µÄÑÕÉ«½»Ìæ£¬²úÉú°ßÂíÏßĞ§¹û£¬ÌåÏÖËÙ¶È¸Ğ
-            //float color = (int(nextSpawnZ / blockSize) % 2 == 0) ? 0.7f : 0.4f;
+            // Create road blocks in a line
+            // Each block is 20 units wide, centered at x=0
+            float blockX = -40.0f + i * 20.0f; // Position from -40 to +40
+            
+            // Alternate colors for visual depth
+            float r, g, b;
+            if (int(nextSpawnZ / blockSize) % 2 == 0) {
+                r = 0.2f; g = 0.6f; b = 0.2f; // Dark green
+            } else {
+                r = 0.3f; g = 0.8f; b = 0.3f; // Light green
+            }
 
             registry.addComponent(block, Transform3D{
-                -40.0f+i*20.0f, -50.0f, nextSpawnZ,   // Î»ÖÃ (YÔÚ½ÅÏÂ, ZÔÚÇ°·½)
-                50.0f, 10.0f, blockSize,   // ¿í, ¸ß, Éî
-                0, 255, 0         // »ÒÉ«
-                });
-            registry.addComponent(block, MapBlockTag{}); // ´ò±êÇ©£¡
+                blockX,         // x position
+                -10.0f,         // y position (below ground level)
+                nextSpawnZ,     // z position (depth)
+                20.0f,          // width
+                10.0f,          // height
+                blockSize,      // depth
+                r, g, b         // color
+            });
+            registry.addComponent(block, MapBlockTag{});
         }
         
-
-        nextSpawnZ += blockSize; // ÍÆ½øÉú³Éµã
+        nextSpawnZ += blockSize; // Move spawn position forward
     }
 
-    // --- 2. Ïú»Ù (Despawn) ---
+    // --- 2. Despawn blocks behind player ---
     View<MapBlockTag, Transform3D> view(registry);
     std::vector<EntityID> toDestroy;
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
-        // Èç¹ûÂ·¿éµÄ Z Ğ¡ÓÚ Íæ¼Ò Z ¼õÈ¥É¾³ı¾àÀë (Ò²¾ÍÊÇËµÔÚÍæ¼ÒÉíºóºÜÔ¶ÁË)
+        // If block is too far behind player, mark for deletion
         if (t.z < playerZ - deleteDistance) {
             toDestroy.push_back(id);
         }
     }
-    // Í³Ò»Ïú»Ù
+    
+    // Destroy marked entities
     for (EntityID id : toDestroy) {
-        registry.destroyEntity(Entity{id,registry.getEntityVersion(id)});
+        registry.destroyEntity(Entity{ id, registry.getEntityVersion(id) });
     }
 }
 void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     Entity entity = registry.createEntity();
-    // Íæ¼ÒÊÇ¸öĞ¡ºì¿é£¬³õÊ¼ÔÚ (0,0,0)
-    registry.addComponent(entity, Transform3D{ 0, 0, 0, 50, 50, 50, 255.0f, 0.0f, 0.0f });
-    registry.addComponent(entity, Velocity3D{});
+    // Create player as a small cube, starting at center of road on the ground
+    registry.addComponent(entity, Transform3D{ 
+        0.0f,    // x: center of road
+        0.0f,    // y: on the ground
+        50.0f,   // z: slightly ahead
+        20.0f,   // width
+        20.0f,   // height
+        20.0f,   // depth
+        255.0f,  // r: red
+        0.0f,    // g
+        0.0f     // b
+    });
+    registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
     registry.addComponent(entity, PlayerTag{});
 }

@@ -144,14 +144,19 @@ endif()
 
 file(GLOB_RECURSE GAME_INC_FILES ${PROJECT_SOURCE_DIR}/src/Game/*.h)
 file(GLOB_RECURSE GAME_SRC_FILES ${PROJECT_SOURCE_DIR}/src/Game/*.cpp)
+file(GLOB_RECURSE SYSTEM_INC_FILES ${PROJECT_SOURCE_DIR}/src/System/*.h)
+file(GLOB_RECURSE SYSTEM_SRC_FILES ${PROJECT_SOURCE_DIR}/src/System/*.cpp)
 
 add_executable(Game WIN32
 	${GAME_INC_FILES} 
 	${GAME_SRC_FILES}
+	${SYSTEM_INC_FILES}
+	${SYSTEM_SRC_FILES}
 )
 
 target_include_directories(Game PRIVATE 
 	"${PROJECT_SOURCE_DIR}/src/Game"
+	"${PROJECT_SOURCE_DIR}/src/System"
 	"${FREE_GLUT_INC_DIR}"
 )
 

@@ -1,7 +1,8 @@
 #pragma once
-#include "../ContestAPI/SimpleSprite.h"
-#include "../System/Math/Vec2.h"
-#include "../System/Math/Vec3.h"
+#include "../../ContestAPI/SimpleSprite.h"
+#include "../Math/Vec2.h"
+#include "../Math/Vec3.h"
+
 enum {
     ANIM_FORWARDS,
     ANIM_BACKWARDS,
@@ -9,59 +10,62 @@ enum {
     ANIM_RIGHT,
 };
 
-// 1. 位置组件
+// 2D Position component
 struct Position {
     Vec2 pos;
 };
 
-// 2. 速度组件
+// 2D Velocity component
 struct Velocity {
     Vec2 vel;
 };
 
-// 3. 精灵组件 (持有 API 的对象)
+// Sprite component (uses Contest API sprites)
 struct SpriteComponent {
     CSimpleSprite* sprite;
-    int currentAnimID; // 记录当前播放的动画，防止每帧重复 SetAnimation
+    int currentAnimID; // Track current animation to avoid redundant SetAnimation calls
 };
 
-// 4. 玩家标签
+// Tag components
 struct PlayerTag {};
 struct EnemyTag {};
 
-// 5. 刚体组件
+// 2D Rigid body component
 struct RigidBody {
     float mass;
-	float radius;
+    float radius;
     Vec2 force;
 };
-// 6. 生命值组件
+
+// Health component
 struct Health {
     int currentHealth;
     int maxHealth;
 };
 
-// 世界坐标 (逻辑坐标)
+// 3D Position component
 struct Position3D {
-    float x; // 左右移动
-    float z; // 前后移动 (屏幕上的上下，代表地板深度)
-    float y; // 上下移动 (跳跃高度，0代表在地面)
+    float x; // Left/right movement
+    float z; // Forward/backward movement (depth into screen)
+    float y; // Up/down movement (jump height, 0 = on ground)
 };
 
-// 速度
+// 3D Velocity component
 struct Velocity3D {
     float vx, vz, vy;
 };
 
-// 阴影组件 (2.5D 的灵魂)
+// Shadow component (for 2.5D rendering)
 struct Shadow {
     float radius;
 };
 
+// 3D Transform component
 struct Transform3D {
-    float x, y, z;
-    float width, height, depth; // 物体的大小
-    float r, g, b; // 颜色
+    float x, y, z;              // Position
+    float width, height, depth; // Size of the object
+    float r, g, b;              // Color (normalized 0-1 or 0-255)
 };
 
+// Map block tag
 struct MapBlockTag {};

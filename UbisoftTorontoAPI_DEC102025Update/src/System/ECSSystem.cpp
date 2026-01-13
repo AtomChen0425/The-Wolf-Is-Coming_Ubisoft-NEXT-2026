@@ -7,7 +7,7 @@
 #include "../Game/Core/ControlSystem.h"
 #include "../Game/Core/CollisionSystem.h"
 #include "../Game/Core/CameraSystem.h"
-#include "../System/Component/Component.h"
+#include "Component/Component.h"
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>())
 {
@@ -16,7 +16,7 @@ float Lerp(float a, float b, float t) {
     return a + (b - a) * t;
 }
 //void EngineSystem::UpdateCamera(EntityManager& registry, float dt) {
-//    // 1. Ñ°ÕÒÍæ¼Ò 2.5D
+//    // 1. Ñ°ï¿½ï¿½ï¿½ï¿½ï¿½ 2.5D
 //    View<PlayerTag, Position3D> view(registry);
 //    EntityID playerID = -1;
 //    for (EntityID id : view) { playerID = id; break; }
@@ -25,112 +25,72 @@ float Lerp(float a, float b, float t) {
 //
 //    auto& pos = view.get<Position3D>(playerID);
 //
-//    // 2. ¼ÆËãÄ¿±êµã (Target)
-//    // Ä¿±êÊÇ°ÑÍæ¼ÒµÄ¡¾½Åµ×¡¿(pos.x, pos.z) ·ÅÔÚÆÁÄ»ÖÐÐÄ
+//    // 2. ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ (Target)
+//    // Ä¿ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ÒµÄ¡ï¿½ï¿½Åµ×¡ï¿½(pos.x, pos.z) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½
 //    float targetX = pos.x - (camera.width / 2.0f);
-//    float targetY = pos.z - (camera.height / 2.0f); // ×¢Òâ£ºÓÃ z ¶ÔÓ¦ÆÁÄ» y
+//    float targetY = pos.z - (camera.height / 2.0f); // ×¢ï¿½â£ºï¿½ï¿½ z ï¿½ï¿½Ó¦ï¿½ï¿½Ä» y
 //
-//    // 3. Æ½»¬ÒÆ¶¯ (Lerp)
-//    // t ¾ö¶¨ÁËÏà»úµÄÖÍºó¸Ð£¬0.1 ±È½ÏÆ½»¬£¬1.0 ÊÇËÀËÀÒ§×¡
+//    // 3. Æ½ï¿½ï¿½ï¿½Æ¶ï¿½ (Lerp)
+//    // t ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½Ð£ï¿½0.1 ï¿½È½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½1.0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò§×¡
 //    float smoothSpeed = 5.0f * (dt / 1000.0f);
-//    // ·ÀÖ¹ dt ¹ý´óµ¼ÖÂ´©°ï£¬ÏÞÖÆ t ÔÚ 0~1
+//    // ï¿½ï¿½Ö¹ dt ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ t ï¿½ï¿½ 0~1
 //    if (smoothSpeed > 1.0f) smoothSpeed = 1.0f;
 //
 //    camera.x = Lerp(camera.x, targetX, smoothSpeed);
 //    camera.y = Lerp(camera.y, targetY, smoothSpeed);
 //
-//    // 4. ±ß½çÏÞÖÆ (Clamping)
-//    // ÕâÒ»²½±£Ö¤Ïà»ú²»»áÅÄµ½µØÍ¼ÍâÃæµÄºÚ±ß
-//    // X ÖáÏÞÖÆ
+//    // 4. ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ (Clamping)
+//    // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ÄºÚ±ï¿½
+//    // X ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //    float maxCamX = camera.worldMaxX - camera.width;
 //    camera.x = std::clamp(camera.x, camera.worldMinX, maxCamX);
 //
-//    // Y ÖáÏÞÖÆ (¶ÔÓ¦ÊÀ½çµÄ Z)
+//    // Y ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ Z)
 //    float maxCamY = camera.worldMaxZ - camera.height;
 //    camera.y = std::clamp(camera.y, camera.worldMinZ, maxCamY);
 //}
 void EngineSystem::ResetGame() {
-    // ÊµÏÖÓÎÏ·ÖØÖÃÂß¼­£¬ÀýÈçÇå¿ÕÊµÌå£¬ÖØÐÂ´´½¨Íæ¼ÒµÈ
+    // Reset the game: clear registry, reset score, create new player
     registry = std::make_unique<EntityManager>();
     gSpawnTimerMs = 0.0f;
     gScore = 0;
-    //GenerateSystem::CreatePlayer(*registry);
 
+    nextSpawnZ = 0.0f; // Reset map generation pointer
 
-    nextSpawnZ = 0.0f; // ÖØÖÃµØÍ¼Éú³Éµã
+    // Initialize camera position and offsets for 3D view
+    // Camera should be behind and above the player
+    camera.followOffsetX = 0.0f;    // No horizontal offset
+    camera.followOffsetY = 200.0f;  // Height above player
+    camera.followOffsetZ = -300.0f; // Distance behind player
 
-    // ³õÊ¼»¯Ïà»úÎ»ÖÃ (±ÜÃâµÚÒ»Ö¡ÉÁË¸)
-    camera.x = 0;
+    // Set initial camera position
+    camera.x = 0.0f;
     camera.y = camera.followOffsetY;
     camera.z = camera.followOffsetZ;
-	GenerateSystem::CreatePlayer3D(*registry);
 
-    float targetScreenX = 200.0f;
-    float targetScreenY = 100.0f;
+    // Create the player
+    GenerateSystem::CreatePlayer3D(*registry);
 
-    // 2. ÆÁÄ»ÖÐÐÄ (¼ÙÉè´°¿Ú 1024x768)
-    float screenCenterX = 1024.0f / 2.0f; // 512
-    float screenCenterY = 768.0f / 2.0f;  // 384
-
-    // 3. Í¶Ó°²ÎÊý (±ØÐëºÍ RenderSystem3D ÀïµÄ fov Ò»ÖÂ)
-    float fov = 600.0f;
-    // Íæ¼Òµ½Ïà»úµÄ¾àÀë (È¡¾ø¶ÔÖµ)
-    float dist = std::abs(camera.followOffsetZ); // 300
-
-    // 4. ÄæÏòÍÆµ¼Ïà»úÆ«ÒÆ
-    // ¹«Ê½Ô­Àí£ºÆ«ÒÆÁ¿ = (Ä¿±êÆÁÄ» - ÖÐÐÄ) * (¾àÀë / FOV)
-
-    // XÖáÍÆµ¼: 
-    // ÒòÎªÏà»úÍùÓÒÒÆ(X+)£¬ÎïÌåÔÚÆÁÄ»ÉÏ»áÍù×ó(X-)£¬ËùÒÔÊÇ·´Ïò¹ØÏµ
-    // Èç¹ûÏëÒªÎïÌåÔÚ 400 (×ó±ß)£¬Ïà»úµÃÍùÓÒÒÆ (512 - 400) µÄÁ¿
-    float screenDiffX = screenCenterX - targetScreenX; // 512 - 400 = 112
-    camera.followOffsetX = screenDiffX * (dist / fov); // 112 * (300/600) = 56
-
-    // YÖáÍÆµ¼:
-    // ÆÁÄ»YÏòÏÂÊÇÕý¡£ÎïÌåÔÚ 400 (Æ«ÏÂ)£¬Ïà»úÐèÒªÍùÉÏÌ§»¹ÊÇÍùÏÂÑ¹£¿
-    // 3DÊÀ½çYÏòÉÏÊÇÕý¡£
-    float screenDiffY = screenCenterY - targetScreenY; // 384 - 400 = -16
-    // ÕâÀïµÄÕý¸ººÅ±È½ÏÈÆ£¬Í¨³£ÐèÒªÊÔÒ»ÏÂ£¬¸ù¾ÝÖ®Ç°µÄ¹«Ê½£º
-    // outY = -ry * ... -> ry = -outY ...
-    // ¼òµ¥À´Ëµ£º(384 - 400) * 0.5 = -8¡£
-    // ÎÒÃÇÐèÒªÔÚÔ­ÓÐµÄ¸ß¶È»ù´¡ÉÏ£¬ÔÙµ÷Õû -8
-    float baseHeight = 200.0f; // »ù´¡¸ß¶È
-    camera.followOffsetY = baseHeight + (screenDiffY * (dist / fov));
-
-
-    // 5. ³õÊ¼»¯Ïà»úÎ»ÖÃ
-    camera.x = camera.followOffsetX;
-    camera.y = camera.followOffsetY;
-    camera.z = camera.followOffsetZ;
-	GenerateSystem::MapGenerationSystem(*registry, 0.0f, nextSpawnZ);
+    // Generate initial map
+    GenerateSystem::MapGenerationSystem(*registry, 0.0f, nextSpawnZ);
 }
 void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
-    // ----- Spawn enemies -----
-    /*gSpawnTimerMs += deltaTimeMs;
-    float spawnInterval = std::fmax(280.0f, 1200.0f);
-    if (gSpawnTimerMs >= spawnInterval)
-    {
-        gSpawnTimerMs = 0.0f;
-        GenerateSystem::SpawnEnemy(*registry);
-    }
-    */
-    //ControlSystem::Update(*registry);
-    //CollisionSystem::Update(*registry);
-    //MovementSystem::Update(*registry, deltaTimeMs);
-    //UpdateCamera(*registry, deltaTimeMs);
-	ControlSystem::Update(*registry, deltaTimeMs, camera, nextSpawnZ);
+    
+    // Update player control (handles input and movement)
+    ControlSystem::Update(*registry, deltaTimeMs, camera, nextSpawnZ);
+    
+    // Update camera to follow player
     CameraSystem::Update(*registry, camera);
-	//RenderSystem::Update(*registry, deltaTimeMs);
-	
 }
 void EngineSystem::Render() {
     if (!registry) return;
-    //RenderSystem::Render(*registry);
+    
+    // Render the 3D scene with camera
     RenderSystem::Render(*registry, camera);
 }
 void EngineSystem::Shutdown() {
-    // ÇåÀí×ÊÔ´
+    // Clean up resources
     View<SpriteComponent> view(*registry);
     for (EntityID id : view) {
         auto& spr = view.get<SpriteComponent>(id);
