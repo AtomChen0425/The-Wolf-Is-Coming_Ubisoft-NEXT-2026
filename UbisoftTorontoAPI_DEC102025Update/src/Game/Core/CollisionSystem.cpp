@@ -1,6 +1,7 @@
 #include "CollisionSystem.h"
-#include "../System/Component/Component.h"
-#include "../System/Physic/Collision.h"
+#include "../../System/Component/Component.h"
+#include "../../System/Physic/Collision.h"
+
 Collision* gCollision;
 void CheckPlayerEnemyCollision(EntityManager& registry) {
 	View<PlayerTag, Position,Velocity, RigidBody,Health> playerView(registry);
@@ -20,16 +21,16 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
 		float enemyRadius = enemyView.get<RigidBody>(enemyId).radius;
 		if (gCollision->Circle(playerPos, playerRadius, enemyPos.pos, enemyRadius)) {
 			auto& playerHealth = playerView.get<Health>(playerId);
-			playerHealth.currentHealth -= 10; // ¼ÙÉèÅö×²¿Û10µãÑª
+			playerHealth.currentHealth -= 10; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½10ï¿½ï¿½Ñª
 
 			auto& playerRigidBody = playerView.get<RigidBody>(playerId);
 
-			Vec2 dir = Normalize(playerPos - enemyPos.pos); // ´ÓµÐÈËÖ¸ÏòÍæ¼Ò
+			Vec2 dir = Normalize(playerPos - enemyPos.pos); // ï¿½Óµï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½
 			const float knockbackImpulse = 10.0f;              
 
 			playerRigidBody.force = dir * knockbackImpulse;
-			registry.destroyEntity(Entity{ enemyId, registry.getEntityVersion(enemyId) }); // Åö×²ºóÏú»ÙµÐÈËÊµÌå
-			break; // Åö×²ºóÍË³öÑ­»·£¬±ÜÃâ¶à´Î¿ÛÑª
+			registry.destroyEntity(Entity{ enemyId, registry.getEntityVersion(enemyId) }); // ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½ï¿½Ùµï¿½ï¿½ï¿½Êµï¿½ï¿½
+			break; // ï¿½ï¿½×²ï¿½ï¿½ï¿½Ë³ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½Ñª
 		}
 	}
 }
