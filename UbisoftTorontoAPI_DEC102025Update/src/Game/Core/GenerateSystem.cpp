@@ -117,7 +117,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
         20.0f,   // width
         20.0f,   // height
         20.0f,   // depth
-        255.0f,  // r: red
+        1.0f,    // r: red
         0.0f,    // g
         0.0f     // b
     });
