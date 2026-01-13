@@ -83,7 +83,57 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
                 r, g, b         // color
             });
             registry.addComponent(block, MapBlockTag{});
+            // Add collider to floor blocks
+            registry.addComponent(block, Collider3D{
+                blockSize,      // width
+                10.0f,          // height
+                blockSize,      // depth
+                true,           // isFloor
+                false           // isWall
+            });
         }
+        
+        // Create left wall
+        Entity leftWall = registry.createEntity();
+        float leftWallX = -1 * (roadWidth / 2 * blockSize) - blockSize / 2; // Left of road
+        registry.addComponent(leftWall, Transform3D{
+            leftWallX,      // x position
+            50.0f,          // y position (above ground)
+            nextSpawnZ,     // z position
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            0.6f, 0.3f, 0.1f // brown color
+        });
+        registry.addComponent(leftWall, MapBlockTag{});
+        registry.addComponent(leftWall, Collider3D{
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            false,          // isFloor
+            true            // isWall
+        });
+        
+        // Create right wall
+        Entity rightWall = registry.createEntity();
+        float rightWallX = (roadWidth / 2 * blockSize) + blockSize / 2; // Right of road
+        registry.addComponent(rightWall, Transform3D{
+            rightWallX,     // x position
+            50.0f,          // y position (above ground)
+            nextSpawnZ,     // z position
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            0.6f, 0.3f, 0.1f // brown color
+        });
+        registry.addComponent(rightWall, MapBlockTag{});
+        registry.addComponent(rightWall, Collider3D{
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            false,          // isFloor
+            true            // isWall
+        });
         
         nextSpawnZ += blockSize; // Move spawn position forward
     }

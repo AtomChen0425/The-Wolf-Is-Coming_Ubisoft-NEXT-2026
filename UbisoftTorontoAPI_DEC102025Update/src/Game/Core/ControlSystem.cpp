@@ -2,6 +2,7 @@
 #include "../../ContestAPI/app.h"
 #include "../../ContestAPI/AppSettings.h"
 #include "../../System/Component/Component.h"
+#include "../../System/Physic/Collision.h"
 #include "GenerateSystem.h"
 #include <cmath>
 
@@ -11,7 +12,6 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
     
     // Constants for physics
     const float gravity = -980.0f;      // Gravity acceleration (pixels/s^2)
-    const float groundLevel = 0.0f;     // Ground Y position
     const float jumpVelocity = 400.0f;  // Initial jump velocity
     const float forwardSpeed = 200.0f;  // Forward/backward speed
     const float strafeSpeed = 300.0f;   // Left/right strafe speed
@@ -20,6 +20,8 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
     const float roadHalfWidth = 50.0f;  // Half width of the road
     const float roadMinX = -roadHalfWidth + 10.0f; // Leave 10 units padding
     const float roadMaxX = roadHalfWidth - 10.0f;  // Leave 10 units padding
+
+    Collision collision;
 
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
@@ -65,29 +67,113 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
         // 2. Apply gravity
         vel.vy += gravity * dtSec;
 
-        // 3. Handle jump input (only when on ground)
-        if (App::IsKeyPressed(App::KEY_SPACE) && pos.y <= groundLevel + 0.1f) {
+        // 3. Check if player is on ground (for jump detection)
+        bool isOnGround = false;
+        Vec3 playerMin(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.z - pos.depth / 2);
+        Vec3 playerMax(pos.x + pos.width / 2, pos.y + pos.height / 2, pos.z + pos.depth / 2);
+        
+        View<Collider3D, Transform3D> floorView(registry);
+        for (EntityID floorId : floorView) {
+            auto& floorCollider = floorView.get<Collider3D>(floorId);
+            if (!floorCollider.isFloor) continue; // Skip non-floor objects
+            
+            auto& floorPos = floorView.get<Transform3D>(floorId);
+            Vec3 floorMin(floorPos.x - floorPos.width / 2, floorPos.y - floorPos.height / 2, floorPos.z - floorPos.depth / 2);
+            Vec3 floorMax(floorPos.x + floorPos.width / 2, floorPos.y + floorPos.height / 2, floorPos.z + floorPos.depth / 2);
+            
+            // Check if player is standing on this floor
+            if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
+                playerMin.z < floorMax.z && playerMax.z > floorMin.z &&
+                playerMin.y <= floorMax.y + 0.1f && playerMin.y >= floorMax.y - 5.0f) {
+                isOnGround = true;
+                break;
+            }
+        }
+
+        // 4. Handle jump input (only when on ground)
+        if (App::IsKeyPressed(App::KEY_SPACE) && isOnGround) {
             vel.vy = jumpVelocity;
         }
 
-        // 4. Update position based on velocity
-        pos.z += vel.vz * forwardSpeed * dtSec;
-        pos.x += vel.vx * strafeSpeed * dtSec;
-        pos.y += vel.vy * dtSec;
+        // 5. Calculate next position based on velocity
+        float nextX = pos.x + vel.vx * strafeSpeed * dtSec;
+        float nextZ = pos.z + vel.vz * forwardSpeed * dtSec;
+        float nextY = pos.y + vel.vy * dtSec;
 
-        // 5. Keep player on the road (boundary constraints)
-        if (pos.x < roadMinX) {
-            pos.x = roadMinX;
-            vel.vx = 0.0f; // Stop horizontal movement when hitting boundary
-        }
-        if (pos.x > roadMaxX) {
-            pos.x = roadMaxX;
-            vel.vx = 0.0f;
+        // 6. Check wall collisions for horizontal movement
+        Vec3 nextPlayerMin(nextX - pos.width / 2, pos.y - pos.height / 2, nextZ - pos.depth / 2);
+        Vec3 nextPlayerMax(nextX + pos.width / 2, pos.y + pos.height / 2, nextZ + pos.depth / 2);
+        
+        bool collisionX = false;
+        bool collisionZ = false;
+        
+        View<Collider3D, Transform3D> wallView(registry);
+        for (EntityID wallId : wallView) {
+            auto& wallCollider = wallView.get<Collider3D>(wallId);
+            if (!wallCollider.isWall) continue; // Skip non-wall objects
+            
+            auto& wallPos = wallView.get<Transform3D>(wallId);
+            Vec3 wallMin(wallPos.x - wallPos.width / 2, wallPos.y - wallPos.height / 2, wallPos.z - wallPos.depth / 2);
+            Vec3 wallMax(wallPos.x + wallPos.width / 2, wallPos.y + wallPos.height / 2, wallPos.z + wallPos.depth / 2);
+            
+            // Check collision with wall for X movement
+            Vec3 testXMin(nextX - pos.width / 2, pos.y - pos.height / 2, pos.z - pos.depth / 2);
+            Vec3 testXMax(nextX + pos.width / 2, pos.y + pos.height / 2, pos.z + pos.depth / 2);
+            if (collision.AABB3D(testXMin, testXMax, wallMin, wallMax)) {
+                collisionX = true;
+            }
+            
+            // Check collision with wall for Z movement
+            Vec3 testZMin(pos.x - pos.width / 2, pos.y - pos.height / 2, nextZ - pos.depth / 2);
+            Vec3 testZMax(pos.x + pos.width / 2, pos.y + pos.height / 2, nextZ + pos.depth / 2);
+            if (collision.AABB3D(testZMin, testZMax, wallMin, wallMax)) {
+                collisionZ = true;
+            }
         }
 
-        // 6. Ground collision
-        if (pos.y < groundLevel) {
-            pos.y = groundLevel;
+        // 7. Update position based on velocity and collision results
+        if (!collisionX) {
+            pos.x = nextX;
+        } else {
+            vel.vx = 0.0f; // Stop horizontal movement when hitting wall
+        }
+        
+        if (!collisionZ) {
+            pos.z = nextZ;
+        } else {
+            vel.vz = 0.0f; // Stop forward movement when hitting wall
+        }
+        
+        pos.y = nextY;
+
+        // 8. Ground collision - check all floors and find the highest one player is on
+        float groundY = -1000.0f; // Default very low ground
+        View<Collider3D, Transform3D> floorCheckView(registry);
+        for (EntityID floorId : floorCheckView) {
+            auto& floorCollider = floorCheckView.get<Collider3D>(floorId);
+            if (!floorCollider.isFloor) continue;
+            
+            auto& floorPos = floorCheckView.get<Transform3D>(floorId);
+            Vec3 floorMin(floorPos.x - floorPos.width / 2, floorPos.y - floorPos.height / 2, floorPos.z - floorPos.depth / 2);
+            Vec3 floorMax(floorPos.x + floorPos.width / 2, floorPos.y + floorPos.height / 2, floorPos.z + floorPos.depth / 2);
+            
+            // Check if player is above this floor block
+            playerMin = Vec3(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.z - pos.depth / 2);
+            playerMax = Vec3(pos.x + pos.width / 2, pos.y + pos.height / 2, pos.z + pos.depth / 2);
+            
+            if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
+                playerMin.z < floorMax.z && playerMax.z > floorMin.z) {
+                // Player is horizontally aligned with this floor
+                float floorTop = floorMax.y;
+                if (floorTop > groundY) {
+                    groundY = floorTop;
+                }
+            }
+        }
+        
+        // Apply ground collision
+        if (pos.y - pos.height / 2 < groundY) {
+            pos.y = groundY + pos.height / 2;
             vel.vy = 0.0f;
         }
 
@@ -95,7 +181,7 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
         playerCurrentZ = pos.z;
     }
 
-    // 7. Update map generation system based on player position
+    // 9. Update map generation system based on player position
     GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ);
 }
 

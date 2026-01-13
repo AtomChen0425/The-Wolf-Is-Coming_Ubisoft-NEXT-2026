@@ -67,5 +67,12 @@ struct Transform3D {
     float r, g, b;              // Color (normalized 0.0-1.0 range)
 };
 
+// 3D Collider component for collision detection
+struct Collider3D {
+    float width, height, depth; // Size of the collider box
+    bool isFloor;               // True if this is a floor object
+    bool isWall;                // True if this is a wall object
+};
+
 // Map block tag
 struct MapBlockTag {};
