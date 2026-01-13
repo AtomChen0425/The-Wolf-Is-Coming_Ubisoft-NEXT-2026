@@ -36,25 +36,20 @@ void UpdateSpriteAnimation(EntityManager& registry, const float dt) {
     }
 }
 bool Project(float wx, float wy, float wz, const Camera3D& cam, float& outX, float& outY) {
-    // 1. ����������ת��Ϊ�������������� (View Space)
+    
     float rx = wx - cam.x;
     float ry = wy - cam.y;
     float rz = wz - cam.z;
 
-    // 2. �ü������������������պ������λ�ã������� (��ֹ�������ʹ����ͶӰ)
+    
     if (rz <= 1.0f) return false;
 
-    // 3. ͸�ӳ��� (����)
-    // fov (Field of View) ���࣬������Ұ�ж�㡣ֵԽ�󣬿�����Խ����
     float fov = 600.0f;
-    // ��Ļ���ĵ� (���贰�� 1024x768)
     float centerX = 1024.0f / 2.0f;
     float centerY = 768.0f / 2.0f;
 
-    // ��ʽ����Ļ���� = ������� * (���� / ������) + ��Ļ����ƫ��
     outX = rx * (fov / rz) + centerX;
-    // ע������ĸ��ţ�3D����Y������������ĻY��������������Ҫ��ת
-    outY = -ry * (fov / rz) + centerY;
+    outY = ry * (fov / rz) + centerY;
 
     return true;
 }
@@ -108,8 +103,15 @@ void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
 
 void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     View<Transform3D, MapBlockTag> view(registry);
-
+    std::vector<EntityID> sortedEntities;
     for (EntityID id : view) {
+        sortedEntities.push_back(id);
+    }
+
+    std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
+        return view.get<Transform3D>(a).z < view.get<Transform3D>(b).z;
+        });
+    for (EntityID id : sortedEntities) {
         auto& t = view.get<Transform3D>(id);
 
         // Calculate the 4 corners of the top face of the road block
@@ -132,10 +134,30 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
         if (!Project(x4, topY, z4, camera, sx4, sy4)) continue;
 
         // Draw the road block as a quad (simplified rendering)
-        gRenderHelper->DrawQuad(
+        /*gRenderHelper->DrawQuad(
             Vec2((sx1 + sx2 + sx3 + sx4) / 4, (sy1 + sy2 + sy3 + sy4) / 4),
             t.width / 2, 
             t.r, t.g, t.b
+        );*/
+        App::DrawTriangle(
+            sx1, sy1, 0, 1.0f,
+            sx2, sy2, 0, 1.0f,
+            sx3, sy3, 0, 1.0f,
+            t.r, t.g, t.b,  // 顶点1颜色
+            t.r, t.g, t.b,  // 顶点2颜色
+            t.r, t.g, t.b,  // 顶点3颜色
+            false           // 是否线框
+        );
+
+        // 绘制第二个三角形 (左后 -> 右前 -> 左前)
+        App::DrawTriangle(
+            sx1, sy1, 0, 1.0f,
+            sx3, sy3, 0, 1.0f,
+            sx4, sy4, 0, 1.0f,
+            t.r, t.g, t.b,
+            t.r, t.g, t.b,
+            t.r, t.g, t.b,
+            false
         );
     }
 }
@@ -166,10 +188,30 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
         if (!Project(x4, topY, z4, camera, sx4, sy4)) continue;
 
         // Draw the player as a quad
-        gRenderHelper->DrawQuad(
+        /*gRenderHelper->DrawQuad(
             Vec2((sx1 + sx2 + sx3 + sx4) / 4, (sy1 + sy2 + sy3 + sy4) / 4), 
             t.width / 2, 
             t.r, t.g, t.b
+        );*/
+        App::DrawTriangle(
+            sx1, sy1, -1, 1.0f,
+            sx2, sy2, -1, 1.0f,
+            sx3, sy3, -1, 1.0f,
+            t.r, t.g, t.b,  // 顶点1颜色
+            t.r, t.g, t.b,  // 顶点2颜色
+            t.r, t.g, t.b,  // 顶点3颜色
+            false           // 是否线框
+        );
+
+        // 绘制第二个三角形 (左后 -> 右前 -> 左前)
+        App::DrawTriangle(
+            sx1, sy1, -1, 1.0f,
+            sx3, sy3, -1, 1.0f,
+            sx4, sy4, -1, 1.0f,
+            t.r, t.g, t.b,
+            t.r, t.g, t.b,
+            t.r, t.g, t.b,
+            false
         );
         
         // Display player position info
@@ -191,8 +233,10 @@ void RenderSystem::Render(EntityManager& registry, Camera25D& camera) {
     RenderSystem25D(registry, camera);
 }
 void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
+    
     RenderRoad3D(registry, camera);
     RenderPlayer3D(registry, camera);
+    
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
 	UpdateSpriteAnimation(registry, dt);

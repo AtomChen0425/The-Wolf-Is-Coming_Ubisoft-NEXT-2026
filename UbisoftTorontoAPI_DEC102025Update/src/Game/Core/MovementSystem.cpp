@@ -25,7 +25,7 @@ void SpriteMovementSystem(EntityManager& registry, float dtMs) {
         pos.pos = pos.pos + vel.vel * dtMs;
     }
 }
-void SpriteMovementSystem25D(EntityManager& registry, float dtMs) {
+void SpriteMovementSystem3D(EntityManager& registry, float dtMs) {
     View<Position3D, Velocity3D, PlayerTag, Health, RigidBody> view(registry);
     const float dtSec = dtMs / 1000.0f;
     const float damping = 8.0f;
@@ -40,7 +40,7 @@ void SpriteMovementSystem25D(EntityManager& registry, float dtMs) {
             const Vec2 accel = rb.force * invMass;
             vel.vx = vel.vx + accel.x * dtSec;
             vel.vz = vel.vz + accel.y * dtSec;
-            // 2) force ��һ���Եģ����ֻ����һ֡���������������
+            // 2)
             rb.force = { 0.0f, 0.0f };
         }
         pos.x = pos.x + vel.vx * dtSec;
@@ -82,7 +82,7 @@ void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
     }
 }
 void MovementSystem::Update(EntityManager& registry, const float dt) {
-    SpriteMovementSystem25D(registry, dt);
+    SpriteMovementSystem3D(registry, dt);
     /*SpriteMovementSystem(registry, dt);
     EnemyMovementSystem(registry, dt);*/
 }

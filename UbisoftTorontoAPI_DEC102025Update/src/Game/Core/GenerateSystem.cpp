@@ -5,19 +5,18 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
 {
     Entity entity = registry.createEntity();
 
-    // A. ��������
-    registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // ��ʼλ��
+
+    registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // 
     registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
 	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
-    registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // ��ʼ�ٶ�
-    registry.addComponent(entity, PlayerTag{});                // ���Ϊ���
-	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // �������
-	registry.addComponent(entity, Health{ 100, 100 });          // ����ֵ���
+    registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // 
+    registry.addComponent(entity, PlayerTag{});                // 
+	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // 
+	registry.addComponent(entity, Health{ 100, 100 });          //
 
-    // B. ���� Sprite (�������ʾ������)
     CSimpleSprite* pSprite = App::CreateSprite("data/TestData/Test.bmp", 8, 4);
 
-    // ���ö�������
+    // 
     const float speed = 1.0f / 15.0f;
     pSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
     pSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
@@ -25,8 +24,7 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
     pSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
     pSprite->SetScale(1.0f);
 
-    // C. �������
-    // ��ʼ������Ϊ -1 ��Ĭ�Ϸ���
+    // 
     registry.addComponent(entity, SpriteComponent{ pSprite, 0 });
 }
 void GenerateSystem::SpawnEnemy(EntityManager& registry) {
@@ -53,9 +51,9 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
 }
 
 void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ) {
-    const float blockSize = 20.0f;       // Length of each road block
+    const float blockSize = 100.0f;       // Length of each road block
     const float renderDistance = 1000.0f; // How far ahead to render
-    const float deleteDistance = 200.0f;  // How far behind to delete
+    const float deleteDistance = 1000.0f;  // How far behind to delete
     const int roadWidth = 5;             // Number of blocks wide (5 blocks = 100 units)
     
     // --- 1. Spawn road blocks ahead of player ---
@@ -64,9 +62,9 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
             Entity block = registry.createEntity();
 
             // Create road blocks in a line
-            // Each block is 20 units wide, centered at x=0
-            float blockX = -40.0f + i * 20.0f; // Position from -40 to +40
-            
+            // Each block is 100 units wide, centered at x=0
+            float blockX = -1 * (roadWidth / 2 * blockSize) + i * blockSize; // Position from -200 to +200
+
             // Alternate colors for visual depth
             float r, g, b;
             if (int(nextSpawnZ / blockSize) % 2 == 0) {
@@ -79,7 +77,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
                 blockX,         // x position
                 -10.0f,         // y position (below ground level)
                 nextSpawnZ,     // z position (depth)
-                20.0f,          // width
+                blockSize,          // width
                 10.0f,          // height
                 blockSize,      // depth
                 r, g, b         // color

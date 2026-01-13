@@ -21,16 +21,16 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
 		float enemyRadius = enemyView.get<RigidBody>(enemyId).radius;
 		if (gCollision->Circle(playerPos, playerRadius, enemyPos.pos, enemyRadius)) {
 			auto& playerHealth = playerView.get<Health>(playerId);
-			playerHealth.currentHealth -= 10; // ������ײ��10��Ѫ
+			playerHealth.currentHealth -= 10; 
 
 			auto& playerRigidBody = playerView.get<RigidBody>(playerId);
 
-			Vec2 dir = Normalize(playerPos - enemyPos.pos); // �ӵ���ָ�����
+			Vec2 dir = Normalize(playerPos - enemyPos.pos); 
 			const float knockbackImpulse = 10.0f;              
 
 			playerRigidBody.force = dir * knockbackImpulse;
-			registry.destroyEntity(Entity{ enemyId, registry.getEntityVersion(enemyId) }); // ��ײ�����ٵ���ʵ��
-			break; // ��ײ���˳�ѭ���������ο�Ѫ
+			registry.destroyEntity(Entity{ enemyId, registry.getEntityVersion(enemyId) }); 
+			break; 
 		}
 	}
 }
