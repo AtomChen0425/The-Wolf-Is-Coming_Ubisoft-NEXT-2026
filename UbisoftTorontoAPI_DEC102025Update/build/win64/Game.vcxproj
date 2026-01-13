@@ -420,6 +420,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Game\Core\CollisionSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\ControlSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\GenerateSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\MovementSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\RenderSystem.cpp" />
     <ClCompile Include="..\..\src\System\ECSSystem.cpp" />
     <ClCompile Include="..\..\src\System\Math\Vec2.cpp" />
     <ClCompile Include="..\..\src\System\Physic\Collision.cpp" />
@@ -428,6 +433,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="RenderHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Game\Core\CollisionSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\ControlSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\GenerateSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\MovementSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\RenderSystem.h" />
     <ClInclude Include="..\..\src\System\Access\Bullet.h" />
     <ClInclude Include="..\..\src\System\Access\Enemy.h" />
     <ClInclude Include="..\..\src\System\Component\Component.h" />

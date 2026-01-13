@@ -1,6 +1,7 @@
 #pragma once
 #include "../ContestAPI/SimpleSprite.h"
 #include "../System/Math/Vec2.h"
+#include "../System/Math/Vec3.h"
 enum {
     ANIM_FORWARDS,
     ANIM_BACKWARDS,
@@ -26,3 +27,16 @@ struct SpriteComponent {
 
 // 4. 玩家标签
 struct PlayerTag {};
+struct EnemyTag {};
+
+// 5. 刚体组件
+struct RigidBody {
+    float mass;
+	float radius;
+    Vec2 force;
+};
+// 6. 生命值组件
+struct Health {
+    int currentHealth;
+    int maxHealth;
+};
