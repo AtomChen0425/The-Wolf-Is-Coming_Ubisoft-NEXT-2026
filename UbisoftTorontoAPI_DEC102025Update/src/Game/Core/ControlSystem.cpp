@@ -3,6 +3,7 @@
 #include "../../ContestAPI/AppSettings.h"
 #include "../../System/Component/Component.h"
 #include "GenerateSystem.h"
+#include <cmath>
 
 void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float& nextSpawnZ) {
     float dtSec = dt / 1000.0f;

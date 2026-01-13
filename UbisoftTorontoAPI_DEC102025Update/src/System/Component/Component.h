@@ -64,7 +64,7 @@ struct Shadow {
 struct Transform3D {
     float x, y, z;              // Position
     float width, height, depth; // Size of the object
-    float r, g, b;              // Color (normalized 0-1 or 0-255)
+    float r, g, b;              // Color (normalized 0.0-1.0 range)
 };
 
 // Map block tag
