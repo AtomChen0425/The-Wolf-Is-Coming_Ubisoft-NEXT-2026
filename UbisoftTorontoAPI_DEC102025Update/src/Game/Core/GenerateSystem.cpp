@@ -1,23 +1,62 @@
 #include "GenerateSystem.h"
 #include "../System/Component/Component.h"
 #include "../ContestAPI/app.h"
+
+// Helper function to get enemy stats based on type
+static void GetEnemyStats(EnemyType type, Vec3& color, float& speed, int& health, int& scoreValue, float& radius) {
+    switch (type) {
+        case EnemyType::WEAK:
+            color = Vec3{ 1.0f, 0.2f, 0.2f };  // Red
+            speed = 180.0f;
+            health = 50;
+            scoreValue = 10;
+            radius = 15.0f;
+            break;
+        case EnemyType::NORMAL:
+            color = Vec3{ 0.2f, 1.0f, 0.2f };  // Green
+            speed = 120.0f;
+            health = 100;
+            scoreValue = 20;
+            radius = 20.0f;
+            break;
+        case EnemyType::TANK:
+            color = Vec3{ 0.2f, 0.2f, 1.0f };  // Blue
+            speed = 70.0f;
+            health = 250;
+            scoreValue = 50;
+            radius = 30.0f;
+            break;
+        case EnemyType::ELITE:
+            color = Vec3{ 0.8f, 0.2f, 0.8f };  // Purple
+            speed = 130.0f;
+            health = 200;
+            scoreValue = 40;
+            radius = 25.0f;
+            break;
+    }
+}
+
 void GenerateSystem::CreatePlayer(EntityManager& registry)
 {
     Entity entity = registry.createEntity();
 
-    // A. »ù´¡Êý¾Ý
-    registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // ³õÊ¼Î»ÖÃ
+    // A. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // ï¿½ï¿½Ê¼Î»ï¿½ï¿½
     registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
 	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
-    registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // ³õÊ¼ËÙ¶È
-    registry.addComponent(entity, PlayerTag{});                // ±ê¼ÇÎªÍæ¼Ò
-	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // ¸ÕÌå×é¼þ
-	registry.addComponent(entity, Health{ 100, 100 });          // ÉúÃüÖµ×é¼þ
+    registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // ï¿½ï¿½Ê¼ï¿½Ù¶ï¿½
+    registry.addComponent(entity, PlayerTag{});                // ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½
+	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	registry.addComponent(entity, Health{ 100, 100 });          // ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½
+    
+    // Add experience and auto-weapon
+    registry.addComponent(entity, Experience{ 0, 100, 1 });
+    registry.addComponent(entity, AutoWeapon{ 500.0f, 0.0f, 400.0f, 20.0f, 500.0f });
 
-    // B. ´´½¨ Sprite (¸´ÖÆÄãµÄÊ¾Àý´úÂë)
+    // B. ï¿½ï¿½ï¿½ï¿½ Sprite (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     CSimpleSprite* pSprite = App::CreateSprite("data/TestData/Test.bmp", 8, 4);
 
-    // ÉèÖÃ¶¯»­ÅäÖÃ
+    // ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     const float speed = 1.0f / 15.0f;
     pSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
     pSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
@@ -25,29 +64,82 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
     pSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
     pSprite->SetScale(1.0f);
 
-    // C. ´æÈë×é¼þ
-    // ³õÊ¼¶¯»­ÉèÎª -1 »òÄ¬ÈÏ·½Ïò
+    // C. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª -1 ï¿½ï¿½Ä¬ï¿½Ï·ï¿½ï¿½ï¿½
     registry.addComponent(entity, SpriteComponent{ pSprite, 0 });
 }
-void GenerateSystem::SpawnEnemy(EntityManager& registry) {
-    Entity enemy = registry.createEntity();
-    View<PlayerTag> view(registry);
-    for (EntityID id : view) {
-        auto& gPlayerPosComponent = view.get<Position>(id);
-        Vec2 gPlayerPos = gPlayerPosComponent.pos;
-        float side = Rand01();
-        Vec2 pos;
-        if (side < 0.25f) { pos = { 0.0f, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
-        else if (side < 0.5f) { pos = { APP_VIRTUAL_WIDTH, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
-        else if (side < 0.75f) { pos = { RandRange(0, APP_VIRTUAL_WIDTH), 0.0f }; }
-        else { pos = { RandRange(0, APP_VIRTUAL_WIDTH), APP_VIRTUAL_HEIGHT }; }
 
-        if (LenSq(pos - gPlayerPos) < 200.0f * 200.0f)
-            pos = pos + Normalize(pos - gPlayerPos) * 220.0f;
-        registry.addComponent(enemy, Position{ pos });
-        registry.addComponent(enemy, Velocity{ Vec2{ 0.0f, 0.0f } });
-        registry.addComponent(enemy, EnemyTag{});
-        registry.addComponent(enemy, RigidBody{ 20.0f, 20.0f, Vec2{ 0.0f, 0.0f } }); // ¸ÕÌå×é¼þ
-        registry.addComponent(enemy, Health{ 100, 100 });
+void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
+    Entity enemy = registry.createEntity();
+    
+    // Get enemy stats
+    Vec3 color;
+    float speed;
+    int health;
+    int scoreValue;
+    float radius;
+    GetEnemyStats(type, color, speed, health, scoreValue, radius);
+    
+    // Find player position for spawning
+    View<PlayerTag, Position3D> view(registry);
+    Vec2 playerPos = { 512.0f, 384.0f }; // Default center
+    
+    for (EntityID id : view) {
+        auto& pos3d = view.get<Position3D>(id);
+        playerPos = { pos3d.x, pos3d.z };
+        break;
     }
+    
+    // Spawn at screen edges
+    float side = Rand01();
+    Vec2 pos;
+    if (side < 0.25f) { pos = { 0.0f, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
+    else if (side < 0.5f) { pos = { APP_VIRTUAL_WIDTH, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
+    else if (side < 0.75f) { pos = { RandRange(0, APP_VIRTUAL_WIDTH), 0.0f }; }
+    else { pos = { RandRange(0, APP_VIRTUAL_WIDTH), APP_VIRTUAL_HEIGHT }; }
+
+    // Ensure minimum distance from player
+    if (LenSq(pos - playerPos) < 200.0f * 200.0f)
+        pos = pos + Normalize(pos - playerPos) * 220.0f;
+    
+    // Add components
+    registry.addComponent(enemy, Position{ pos });
+    registry.addComponent(enemy, Position3D{ pos.x, pos.y, 0.0f });
+    registry.addComponent(enemy, Velocity{ Vec2{ 0.0f, 0.0f } });
+    registry.addComponent(enemy, Velocity3D{ 0.0f, 0.0f, 0.0f });
+    registry.addComponent(enemy, EnemyTag{});
+    registry.addComponent(enemy, RigidBody{ 20.0f, radius, Vec2{ 0.0f, 0.0f } });
+    registry.addComponent(enemy, Health{ health, health });
+    registry.addComponent(enemy, EnemyTypeComponent{ type, color, speed, scoreValue });
+}
+
+void GenerateSystem::SpawnEnemy(EntityManager& registry) {
+    // Randomly select enemy type with weighted probabilities
+    float roll = Rand01();
+    EnemyType type;
+    
+    if (roll < 0.5f) {
+        type = EnemyType::WEAK;        // 50% chance
+    } else if (roll < 0.8f) {
+        type = EnemyType::NORMAL;      // 30% chance
+    } else if (roll < 0.95f) {
+        type = EnemyType::TANK;        // 15% chance
+    } else {
+        type = EnemyType::ELITE;       // 5% chance
+    }
+    
+    SpawnEnemyOfType(registry, type);
+}
+
+void GenerateSystem::CreateBullet(EntityManager& registry, Vec2 position, Vec2 direction, float speed, float damage) {
+    Entity bullet = registry.createEntity();
+    
+    Vec2 velocity = Normalize(direction) * speed;
+    
+    registry.addComponent(bullet, Position{ position });
+    registry.addComponent(bullet, Position3D{ position.x, position.y, 0.0f });
+    registry.addComponent(bullet, Velocity{ velocity });
+    registry.addComponent(bullet, BulletTag{});
+    registry.addComponent(bullet, BulletComponent{ damage, 2000.0f, 2000.0f });
+    registry.addComponent(bullet, RigidBody{ 1.0f, 4.0f, Vec2{ 0.0f, 0.0f } });
 }
