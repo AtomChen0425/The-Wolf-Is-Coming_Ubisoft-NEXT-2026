@@ -61,7 +61,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
     // Handle input based on game state
     if (gameState == GameState::StartScreen) {
         // Check for space or enter to start
-        if (App::IsKeyPressed(App::KEY_SPACE) || App::IsKeyPressed(static_cast<int>('\r'))) {
+        if (App::IsKeyPressed(App::KEY_SPACE) || App::IsKeyPressed(App::KEY_ENTER)) {
             StartGame();
         }
         // No physics/collision updates on start screen

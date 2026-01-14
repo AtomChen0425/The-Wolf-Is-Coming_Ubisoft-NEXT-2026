@@ -141,6 +141,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
         }
         
         // 3. Find the highest floor the player is on and apply ground collision
+        const float FLOOR_PROXIMITY_THRESHOLD = 5.0f;  // Distance within which player can land on floor
         float groundY = -1000.0f;  // Default very low ground
         View<Collider3D, Transform3D> groundCheckView(registry);
         for (EntityID floorId : groundCheckView) {
@@ -169,7 +170,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                 // Check if player was above this floor previously (falling/landing)
                 // Only set as ground if the player's bottom is close to the floor top
                 // and they're moving downward or stationary
-                if (playerBottom <= floorTop + 5.0f && vel.y <= 0.0f) {
+                if (playerBottom <= floorTop + FLOOR_PROXIMITY_THRESHOLD && vel.y <= 0.0f) {
                     if (floorTop > groundY) {
                         groundY = floorTop;
                     }
