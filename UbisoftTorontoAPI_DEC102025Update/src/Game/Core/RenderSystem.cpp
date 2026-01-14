@@ -128,7 +128,14 @@ void RenderCube(const Transform3D& t, const Camera3D& camera) {
         }
         
         // Back-face culling: check if face is facing away from camera
-        Vec3 faceCenter = (corners[v0] + corners[v1] + corners[v2] + corners[v3]) * (1.0f / 4.0f);
+        // Calculate average of 4 corners
+        Vec3 c0 = corners[v0];
+        Vec3 c1 = corners[v1];
+        Vec3 c2 = corners[v2];
+        Vec3 c3 = corners[v3];
+        Vec3 faceCenter((c0.x + c1.x + c2.x + c3.x) * 0.25f,
+                       (c0.y + c1.y + c2.y + c3.y) * 0.25f,
+                       (c0.z + c1.z + c2.z + c3.z) * 0.25f);
         Vec3 toCamera = Vec3(camera.x - faceCenter.x, camera.y - faceCenter.y, camera.z - faceCenter.z);
         float dot = toCamera.x * faceNormals[f].x + toCamera.y * faceNormals[f].y + toCamera.z * faceNormals[f].z;
         
