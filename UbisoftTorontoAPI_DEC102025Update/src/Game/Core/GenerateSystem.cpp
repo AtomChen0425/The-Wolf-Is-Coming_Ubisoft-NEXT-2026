@@ -115,7 +115,7 @@ void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
     
     // Add all required components to enemy
     registry.addComponent(enemy, Position{ pos });
-    registry.addComponent(enemy, Position3D{ pos.x, pos.y, 0.0f });
+    registry.addComponent(enemy, Position3D{ pos.x, 0.0f, pos.y });  // pos.y is the z-coordinate (forward/back)
     registry.addComponent(enemy, Velocity{ Vec2{ 0.0f, 0.0f } });
     registry.addComponent(enemy, Velocity3D{ 0.0f, 0.0f, 0.0f });
     registry.addComponent(enemy, EnemyTag{});
@@ -154,7 +154,7 @@ void GenerateSystem::CreateBullet(EntityManager& registry, Vec2 position, Vec2 d
     
     // Add all bullet components
     registry.addComponent(bullet, Position{ position });
-    registry.addComponent(bullet, Position3D{ position.x, position.y, 0.0f });
+    registry.addComponent(bullet, Position3D{ position.x, 0.0f, position.y });  // position.y is z-coordinate
     registry.addComponent(bullet, Velocity{ velocity });
     registry.addComponent(bullet, BulletTag{});
     registry.addComponent(bullet, BulletComponent{ damage, 2000.0f, 2000.0f });  // 2 second lifetime
