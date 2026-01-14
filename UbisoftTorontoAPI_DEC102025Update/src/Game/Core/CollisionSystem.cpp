@@ -5,6 +5,16 @@
 #include <algorithm>
 extern Collision* gCollision;
 
+// ========================================
+// Collision System
+// ========================================
+// Handles all collision detection and response:
+// - Bullet vs Enemy: Damage enemies, grant experience
+// - Player vs Enemy: Damage player, apply knockback
+
+// ========================================
+// Player-Enemy Collision
+// ========================================
 void CheckPlayerEnemyCollision(EntityManager& registry) {
 	View<PlayerTag, Position3D, Velocity, RigidBody, Health> playerView(registry);
 	View<EnemyTag, Position3D, RigidBody> enemyView(registry);
@@ -40,6 +50,10 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
 	}
 }
 
+// ========================================
+// Bullet-Enemy Collision
+// ========================================
+// Detects when bullets hit enemies, applies damage, and grants experience
 void CheckBulletEnemyCollision(EntityManager& registry) {
 	View<BulletTag, Position3D, RigidBody, BulletComponent> bulletView(registry);
 	View<EnemyTag, Position3D, RigidBody, Health, EnemyTypeComponent> enemyView(registry);

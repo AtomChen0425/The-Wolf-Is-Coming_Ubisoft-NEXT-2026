@@ -2,7 +2,11 @@
 #include "../System/Component/Component.h"
 #include "../ContestAPI/app.h"
 
+// ========================================
+// Enemy Stats Configuration
+// ========================================
 // Helper function to get enemy stats based on type
+// This centralizes all enemy balance parameters
 static void GetEnemyStats(EnemyType type, Vec3& color, float& speed, int& health, int& scoreValue, float& radius) {
     switch (type) {
         case EnemyType::WEAK:
@@ -35,6 +39,10 @@ static void GetEnemyStats(EnemyType type, Vec3& color, float& speed, int& health
             break;
     }
 }
+
+// ========================================
+// Player Creation
+// ========================================
 
 void GenerateSystem::CreatePlayer(EntityManager& registry)
 {
@@ -69,10 +77,13 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
     registry.addComponent(entity, SpriteComponent{ pSprite, 0 });
 }
 
+// ========================================
+// Enemy Spawning
+// ========================================
 void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
     Entity enemy = registry.createEntity();
     
-    // Get enemy stats
+    // Get enemy stats based on type
     Vec3 color;
     float speed;
     int health;
@@ -80,7 +91,7 @@ void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
     float radius;
     GetEnemyStats(type, color, speed, health, scoreValue, radius);
     
-    // Find player position for spawning
+    // Find player position for spawning enemies away from player
     View<PlayerTag, Position3D> view(registry);
     Vec2 playerPos = { 512.0f, 384.0f }; // Default center
     
@@ -90,7 +101,7 @@ void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
         break;
     }
     
-    // Spawn at screen edges
+    // Spawn enemies at screen edges (top, bottom, left, right)
     float side = Rand01();
     Vec2 pos;
     if (side < 0.25f) { pos = { 0.0f, RandRange(0, APP_VIRTUAL_HEIGHT) }; }
@@ -98,11 +109,11 @@ void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
     else if (side < 0.75f) { pos = { RandRange(0, APP_VIRTUAL_WIDTH), 0.0f }; }
     else { pos = { RandRange(0, APP_VIRTUAL_WIDTH), APP_VIRTUAL_HEIGHT }; }
 
-    // Ensure minimum distance from player
+    // Ensure minimum distance from player (avoid spawning on top of player)
     if (LenSq(pos - playerPos) < 200.0f * 200.0f)
         pos = pos + Normalize(pos - playerPos) * 220.0f;
     
-    // Add components
+    // Add all required components to enemy
     registry.addComponent(enemy, Position{ pos });
     registry.addComponent(enemy, Position3D{ pos.x, pos.y, 0.0f });
     registry.addComponent(enemy, Velocity{ Vec2{ 0.0f, 0.0f } });
@@ -115,6 +126,7 @@ void GenerateSystem::SpawnEnemyOfType(EntityManager& registry, EnemyType type) {
 
 void GenerateSystem::SpawnEnemy(EntityManager& registry) {
     // Randomly select enemy type with weighted probabilities
+    // Spawn rates: WEAK=50%, NORMAL=30%, TANK=15%, ELITE=5%
     float roll = Rand01();
     EnemyType type;
     
@@ -131,15 +143,20 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
     SpawnEnemyOfType(registry, type);
 }
 
+// ========================================
+// Bullet Creation
+// ========================================
 void GenerateSystem::CreateBullet(EntityManager& registry, Vec2 position, Vec2 direction, float speed, float damage) {
     Entity bullet = registry.createEntity();
     
+    // Calculate bullet velocity from direction and speed
     Vec2 velocity = Normalize(direction) * speed;
     
+    // Add all bullet components
     registry.addComponent(bullet, Position{ position });
     registry.addComponent(bullet, Position3D{ position.x, position.y, 0.0f });
     registry.addComponent(bullet, Velocity{ velocity });
     registry.addComponent(bullet, BulletTag{});
-    registry.addComponent(bullet, BulletComponent{ damage, 2000.0f, 2000.0f });
-    registry.addComponent(bullet, RigidBody{ 1.0f, 4.0f, Vec2{ 0.0f, 0.0f } });
+    registry.addComponent(bullet, BulletComponent{ damage, 2000.0f, 2000.0f });  // 2 second lifetime
+    registry.addComponent(bullet, RigidBody{ 1.0f, 4.0f, Vec2{ 0.0f, 0.0f } });  // Small radius for collision
 }

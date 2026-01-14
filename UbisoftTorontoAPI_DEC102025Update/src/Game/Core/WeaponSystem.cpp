@@ -3,13 +3,20 @@
 #include "../System/Component/Component.h"
 #include <cmath>
 
-// Helper function to find nearest enemy
+// ========================================
+// Weapon System - Auto Attack
+// ========================================
+// This system handles the automatic firing of projectiles
+// at nearby enemies, Vampire Survivors style
+
+// Helper function to find nearest enemy within range
 static bool FindNearestEnemy(EntityManager& registry, Vec2 playerPos, Vec2& nearestEnemyPos, float maxRange) {
     View<EnemyTag, Position3D> enemyView(registry);
     
     float nearestDistSq = maxRange * maxRange;
     bool found = false;
     
+    // Iterate through all enemies and find closest one
     for (EntityID id : enemyView) {
         auto& enemyPos3d = enemyView.get<Position3D>(id);
         Vec2 enemyPos = { enemyPos3d.x, enemyPos3d.z };
@@ -34,14 +41,15 @@ void WeaponSystem::Update(EntityManager& registry, const float dt) {
         
         Vec2 playerPos = { pos3d.x, pos3d.z };
         
-        // Update cooldown
+        // Update cooldown timer
         weapon.currentCooldownMs -= dt;
         
         // Try to shoot if cooldown is ready
         if (weapon.currentCooldownMs <= 0.0f) {
             Vec2 targetPos;
+            // Find nearest enemy within weapon range
             if (FindNearestEnemy(registry, playerPos, targetPos, weapon.range)) {
-                // Fire at nearest enemy
+                // Fire bullet at nearest enemy
                 Vec2 direction = targetPos - playerPos;
                 
                 GenerateSystem::CreateBullet(registry, playerPos, direction, weapon.bulletSpeed, weapon.damage);
