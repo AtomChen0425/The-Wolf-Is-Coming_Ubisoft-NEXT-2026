@@ -4,5 +4,5 @@
 
 namespace ControlSystem
 {
-	void Update(EntityManager& registry, float dtms, Camera3D& camera, float& nextSpawnZ);
+	void Update(EntityManager& registry, float dtms, float& nextSpawnZ);
 };

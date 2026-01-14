@@ -78,7 +78,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
 	
     // Update player control (handles input and movement)
-    ControlSystem::Update(*registry, deltaTimeMs, camera, nextSpawnZ);
+    ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ);
     
     // Check and resolve collisions (after movement is applied)
     CollisionSystem::Update(*registry);

@@ -32,19 +32,19 @@ void SpriteMovementSystem3D(EntityManager& registry, float dtMs) {
     for (EntityID id : view)
     {
         auto& pos = view.get<Position3D>(id);
-        auto& vel = view.get<Velocity3D>(id);
+        auto& vel = view.get<Velocity3D>(id).vel;
         auto& rb = view.get<RigidBody>(id);
         if (rb.force.x != 0.0f || rb.force.y != 0.0f)
         {
             const float invMass = (rb.mass > 0.0001f) ? (1.0f / rb.mass) : 0.0f;
             const Vec2 accel = rb.force * invMass;
-            vel.vx = vel.vx + accel.x * dtSec;
-            vel.vz = vel.vz + accel.y * dtSec;
+            vel.x = vel.x + accel.x * dtSec;
+            vel.z = vel.z + accel.y * dtSec;
             // 2)
             rb.force = { 0.0f, 0.0f };
         }
-        pos.x = pos.x + vel.vx * dtSec;
-        pos.z = pos.z + vel.vz * dtSec;
+        pos.x = pos.x + vel.x * dtSec;
+        pos.z = pos.z + vel.x * dtSec;
     }
 }
 void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {

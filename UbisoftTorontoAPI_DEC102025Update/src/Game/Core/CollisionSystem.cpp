@@ -2,17 +2,46 @@
 #include "../../System/Component/Component.h"
 #include "../../System/Physic/Collision.h"
 #include <cmath>
+Collision* gCollision;
+void CheckPlayerEnemyCollision(EntityManager& registry) {
+    View<PlayerTag, Position, Velocity, RigidBody, Health> playerView(registry);
+    View<EnemyTag, Position> enemyView(registry);
+    EntityID playerId{};
+    Vec2 playerPos;
+    float playerRadius = 0.0f;
+    for (EntityID id : playerView) {
+        playerId = id;
+        playerPos = playerView.get<Position>(id).pos;
+        playerRadius = playerView.get<RigidBody>(id).radius;
+        break;
+    }
 
+    for (EntityID enemyId : enemyView) {
+        auto& enemyPos = enemyView.get<Position>(enemyId);
+        float enemyRadius = enemyView.get<RigidBody>(enemyId).radius;
+        if (gCollision->Circle(playerPos, playerRadius, enemyPos.pos, enemyRadius)) {
+            auto& playerHealth = playerView.get<Health>(playerId);
+            playerHealth.currentHealth -= 10;
+
+            auto& playerRigidBody = playerView.get<RigidBody>(playerId);
+
+            Vec2 dir = Normalize(playerPos - enemyPos.pos);
+            const float knockbackImpulse = 10.0f;
+
+            playerRigidBody.force = dir * knockbackImpulse;
+            registry.destroyEntity(Entity{ enemyId, registry.getEntityVersion(enemyId) });
+            break;
+        }
+    }
+}
 // Helper function to check and resolve 3D collisions for the player
 void CheckPlayer3DCollisions(EntityManager& registry) {
-    Collision collision;
-    
     // Process each player entity
     View<PlayerTag, Transform3D, Velocity3D> playerView(registry);
     for (EntityID playerId : playerView) {
         auto& playerTag = playerView.get<PlayerTag>(playerId);
         auto& playerTransform = playerView.get<Transform3D>(playerId);
-        auto& vel = playerView.get<Velocity3D>(playerId);
+        auto& vel = playerView.get<Velocity3D>(playerId).vel;
         
         Vec3& pos = playerTransform.pos;
         
@@ -67,7 +96,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                         wallPos.z + wallTransform.depth / 2);
             
             // Check if player is colliding with wall
-            if (collision.AABB3D(playerMin, playerMax, wallMin, wallMax)) {
+            if (gCollision->AABB3D(playerMin, playerMax, wallMin, wallMax)) {
                 // Calculate penetration depth in each axis
                 float overlapX = 0.0f;
                 float overlapZ = 0.0f;
@@ -95,10 +124,10 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                 // Resolve collision by pushing out on the axis with minimum penetration
                 if (std::abs(overlapX) < std::abs(overlapZ)) {
                     pos.x += overlapX;
-                    vel.vx = 0.0f;
+                    vel.x = 0.0f;
                 } else {
                     pos.z += overlapZ;
-                    vel.vz = 0.0f;
+                    vel.z = 0.0f;
                 }
                 
                 // Recalculate bounding box after correction
@@ -140,7 +169,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
         // Apply ground collision response
         if (pos.y - playerTransform.height / 2 < groundY) {
             pos.y = groundY + playerTransform.height / 2;
-            vel.vy = 0.0f;
+            vel.y = 0.0f;
         }
     }
 }

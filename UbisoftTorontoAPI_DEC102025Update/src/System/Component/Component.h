@@ -29,6 +29,7 @@ struct SpriteComponent {
 // Tag components
 struct PlayerTag {
     bool isOnGround;
+    float rotationY;
 };
 struct EnemyTag {};
 
@@ -54,7 +55,7 @@ struct Position3D {
 
 // 3D Velocity component
 struct Velocity3D {
-    float vx, vz, vy;
+    Vec3 vel;
 };
 
 // Shadow component (for 2.5D rendering)

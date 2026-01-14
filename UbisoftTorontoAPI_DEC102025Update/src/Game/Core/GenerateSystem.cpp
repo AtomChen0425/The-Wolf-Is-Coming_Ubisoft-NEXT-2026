@@ -8,7 +8,7 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
 
     registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // 
     registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
-	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
+	registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // 
     registry.addComponent(entity, PlayerTag{ true });                // 
 	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // 
@@ -174,6 +174,6 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
         0.0f,    // g
         0.0f     // b
     });
-    registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
+    registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, PlayerTag{});
 }

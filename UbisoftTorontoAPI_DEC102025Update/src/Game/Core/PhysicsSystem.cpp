@@ -6,19 +6,19 @@ void PhysicsSystem3D(EntityManager& registry, float dtMs) {
     View<Position3D, Velocity3D> view(registry);
     for (EntityID id : view) {
         auto& pos = view.get<Position3D>(id);
-        auto& vel = view.get<Velocity3D>(id);
+        auto& vel = view.get<Velocity3D>(id).vel;
 
 
-        vel.vy += gravity * dtSec;
+        vel.y += gravity * dtSec;
 
-        pos.x += vel.vx * dtSec;
-        pos.z += vel.vz * dtSec; //
-        pos.y += vel.vy * dtSec; // 
+        pos.x += vel.x * dtSec;
+        pos.z += vel.z * dtSec;
+        pos.y += vel.y * dtSec;
 
 
         if (pos.y < 0.0f) {
             pos.y = 0.0f;
-            vel.vy = 0.0f;
+            vel.y = 0.0f;
         }
     }
 }
