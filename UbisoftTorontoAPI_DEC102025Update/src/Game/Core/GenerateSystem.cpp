@@ -50,7 +50,7 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
 
     // A. ��������
     registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // ��ʼλ��
-    registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
+    registry.addComponent(entity, Position3D{ 400.0f, 0.0f, 400.0f }); // x, y(height), z - corrected coordinate mapping
 	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
     registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // ��ʼ�ٶ�
     registry.addComponent(entity, PlayerTag{});                // ���Ϊ���
