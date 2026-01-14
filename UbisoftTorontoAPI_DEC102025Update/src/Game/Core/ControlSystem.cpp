@@ -181,7 +181,26 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
         playerCurrentZ = pos.z;
     }
 
-    // 9. Update map generation system based on player position
+    // 9. Camera left/right control using arrow keys
+    const float cameraSpeed = 200.0f; // Camera movement speed (units per second)
+    const float maxCameraOffset = 100.0f; // Maximum camera offset from player
+    
+    if (App::IsKeyPressed(App::KEY_LEFT)) {
+        camera.followOffsetX -= cameraSpeed * dtSec;
+        // Clamp camera offset
+        if (camera.followOffsetX < -maxCameraOffset) {
+            camera.followOffsetX = -maxCameraOffset;
+        }
+    }
+    if (App::IsKeyPressed(App::KEY_RIGHT)) {
+        camera.followOffsetX += cameraSpeed * dtSec;
+        // Clamp camera offset
+        if (camera.followOffsetX > maxCameraOffset) {
+            camera.followOffsetX = maxCameraOffset;
+        }
+    }
+
+    // 10. Update map generation system based on player position
     GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ);
 }
 
