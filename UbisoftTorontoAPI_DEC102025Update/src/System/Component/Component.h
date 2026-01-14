@@ -2,6 +2,7 @@
 #include "../../ContestAPI/SimpleSprite.h"
 #include "../Math/Vec2.h"
 #include "../Math/Vec3.h"
+#include <vector>
 
 enum {
     ANIM_FORWARDS,
@@ -79,3 +80,41 @@ struct Collider3D {
 
 // Map block tag
 struct MapBlockTag {};
+
+// Block types for map generation
+enum class BlockType {
+    Empty = 0,      // No block
+    Floor = 1,      // Normal floor block
+    Wall = 2,       // Wall that blocks the player
+    TallBlock = 3,  // Tall obstacle block
+    ScorePoint = 4  // Collectible score point
+};
+
+// Map template for procedural generation
+struct MapTemplate {
+    int width;      // Width in blocks
+    int depth;      // Depth in blocks
+    std::vector<BlockType> blocks; // Block data (row-major: z * width + x)
+    
+    MapTemplate() : width(0), depth(0) {}
+    
+    MapTemplate(int w, int d) : width(w), depth(d) {
+        blocks.resize(w * d, BlockType::Empty);
+    }
+    
+    BlockType getBlock(int x, int z) const {
+        if (x < 0 || x >= width || z < 0 || z >= depth) return BlockType::Empty;
+        return blocks[z * width + x];
+    }
+    
+    void setBlock(int x, int z, BlockType type) {
+        if (x < 0 || x >= width || z < 0 || z >= depth) return;
+        blocks[z * width + x] = type;
+    }
+};
+
+// Score point component for collectibles
+struct ScorePointTag {
+    int points;
+    bool collected;
+};

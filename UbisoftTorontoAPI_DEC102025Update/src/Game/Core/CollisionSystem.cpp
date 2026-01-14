@@ -167,9 +167,12 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
         }
         
         // Apply ground collision response
-        if (pos.y - playerTransform.height / 2 < groundY && playerTag.isOnGround) {
+        // If player's bottom is at or below the ground level, place them on top
+        if (pos.y - playerTransform.height / 2 <= groundY) {
             pos.y = groundY + playerTransform.height / 2;
-            vel.y = 0.0f;
+            if (vel.y < 0.0f) {  // Only reset velocity if falling
+                vel.y = 0.0f;
+            }
         }
     }
 }

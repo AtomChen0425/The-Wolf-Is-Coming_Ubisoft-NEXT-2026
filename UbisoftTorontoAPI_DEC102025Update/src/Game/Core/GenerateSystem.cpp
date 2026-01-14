@@ -54,113 +54,48 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
     const float blockSize = 100.0f;       // Length of each road block
     const float renderDistance = 1000.0f; // How far ahead to render
     const float deleteDistance = 1000.0f;  // How far behind to delete
-    const int roadWidth = 5;             // Number of blocks wide (5 blocks = 100 units)
-    const float floorHeight = 10.0f;
+    
     if (nextSpawnZ < blockSize) {
         nextSpawnZ = blockSize;
     }
-    // --- 1. Spawn road blocks ahead of player ---
+    
+    // --- 1. Spawn road sections ahead of player using templates ---
     while (nextSpawnZ < playerZ + renderDistance) {
-        for (int i = 0; i < roadWidth; i++) {
-            Entity block = registry.createEntity();
-
-            // Create road blocks in a line
-            // Each block is 100 units wide, centered at x=0
-            float blockX = -1 * (roadWidth / 2 * blockSize) + i * blockSize; // Position from -200 to +200
-
-            // Alternate colors for visual depth
-            float r, g, b;
-            if (int(nextSpawnZ / blockSize) % 2 == 0) {
-                r = 0.2f; g = 0.6f; b = 0.2f; // Dark green
-            } else {
-                r = 0.3f; g = 0.8f; b = 0.3f; // Light green
-            }
-
-            const float tallBlockChance = 0.10f;   // 10% chance per block
-            const float tallBlockHeight = 60.0f;   // taller than floor (10.0f)
-            bool isTallBlueBlock = (Rand01() < tallBlockChance);
-            
-            float height = isTallBlueBlock ? tallBlockHeight : floorHeight;
-
-            if (isTallBlueBlock) {
-                r = 0.1f; g = 0.3f; b = 0.9f; // blue
-                registry.addComponent(block, Transform3D{
-                Vec3{blockX, 30.0f, nextSpawnZ - blockSize},
-                blockSize,          // width
-                height,          // height
-                blockSize,      // depth
-                r, g, b         // color
-                    });
-            }
-            else{
-                registry.addComponent(block, Transform3D{
-               Vec3{blockX, -10.0f, nextSpawnZ - blockSize},
-               blockSize,          // width
-               height,          // height
-               blockSize,      // depth
-               r, g, b         // color
-                    });
-            }
-            
-            registry.addComponent(block, MapBlockTag{});
-            // Add collider to floor blocks
-            registry.addComponent(block, Collider3D{
-                blockSize,      // width
-                height,          // height
-                blockSize,      // depth
-                true,           // isFloor
-                false           // isWall
-            });
-        }
+        // Generate a random template for this section
+        MapTemplate tmpl = CreateTestTemplate();
+        GenerateMapFromTemplate(registry, tmpl, nextSpawnZ);
         
-        // Create left wall
+        // Create side walls for this section
+        const int roadWidth = 5;
+        const float wallX = roadWidth / 2 * blockSize + blockSize / 2;
+        
+        // Left wall
         Entity leftWall = registry.createEntity();
-        float leftWallX = -1 * (roadWidth / 2 * blockSize) - blockSize / 2; // Left of road
         registry.addComponent(leftWall, Transform3D{
-            Vec3{
-                leftWallX,      // x position
-                50.0f,          // y position (above ground)
-                nextSpawnZ,     // z position
-                },
-            20.0f,          // width
-            100.0f,         // height
-            blockSize,      // depth
-            0.6f, 0.3f, 0.1f // brown color
+            Vec3{-wallX, 50.0f, nextSpawnZ},
+            20.0f, 100.0f, blockSize,
+            0.6f, 0.3f, 0.1f  // Brown
         });
         registry.addComponent(leftWall, MapBlockTag{});
         registry.addComponent(leftWall, Collider3D{
-            20.0f,          // width
-            100.0f,         // height
-            blockSize,      // depth
-            false,          // isFloor
-            true            // isWall
+            20.0f, 100.0f, blockSize,
+            false, true  // not floor, isWall
         });
         
-        // Create right wall
+        // Right wall
         Entity rightWall = registry.createEntity();
-        float rightWallX = (roadWidth / 2 * blockSize) + blockSize / 2; // Right of road
         registry.addComponent(rightWall, Transform3D{
-            Vec3{
-                rightWallX,     // x position
-                50.0f,          // y position (above ground)
-                nextSpawnZ,     // z position
-            
-            },
-            20.0f,          // width
-            100.0f,         // height
-            blockSize,      // depth
-            0.6f, 0.3f, 0.1f // brown color
+            Vec3{wallX, 50.0f, nextSpawnZ},
+            20.0f, 100.0f, blockSize,
+            0.6f, 0.3f, 0.1f  // Brown
         });
         registry.addComponent(rightWall, MapBlockTag{});
         registry.addComponent(rightWall, Collider3D{
-            20.0f,          // width
-            100.0f,         // height
-            blockSize,      // depth
-            false,          // isFloor
-            true            // isWall
+            20.0f, 100.0f, blockSize,
+            false, true  // not floor, isWall
         });
         
-        nextSpawnZ += blockSize; // Move spawn position forward
+        nextSpawnZ += blockSize;
     }
 
     // --- 2. Despawn blocks behind player ---
@@ -169,13 +104,21 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
-        // If block is too far behind player, mark for deletion
         if (t.pos.z < playerZ - deleteDistance) {
             toDestroy.push_back(id);
         }
     }
     
-    // Destroy marked entities
+    // Also despawn collected score points
+    View<ScorePointTag, Transform3D> scoreView(registry);
+    for (EntityID id : scoreView) {
+        auto& scoreTag = scoreView.get<ScorePointTag>(id);
+        auto& t = scoreView.get<Transform3D>(id);
+        if (t.pos.z < playerZ - deleteDistance || scoreTag.collected) {
+            toDestroy.push_back(id);
+        }
+    }
+    
     for (EntityID id : toDestroy) {
         registry.destroyEntity(Entity{ id, registry.getEntityVersion(id) });
     }
@@ -183,10 +126,12 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
 void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     Entity entity = registry.createEntity();
     // Create player as a small cube, starting at center of road on the ground
+    // Floor blocks are at Y=-10 with height=10, so top is at Y=-5
+    // Player with height=20 should be at Y=-5+10=5 to stand on the ground
     registry.addComponent(entity, Transform3D{ 
         Vec3{
             0.0f,    // x: center of road
-            400.0f,    // y: on the ground
+            5.0f,    // y: on the ground (floor top at -5, player height/2 = 10, so 5)
             50.0f,   // z: slightly ahead
         },
         20.0f,   // width
@@ -198,4 +143,168 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     });
     registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, PlayerTag{true});
+}
+
+// Create a default simple template
+MapTemplate GenerateSystem::CreateDefaultTemplate() {
+    const int roadWidth = 5;
+    MapTemplate tmpl(roadWidth, 1); // 5 wide, 1 deep
+    
+    // Fill with floor blocks
+    for (int x = 0; x < roadWidth; x++) {
+        tmpl.setBlock(x, 0, BlockType::Floor);
+    }
+    
+    return tmpl;
+}
+
+// Create a more interesting test template with obstacles
+MapTemplate GenerateSystem::CreateTestTemplate() {
+    const int roadWidth = 5;
+    MapTemplate tmpl(roadWidth, 1);
+    
+    // Randomly decide what to put in this row
+    float chance = Rand01();
+    
+    if (chance < 0.6f) {
+        // 60% chance: Normal floor
+        for (int x = 0; x < roadWidth; x++) {
+            tmpl.setBlock(x, 0, BlockType::Floor);
+        }
+    } else if (chance < 0.75f) {
+        // 15% chance: Floor with a tall block obstacle in the middle
+        for (int x = 0; x < roadWidth; x++) {
+            tmpl.setBlock(x, 0, BlockType::Floor);
+        }
+        int obstacleX = (int)(Rand01() * roadWidth);
+        tmpl.setBlock(obstacleX, 0, BlockType::TallBlock);
+    } else if (chance < 0.90f) {
+        // 15% chance: Floor with score points
+        for (int x = 0; x < roadWidth; x++) {
+            tmpl.setBlock(x, 0, BlockType::Floor);
+        }
+        int scoreX = (int)(Rand01() * roadWidth);
+        tmpl.setBlock(scoreX, 0, BlockType::ScorePoint);
+    } else {
+        // 10% chance: Gap with some floor blocks missing
+        for (int x = 0; x < roadWidth; x++) {
+            if (Rand01() > 0.3f) {
+                tmpl.setBlock(x, 0, BlockType::Floor);
+            }
+        }
+    }
+    
+    return tmpl;
+}
+
+// Generate map blocks from a template at a specific Z position
+void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ) {
+    const float blockSize = 100.0f;
+    const float floorHeight = 10.0f;
+    const float tallBlockHeight = 60.0f;
+    const float scorePointHeight = 30.0f;
+    const int roadWidth = mapTemplate.width;
+    
+    for (int z = 0; z < mapTemplate.depth; z++) {
+        for (int x = 0; x < mapTemplate.width; x++) {
+            BlockType type = mapTemplate.getBlock(x, z);
+            
+            if (type == BlockType::Empty) continue;
+            
+            float blockX = -1 * (roadWidth / 2 * blockSize) + x * blockSize;
+            float blockZ = startZ + z * blockSize;
+            
+            Entity block = registry.createEntity();
+            
+            switch (type) {
+                case BlockType::Floor: {
+                    // Alternate colors for visual depth
+                    float r, g, b;
+                    if (int(blockZ / blockSize) % 2 == 0) {
+                        r = 0.2f; g = 0.6f; b = 0.2f; // Dark green
+                    } else {
+                        r = 0.3f; g = 0.8f; b = 0.3f; // Light green
+                    }
+                    
+                    registry.addComponent(block, Transform3D{
+                        Vec3{blockX, -10.0f, blockZ},
+                        blockSize, floorHeight, blockSize,
+                        r, g, b
+                    });
+                    registry.addComponent(block, MapBlockTag{});
+                    registry.addComponent(block, Collider3D{
+                        blockSize, floorHeight, blockSize,
+                        true, false  // isFloor, not wall
+                    });
+                    break;
+                }
+                
+                case BlockType::Wall: {
+                    // Walls are vertical barriers
+                    registry.addComponent(block, Transform3D{
+                        Vec3{blockX, 50.0f, blockZ},
+                        blockSize, 100.0f, blockSize,
+                        0.6f, 0.3f, 0.1f  // Brown color
+                    });
+                    registry.addComponent(block, MapBlockTag{});
+                    registry.addComponent(block, Collider3D{
+                        blockSize, 100.0f, blockSize,
+                        false, true  // not floor, isWall
+                    });
+                    break;
+                }
+                
+                case BlockType::TallBlock: {
+                    // Tall blue obstacle blocks
+                    registry.addComponent(block, Transform3D{
+                        Vec3{blockX, 30.0f, blockZ},
+                        blockSize, tallBlockHeight, blockSize,
+                        0.1f, 0.3f, 0.9f  // Blue
+                    });
+                    registry.addComponent(block, MapBlockTag{});
+                    registry.addComponent(block, Collider3D{
+                        blockSize, tallBlockHeight, blockSize,
+                        true, false  // Can stand on top, not a wall
+                    });
+                    break;
+                }
+                
+                case BlockType::ScorePoint: {
+                    // Yellow score point on top of floor
+                    // First create the floor
+                    Entity floorBlock = registry.createEntity();
+                    float r, g, b;
+                    if (int(blockZ / blockSize) % 2 == 0) {
+                        r = 0.2f; g = 0.6f; b = 0.2f;
+                    } else {
+                        r = 0.3f; g = 0.8f; b = 0.3f;
+                    }
+                    registry.addComponent(floorBlock, Transform3D{
+                        Vec3{blockX, -10.0f, blockZ},
+                        blockSize, floorHeight, blockSize,
+                        r, g, b
+                    });
+                    registry.addComponent(floorBlock, MapBlockTag{});
+                    registry.addComponent(floorBlock, Collider3D{
+                        blockSize, floorHeight, blockSize,
+                        true, false
+                    });
+                    
+                    // Then create the score point above it
+                    registry.addComponent(block, Transform3D{
+                        Vec3{blockX, 10.0f, blockZ},
+                        30.0f, scorePointHeight, 30.0f,
+                        1.0f, 1.0f, 0.0f  // Yellow
+                    });
+                    registry.addComponent(block, MapBlockTag{});
+                    registry.addComponent(block, ScorePointTag{10, false});
+                    // No collider - player can walk through to collect
+                    break;
+                }
+                
+                default:
+                    break;
+            }
+        }
+    }
 }
