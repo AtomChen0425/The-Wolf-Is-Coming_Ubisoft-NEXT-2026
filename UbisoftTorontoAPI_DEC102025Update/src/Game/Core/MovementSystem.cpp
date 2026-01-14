@@ -1,6 +1,7 @@
 #include "../System/Component/Component.h"
 #include "MovementSystem.h"
 #include <cmath>
+#include <vector>
 void SpriteMovementSystem(EntityManager& registry, float dtMs) {
     View<Position, Velocity,PlayerTag,Health, RigidBody> view(registry);
     const float dtSec = dtMs / 1000.0f;

@@ -1,6 +1,8 @@
 #include "CollisionSystem.h"
 #include "../System/Component/Component.h"
 #include "../System/Physic/Collision.h"
+#include <vector>
+#include <algorithm>
 extern Collision* gCollision;
 
 void CheckPlayerEnemyCollision(EntityManager& registry) {
