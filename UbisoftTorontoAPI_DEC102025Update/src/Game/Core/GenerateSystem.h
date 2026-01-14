@@ -1,6 +1,6 @@
 #pragma once
 #include "../../System/ECS/ECS.h"
-
+#include "../../System/Component/Component.h"
 namespace GenerateSystem
 {
 	void CreatePlayer(EntityManager& registry);

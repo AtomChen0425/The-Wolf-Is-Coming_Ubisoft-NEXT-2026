@@ -9,6 +9,6 @@
   -- Project Source Dir is D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update
   -- Vendor Source Dir is D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/src/ContestAPI/vendor
   -- Project Runtime DLLS: $<TARGET_RUNTIME_DLLS:Game>
-  -- Configuring done (0.2s)
+  -- Configuring done (0.0s)
   -- Generating done (0.1s)
   -- Build files have been written to: D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64

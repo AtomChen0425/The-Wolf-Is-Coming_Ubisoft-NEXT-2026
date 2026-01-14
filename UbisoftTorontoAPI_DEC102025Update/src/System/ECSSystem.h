@@ -22,7 +22,7 @@ struct Camera3D {
     // Fixed offset for following target (in camera space)
     // For example: 200 units up, 300 units back
     float followOffsetY = 0.0f;
-    float followOffsetZ = -300.0f;
+    float followOffsetZ = -700.0f;
     float followOffsetX = 0.0f;
     
     // Camera rotation angle in radians (rotation around Y axis)

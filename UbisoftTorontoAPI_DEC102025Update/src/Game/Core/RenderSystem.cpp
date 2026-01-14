@@ -27,7 +27,6 @@ void DrawEnemies(EntityManager& registry) {
     }
 }
 void UpdateSpriteAnimation(EntityManager& registry, const float dt) {
-    // ���������� SpriteComponent �� Position ��ʵ��
     View<SpriteComponent> view(registry);
     for (EntityID id : view) {
         auto& spr = view.get<SpriteComponent>(id);
@@ -172,6 +171,114 @@ void RenderCube(const Transform3D& t, const Camera3D& camera) {
         }
     }
 }
+void RenderPlayerCube(const Transform3D& t, const Camera3D& camera) {
+    float halfW = t.width / 2;
+    float halfH = t.height / 2;
+    float halfD = t.depth / 2;
+
+    // Define 8 corners of the cube
+    Vec3 corners[8] = {
+        Vec3(t.pos.x - halfW, t.pos.y - halfH, t.pos.z - halfD), // 0: back-bottom-left
+        Vec3(t.pos.x + halfW, t.pos.y - halfH, t.pos.z - halfD), // 1: back-bottom-right
+        Vec3(t.pos.x + halfW, t.pos.y + halfH, t.pos.z - halfD), // 2: back-top-right
+        Vec3(t.pos.x - halfW, t.pos.y + halfH, t.pos.z - halfD), // 3: back-top-left
+        Vec3(t.pos.x - halfW, t.pos.y - halfH, t.pos.z + halfD), // 4: front-bottom-left
+        Vec3(t.pos.x + halfW, t.pos.y - halfH, t.pos.z + halfD), // 5: front-bottom-right
+        Vec3(t.pos.x + halfW, t.pos.y + halfH, t.pos.z + halfD), // 6: front-top-right
+        Vec3(t.pos.x - halfW, t.pos.y + halfH, t.pos.z + halfD)  // 7: front-top-left
+    };
+
+    // Project all 8 corners
+    float sx[8], sy[8];
+    bool visible[8];
+    for (int i = 0; i < 8; i++) {
+        visible[i] = Project(corners[i].x, corners[i].y, corners[i].z, camera, sx[i], sy[i]);
+    }
+
+    // Define the 6 faces (each face has 4 vertices, split into 2 triangles)
+    // Order: back, front, left, right, bottom, top
+    int faces[6][4] = {
+        {0, 1, 2, 3}, // back face
+        {5, 4, 7, 6}, // front face
+        {4, 0, 3, 7}, // left face
+        {1, 5, 6, 2}, // right face
+        {4, 5, 1, 0}, // bottom face
+        {3, 2, 6, 7}  // top face
+    };
+
+    // Face normals (for back-face culling)
+    Vec3 faceNormals[6] = {
+        Vec3(0, 0, -1),  // back
+        Vec3(0, 0, 1),   // front
+        Vec3(-1, 0, 0),  // left
+        Vec3(1, 0, 0),   // right
+        Vec3(0, -1, 0),  // bottom
+        Vec3(0, 1, 0)    // top
+    };
+
+    // Colors for each face (darker on some faces for better depth perception)
+    float faceColors[6][3] = {
+        {t.r * 0.6f, t.g * 0.6f, t.b * 0.6f}, // back - darker
+        {t.r, t.g, t.b},                        // front - full color
+        {t.r * 0.7f, t.g * 0.7f, t.b * 0.7f}, // left - medium
+        {t.r * 0.8f, t.g * 0.8f, t.b * 0.8f}, // right - medium-light
+        {t.r * 0.5f, t.g * 0.5f, t.b * 0.5f}, // bottom - darkest
+        {t.r * 0.9f, t.g * 0.9f, t.b * 0.9f}  // top - light
+    };
+
+    // Render each face
+    for (int f = 0; f < 6; f++) {
+        // Check if all vertices of this face are visible
+        int v0 = faces[f][0], v1 = faces[f][1], v2 = faces[f][2], v3 = faces[f][3];
+        if (!visible[v0] && !visible[v1] && !visible[v2] && !visible[v3]) {
+            continue; // Skip this face if all vertices are behind camera
+        }
+
+        // Back-face culling: check if face is facing away from camera
+        // Calculate average of 4 corners
+        Vec3 c0 = corners[v0];
+        Vec3 c1 = corners[v1];
+        Vec3 c2 = corners[v2];
+        Vec3 c3 = corners[v3];
+        Vec3 faceCenter((c0.x + c1.x + c2.x + c3.x) * 0.25f,
+            (c0.y + c1.y + c2.y + c3.y) * 0.25f,
+            (c0.z + c1.z + c2.z + c3.z) * 0.25f);
+        Vec3 toCamera = Vec3(camera.x - faceCenter.x, camera.y - faceCenter.y, camera.z - faceCenter.z);
+        float dot = toCamera.x * faceNormals[f].x + toCamera.y * faceNormals[f].y + toCamera.z * faceNormals[f].z;
+
+        if (dot <= 0) continue; // Face is facing away from camera
+
+        float r = faceColors[f][0];
+        float g = faceColors[f][1];
+        float b = faceColors[f][2];
+
+        // Draw first triangle (v0, v1, v2)
+        if (visible[v0] || visible[v1] || visible[v2]) {
+            App::DrawTriangle(
+                sx[v0], sy[v0], -1, 1.0f,
+                sx[v1], sy[v1], -1, 1.0f,
+                sx[v2], sy[v2], -1, 1.0f,
+                r, g, b,
+                r, g, b,
+                r, g, b,
+                false
+            );
+        }
+
+        // Draw second triangle (v0, v2, v3)
+        if (visible[v0] || visible[v2] || visible[v3]) {
+            App::DrawTriangle(
+                sx[v0], sy[v0], -1, 1.0f,
+                sx[v2], sy[v2], -1, 1.0f,
+                sx[v3], sy[v3], -1, 1.0f,
+                r, g, b,
+                r, g, b,
+                r, g, b,
+                false
+            );
+        }
+    }
+}
 
 void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
     View<Position3D, SpriteComponent> view(registry);
@@ -242,7 +349,7 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
         auto& tb = view.get<Transform3D>(b);
         float distA = DistanceSq(ta.pos.x, ta.pos.y, ta.pos.z, camera.x, camera.y, camera.z);
         float distB = DistanceSq(tb.pos.x, tb.pos.y, tb.pos.z, camera.x, camera.y, camera.z);
-        return distA > distB; // Render far to near
+        return distA < distB; // Render far to near
     });
     
     for (EntityID id : sortedEntities) {
@@ -256,7 +363,7 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
-        RenderCube(t, camera);
+        RenderPlayerCube(t, camera);
         
         // Display player position info
         App::Print(50, 50, 
