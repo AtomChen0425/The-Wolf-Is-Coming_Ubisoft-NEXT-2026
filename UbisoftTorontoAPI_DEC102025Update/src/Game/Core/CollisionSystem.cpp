@@ -99,8 +99,8 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
             // Check if player is colliding with this obstacle
             if (gCollision->AABB3D(playerMin, playerMax, wallMin, wallMax)) {
                 // For tall blocks, only treat as wall if player is at the side (not landing on top)
-                // Check if this is a vertical landing (player center above block center and falling)
-                bool isLandingOnTop = pos.y > wallPos.y && vel.y <= 0.0f && wallCollider.isFloor;
+                // Check if this is a vertical landing: player's bottom was above the block's top
+                bool isLandingOnTop = playerMin.y > wallMax.y - 1.0f && vel.y <= 0.0f && wallCollider.isFloor;
                 
                 // If landing on top, let the ground collision system handle it
                 // Otherwise, treat as a wall and push the player out
@@ -154,7 +154,10 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                         // Push out in Y direction (hitting from below or top)
                         pos.y += overlapY;
                         if (overlapY < 0) {
-                            // Hit from below
+                            // Hit ceiling from below - reverse velocity to fall back down
+                            vel.y = -std::abs(vel.y);
+                        } else {
+                            // Hit floor from above (shouldn't happen as ground system handles this)
                             vel.y = 0.0f;
                         }
                     }
