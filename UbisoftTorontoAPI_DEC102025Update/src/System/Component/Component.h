@@ -27,7 +27,9 @@ struct SpriteComponent {
 };
 
 // Tag components
-struct PlayerTag {};
+struct PlayerTag {
+    bool isOnGround;
+};
 struct EnemyTag {};
 
 // 2D Rigid body component
@@ -62,7 +64,7 @@ struct Shadow {
 
 // 3D Transform component
 struct Transform3D {
-    float x, y, z;              // Position
+    Vec3 pos;
     float width, height, depth; // Size of the object
     float r, g, b;              // Color (normalized 0.0-1.0 range)
 };

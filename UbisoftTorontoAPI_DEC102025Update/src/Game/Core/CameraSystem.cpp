@@ -5,8 +5,8 @@
 void CameraFollow3D(EntityManager& registry, Camera3D& camera) {
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
-        auto& pos = view.get<Transform3D>(id);
-        
+        auto& playerTransform = view.get<Transform3D>(id);
+		Vec3 pos = playerTransform.pos;
         // Calculate camera position based on rotation angle
         // Rotate the offset vector around the player
         float cosAngle = std::cos(camera.rotationAngle);

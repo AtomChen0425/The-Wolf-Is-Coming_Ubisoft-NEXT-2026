@@ -25,9 +25,10 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
 
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
-        auto& pos = view.get<Transform3D>(id);
+		auto& playerTag = view.get<PlayerTag>(id);
+        auto& playerTransform = view.get<Transform3D>(id);
         auto& vel = view.get<Velocity3D>(id);
-
+		Vec3& pos = playerTransform.pos;
         // 1. Handle horizontal input (forward/backward and strafe)
         // Use damping for smooth movement instead of hard reset
         float inputX = 0.0f;
@@ -69,24 +70,28 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
 
         // 3. Check if player is on ground (for jump detection)
         bool isOnGround = false;
-        Vec3 playerMin(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.z - pos.depth / 2);
-        Vec3 playerMax(pos.x + pos.width / 2, pos.y + pos.height / 2, pos.z + pos.depth / 2);
-        
+        Vec3 playerMin(pos.x - playerTransform.width / 2, pos.y - playerTransform.height / 2, pos.z - playerTransform.depth / 2);
+        Vec3 playerMax(pos.x + playerTransform.width / 2, pos.y + playerTransform.height / 2, pos.z + playerTransform.depth / 2);
+
         View<Collider3D, Transform3D> floorView(registry);
         for (EntityID floorId : floorView) {
             auto& floorCollider = floorView.get<Collider3D>(floorId);
-            if (!floorCollider.isFloor) continue; // Skip non-floor objects
-            
-            auto& floorPos = floorView.get<Transform3D>(floorId);
-            Vec3 floorMin(floorPos.x - floorPos.width / 2, floorPos.y - floorPos.height / 2, floorPos.z - floorPos.depth / 2);
-            Vec3 floorMax(floorPos.x + floorPos.width / 2, floorPos.y + floorPos.height / 2, floorPos.z + floorPos.depth / 2);
-            
-            // Check if player is standing on this floor
+            if (!floorCollider.isFloor) continue;
+
+            auto& floorTransform = floorView.get<Transform3D>(floorId);
+            Vec3 floorPos = floorTransform.pos;
+            Vec3 floorMin(floorPos.x - floorTransform.width / 2, floorPos.y - floorTransform.height / 2, floorPos.z - floorTransform.depth / 2);
+            Vec3 floorMax(floorPos.x + floorTransform.width / 2, floorPos.y + floorTransform.height / 2, floorPos.z + floorTransform.depth / 2);
+
+            // Check if player is above this floor block
+            playerMin = Vec3(pos.x - playerTransform.width / 2, pos.y - playerTransform.height / 2, pos.z - playerTransform.depth / 2);
+            playerMax = Vec3(pos.x + playerTransform.width / 2, pos.y + playerTransform.height / 2, pos.z + playerTransform.depth / 2);
+
             if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
                 playerMin.z < floorMax.z && playerMax.z > floorMin.z &&
                 playerMin.y <= floorMax.y + 0.1f && playerMin.y >= floorMax.y - 5.0f) {
                 isOnGround = true;
-                break;
+				break; // No need to check further
             }
         }
 
@@ -101,8 +106,8 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
         float nextY = pos.y + vel.vy * dtSec;
 
         // 6. Check wall collisions for horizontal movement
-        Vec3 nextPlayerMin(nextX - pos.width / 2, pos.y - pos.height / 2, nextZ - pos.depth / 2);
-        Vec3 nextPlayerMax(nextX + pos.width / 2, pos.y + pos.height / 2, nextZ + pos.depth / 2);
+        Vec3 nextPlayerMin(nextX - playerTransform.width / 2, pos.y - playerTransform.height / 2, nextZ - playerTransform.depth / 2);
+        Vec3 nextPlayerMax(nextX + playerTransform.width / 2, pos.y + playerTransform.height / 2, nextZ + playerTransform.depth / 2);
         
         bool collisionX = false;
         bool collisionZ = false;
@@ -112,20 +117,21 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
             auto& wallCollider = wallView.get<Collider3D>(wallId);
             if (!wallCollider.isWall) continue; // Skip non-wall objects
             
-            auto& wallPos = wallView.get<Transform3D>(wallId);
-            Vec3 wallMin(wallPos.x - wallPos.width / 2, wallPos.y - wallPos.height / 2, wallPos.z - wallPos.depth / 2);
-            Vec3 wallMax(wallPos.x + wallPos.width / 2, wallPos.y + wallPos.height / 2, wallPos.z + wallPos.depth / 2);
+            auto& wallTransform = wallView.get<Transform3D>(wallId);
+			Vec3 wallPos = wallTransform.pos;
+            Vec3 wallMin(wallPos.x - wallTransform.width / 2, wallPos.y - wallTransform.height / 2, wallPos.z - wallTransform.depth / 2);
+            Vec3 wallMax(wallPos.x + wallTransform.width / 2, wallPos.y + wallTransform.height / 2, wallPos.z + wallTransform.depth / 2);
             
             // Check collision with wall for X movement
-            Vec3 testXMin(nextX - pos.width / 2, pos.y - pos.height / 2, pos.z - pos.depth / 2);
-            Vec3 testXMax(nextX + pos.width / 2, pos.y + pos.height / 2, pos.z + pos.depth / 2);
+            Vec3 testXMin(nextX - playerTransform.width / 2, pos.y - playerTransform.height / 2, pos.z - playerTransform.depth / 2);
+            Vec3 testXMax(nextX + playerTransform.width / 2, pos.y + playerTransform.height / 2, pos.z + playerTransform.depth / 2);
             if (collision.AABB3D(testXMin, testXMax, wallMin, wallMax)) {
                 collisionX = true;
             }
             
             // Check collision with wall for Z movement
-            Vec3 testZMin(pos.x - pos.width / 2, pos.y - pos.height / 2, nextZ - pos.depth / 2);
-            Vec3 testZMax(pos.x + pos.width / 2, pos.y + pos.height / 2, nextZ + pos.depth / 2);
+            Vec3 testZMin(pos.x - playerTransform.width / 2, pos.y - playerTransform.height / 2, nextZ - playerTransform.depth / 2);
+            Vec3 testZMax(pos.x + playerTransform.width / 2, pos.y + playerTransform.height / 2, nextZ + playerTransform.depth / 2);
             if (collision.AABB3D(testZMin, testZMax, wallMin, wallMax)) {
                 collisionZ = true;
             }
@@ -153,13 +159,14 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
             auto& floorCollider = floorCheckView.get<Collider3D>(floorId);
             if (!floorCollider.isFloor) continue;
             
-            auto& floorPos = floorCheckView.get<Transform3D>(floorId);
-            Vec3 floorMin(floorPos.x - floorPos.width / 2, floorPos.y - floorPos.height / 2, floorPos.z - floorPos.depth / 2);
-            Vec3 floorMax(floorPos.x + floorPos.width / 2, floorPos.y + floorPos.height / 2, floorPos.z + floorPos.depth / 2);
+            auto& floorTransform = floorCheckView.get<Transform3D>(floorId);
+			Vec3 floorPos = floorTransform.pos;
+            Vec3 floorMin(floorPos.x - floorTransform.width / 2, floorPos.y - floorTransform.height / 2, floorPos.z - floorTransform.depth / 2);
+            Vec3 floorMax(floorPos.x + floorTransform.width / 2, floorPos.y + floorTransform.height / 2, floorPos.z + floorTransform.depth / 2);
             
             // Check if player is above this floor block
-            playerMin = Vec3(pos.x - pos.width / 2, pos.y - pos.height / 2, pos.z - pos.depth / 2);
-            playerMax = Vec3(pos.x + pos.width / 2, pos.y + pos.height / 2, pos.z + pos.depth / 2);
+            playerMin = Vec3(pos.x - playerTransform.width / 2, pos.y - playerTransform.height / 2, pos.z - playerTransform.depth / 2);
+            playerMax = Vec3(pos.x + playerTransform.width / 2, pos.y + playerTransform.height / 2, pos.z + playerTransform.depth / 2);
             
             if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
                 playerMin.z < floorMax.z && playerMax.z > floorMin.z) {
@@ -172,8 +179,8 @@ void PlayerControl3D(EntityManager& registry, float dt, Camera3D& camera, float&
         }
         
         // Apply ground collision
-        if (pos.y - pos.height / 2 < groundY) {
-            pos.y = groundY + pos.height / 2;
+        if (pos.y - playerTransform.height / 2 < groundY) {
+            pos.y = groundY + playerTransform.height / 2;
             vel.vy = 0.0f;
         }
 

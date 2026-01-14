@@ -118,7 +118,7 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     }
 
     std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
-        return view.get<Transform3D>(a).z < view.get<Transform3D>(b).z;
+        return view.get<Transform3D>(a).pos.z < view.get<Transform3D>(b).pos.z;
         });
     for (EntityID id : sortedEntities) {
         auto& t = view.get<Transform3D>(id);
@@ -126,13 +126,13 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
         // Calculate the 4 corners of the top face of the road block
         float halfW = t.width / 2; 
         float halfD = t.depth / 2; 
-        float topY = t.y + t.height / 2;
+        float topY = t.pos.y + t.height / 2;
 
         // Define 4 corners in world space
-        float x1 = t.x - halfW; float z1 = t.z - halfD; // Back-left
-        float x2 = t.x + halfW; float z2 = t.z - halfD; // Back-right
-        float x3 = t.x + halfW; float z3 = t.z + halfD; // Front-right
-        float x4 = t.x - halfW; float z4 = t.z + halfD; // Front-left
+        float x1 = t.pos.x - halfW; float z1 = t.pos.z - halfD; // Back-left
+        float x2 = t.pos.x + halfW; float z2 = t.pos.z - halfD; // Back-right
+        float x3 = t.pos.x + halfW; float z3 = t.pos.z + halfD; // Front-right
+        float x4 = t.pos.x - halfW; float z4 = t.pos.z + halfD; // Front-left
 
         float sx1, sy1, sx2, sy2, sx3, sy3, sx4, sy4;
 
@@ -180,13 +180,13 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
         // Calculate the 4 corners of the top face of the player cube
         float halfW = t.width / 2; 
         float halfD = t.depth / 2; 
-        float topY = t.y + t.height;
+        float topY = t.pos.y + t.height;
 
         // Define 4 corners in world space
-        float x1 = t.x - halfW; float z1 = t.z - halfD; // Back-left
-        float x2 = t.x + halfW; float z2 = t.z - halfD; // Back-right
-        float x3 = t.x + halfW; float z3 = t.z + halfD; // Front-right
-        float x4 = t.x - halfW; float z4 = t.z + halfD; // Front-left
+        float x1 = t.pos.x - halfW; float z1 = t.pos.z - halfD; // Back-left
+        float x2 = t.pos.x + halfW; float z2 = t.pos.z - halfD; // Back-right
+        float x3 = t.pos.x + halfW; float z3 = t.pos.z + halfD; // Front-right
+        float x4 = t.pos.x - halfW; float z4 = t.pos.z + halfD; // Front-left
 
         float sx1, sy1, sx2, sy2, sx3, sy3, sx4, sy4;
 
@@ -225,9 +225,9 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
         
         // Display player position info
         App::Print(50, 50, 
-            ("Player Pos - X:" + std::to_string((int)t.x) + 
-             " Y:" + std::to_string((int)t.y) + 
-             " Z:" + std::to_string((int)t.z)).c_str(), 
+            ("Player Pos - X:" + std::to_string((int)t.pos.x) + 
+             " Y:" + std::to_string((int)t.pos.y) + 
+             " Z:" + std::to_string((int)t.pos.z)).c_str(), 
             1.0f, 1.0f, 1.0f);
         
         // Display controls info
