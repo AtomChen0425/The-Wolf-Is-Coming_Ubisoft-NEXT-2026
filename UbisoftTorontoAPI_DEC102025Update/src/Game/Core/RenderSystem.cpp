@@ -120,29 +120,19 @@ void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
 
         if (!spr.sprite) continue;
 
-        // ===========================================
-        // �ؼ���ʽ����ȥ Camera ƫ��
-        // ===========================================
-
-        // 1. ���㡾���桿����Ļ�ϵ�λ��
-        // ��ĻX = ����X - ���X
         float screenGroundX = pos.x - camera.x;
-        // ��ĻY = ����Z - ���Y
         float screenGroundY = pos.z - camera.y;
 
-        // ��׶�޳� (Culling): �������Ļ��Ͳ���
         if (screenGroundX < -100 || screenGroundX > camera.width + 100 ||
             screenGroundY < -100 || screenGroundY > camera.height + 100) {
             continue;
         }
 
-        // 2. ������Ӱ (��Զ���ڵ���λ��)
+
         float shadowSize = 20.0f;
-        // ��� DrawLine ������Ҫ RGB�������ú�ɫ (0,0,0)
+
 		gRenderHelper->DrawShadow(screenGroundX, screenGroundY, shadowSize);
 
-        // 3. �������� (������Ծ�߶�ƫ��)
-        // ֻ�������õ��� pos.y��
         float spriteScreenY = screenGroundY - pos.y;
 
         spr.sprite->SetPosition(screenGroundX, spriteScreenY);
