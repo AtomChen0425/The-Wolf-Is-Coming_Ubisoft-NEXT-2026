@@ -255,9 +255,9 @@ void RenderPlayerCube(const Transform3D& t, const Camera3D& camera) {
         // Draw first triangle (v0, v1, v2)
         if (visible[v0] || visible[v1] || visible[v2]) {
             App::DrawTriangle(
-                sx[v0], sy[v0], -1, 1.0f,
-                sx[v1], sy[v1], -1, 1.0f,
-                sx[v2], sy[v2], -1, 1.0f,
+                sx[v0], sy[v0], 0, 1.0f,
+                sx[v1], sy[v1], 0, 1.0f,
+                sx[v2], sy[v2], 0, 1.0f,
                 r, g, b,
                 r, g, b,
                 r, g, b,
@@ -268,9 +268,9 @@ void RenderPlayerCube(const Transform3D& t, const Camera3D& camera) {
         // Draw second triangle (v0, v2, v3)
         if (visible[v0] || visible[v2] || visible[v3]) {
             App::DrawTriangle(
-                sx[v0], sy[v0], -1, 1.0f,
-                sx[v2], sy[v2], -1, 1.0f,
-                sx[v3], sy[v3], -1, 1.0f,
+                sx[v0], sy[v0], 0, 1.0f,
+                sx[v2], sy[v2], 0, 1.0f,
+                sx[v3], sy[v3], 0, 1.0f,
                 r, g, b,
                 r, g, b,
                 r, g, b,
