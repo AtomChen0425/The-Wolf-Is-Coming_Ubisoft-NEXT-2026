@@ -128,7 +128,7 @@ void RenderCube(const Transform3D& t, const Camera3D& camera) {
         }
         
         // Back-face culling: check if face is facing away from camera
-        Vec3 faceCenter = (corners[v0] + corners[v1] + corners[v2] + corners[v3]) * 0.25f;
+        Vec3 faceCenter = (corners[v0] + corners[v1] + corners[v2] + corners[v3]) * (1.0f / 4.0f);
         Vec3 toCamera = Vec3(camera.x - faceCenter.x, camera.y - faceCenter.y, camera.z - faceCenter.z);
         float dot = toCamera.x * faceNormals[f].x + toCamera.y * faceNormals[f].y + toCamera.z * faceNormals[f].z;
         
@@ -214,6 +214,14 @@ void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
     }
 }
 
+// Helper function to calculate squared distance between two 3D points
+inline float DistanceSq(float x1, float y1, float z1, float x2, float y2, float z2) {
+    float dx = x1 - x2;
+    float dy = y1 - y2;
+    float dz = z1 - z2;
+    return dx * dx + dy * dy + dz * dz;
+}
+
 void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     View<Transform3D, MapBlockTag> view(registry);
     std::vector<EntityID> sortedEntities;
@@ -225,12 +233,8 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
         auto& ta = view.get<Transform3D>(a);
         auto& tb = view.get<Transform3D>(b);
-        float distA = (ta.pos.x - camera.x) * (ta.pos.x - camera.x) + 
-                      (ta.pos.y - camera.y) * (ta.pos.y - camera.y) + 
-                      (ta.pos.z - camera.z) * (ta.pos.z - camera.z);
-        float distB = (tb.pos.x - camera.x) * (tb.pos.x - camera.x) + 
-                      (tb.pos.y - camera.y) * (tb.pos.y - camera.y) + 
-                      (tb.pos.z - camera.z) * (tb.pos.z - camera.z);
+        float distA = DistanceSq(ta.pos.x, ta.pos.y, ta.pos.z, camera.x, camera.y, camera.z);
+        float distB = DistanceSq(tb.pos.x, tb.pos.y, tb.pos.z, camera.x, camera.y, camera.z);
         return distA > distB; // Render far to near
     });
     

@@ -103,13 +103,18 @@ struct MapTemplate {
     }
     
     BlockType getBlock(int x, int z) const {
-        if (x < 0 || x >= width || z < 0 || z >= depth) return BlockType::Empty;
+        if (!isValidPosition(x, z)) return BlockType::Empty;
         return blocks[z * width + x];
     }
     
     void setBlock(int x, int z, BlockType type) {
-        if (x < 0 || x >= width || z < 0 || z >= depth) return;
+        if (!isValidPosition(x, z)) return;
         blocks[z * width + x] = type;
+    }
+    
+private:
+    bool isValidPosition(int x, int z) const {
+        return x >= 0 && x < width && z >= 0 && z < depth;
     }
 };
 
