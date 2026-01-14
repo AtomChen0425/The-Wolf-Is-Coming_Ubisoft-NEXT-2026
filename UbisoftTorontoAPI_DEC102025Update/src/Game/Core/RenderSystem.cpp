@@ -386,7 +386,7 @@ void RenderSystem::Render(EntityManager& registry, Camera25D& camera) {
 void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     
     RenderRoad3D(registry, camera);
-    //RenderPlayer3D(registry, camera);
+    RenderPlayer3D(registry, camera);
     
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
