@@ -142,6 +142,10 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                     float absZ = std::abs(overlapZ);
                     float absY = std::abs(overlapY);
                     
+                    // For floor blocks, avoid Y-axis resolution when player is falling onto them
+                    // This prevents jittering between wall and ground collision systems
+                    bool avoidYResolution = wallCollider.isFloor && vel.y <= 0.0f && playerMin.y <= wallMax.y + 5.0f;
+                    
                     if (absX < absZ && absX < absY) {
                         // Push out in X direction
                         pos.x += overlapX;
@@ -150,8 +154,8 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                         // Push out in Z direction
                         pos.z += overlapZ;
                         vel.z = 0.0f;
-                    } else {
-                        // Push out in Y direction (hitting from below or top)
+                    } else if (!avoidYResolution) {
+                        // Push out in Y direction only if not falling onto a floor block
                         pos.y += overlapY;
                         if (overlapY < 0) {
                             // Hit ceiling from below - reverse velocity to fall back down
