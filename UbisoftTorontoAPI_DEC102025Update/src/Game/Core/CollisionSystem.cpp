@@ -167,7 +167,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
         }
         
         // Apply ground collision response
-        if (pos.y - playerTransform.height / 2 < groundY) {
+        if (pos.y - playerTransform.height / 2 < groundY && playerTag.isOnGround) {
             pos.y = groundY + playerTransform.height / 2;
             vel.y = 0.0f;
         }
