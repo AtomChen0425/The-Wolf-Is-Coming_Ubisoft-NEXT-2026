@@ -24,6 +24,10 @@ struct Camera3D {
     float followOffsetY = 0.0f;
     float followOffsetZ = -300.0f;
     float followOffsetX = 0.0f;
+    
+    // Camera rotation angle in radians (rotation around Y axis)
+    // 0 = looking along +Z, PI/2 = looking along +X
+    float rotationAngle = 0.0f;
 };
 
 class EngineSystem

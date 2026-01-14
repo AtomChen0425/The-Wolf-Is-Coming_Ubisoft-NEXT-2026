@@ -2,6 +2,7 @@
 #include "../../System/Render/RenderHelper.h"
 #include "../../System/Component/Component.h"
 #include "../../ContestAPI/app.h"
+#include <cmath>
 
 static RenderHelper renderHelper;
 RenderHelper* gRenderHelper = &renderHelper;
@@ -37,19 +38,27 @@ void UpdateSpriteAnimation(EntityManager& registry, const float dt) {
 }
 bool Project(float wx, float wy, float wz, const Camera3D& cam, float& outX, float& outY) {
     
+    // Calculate relative position to camera
     float rx = wx - cam.x;
     float ry = wy - cam.y;
     float rz = wz - cam.z;
 
+    // Rotate the view coordinates by the camera's rotation angle (around Y axis)
+    float cosAngle = std::cos(cam.rotationAngle);
+    float sinAngle = std::sin(cam.rotationAngle);
     
-    if (rz <= 1.0f) return false;
+    float rotatedX = rx * cosAngle + rz * sinAngle;
+    float rotatedZ = -rx * sinAngle + rz * cosAngle;
+    
+    // Use rotated coordinates for projection
+    if (rotatedZ <= 1.0f) return false;
 
     float fov = 600.0f;
     float centerX = 1024.0f / 2.0f;
     float centerY = 768.0f / 2.0f;
 
-    outX = rx * (fov / rz) + centerX;
-    outY = ry * (fov / rz) + centerY;
+    outX = rotatedX * (fov / rotatedZ) + centerX;
+    outY = ry * (fov / rotatedZ) + centerY;
 
     return true;
 }
