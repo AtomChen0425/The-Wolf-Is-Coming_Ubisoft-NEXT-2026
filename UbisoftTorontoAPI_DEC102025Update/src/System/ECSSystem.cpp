@@ -39,9 +39,6 @@ void EngineSystem::InitializeGame() {
 
     // Generate initial map
     GenerateSystem::MapGenerationSystem(*registry, 0.0f, nextSpawnZ);
-    
-    // Update camera once to position it correctly
-    CameraSystem::Update(*registry, camera);
 }
 
 void EngineSystem::StartGame() {
@@ -89,9 +86,6 @@ void EngineSystem::Update(const float deltaTimeMs) {
         // Check and resolve collisions (after movement is applied)
         CollisionSystem::Update(*registry);
         
-        // Update camera to follow player
-        CameraSystem::Update(*registry, camera);
-        
         // Check for game over conditions (player fell off the world)
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {
@@ -105,6 +99,9 @@ void EngineSystem::Update(const float deltaTimeMs) {
 
 void EngineSystem::Render() {
     if (!registry) return;
+    
+    // Update camera position for all states to ensure proper view
+    CameraSystem::Update(*registry, camera);
     
     // Render the 3D scene with camera
     RenderSystem::Render(*registry, camera);

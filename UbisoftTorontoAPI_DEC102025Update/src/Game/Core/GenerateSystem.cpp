@@ -127,11 +127,11 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     Entity entity = registry.createEntity();
     // Create player as a small cube, starting at center of road on the ground
     // Floor blocks are at Y=-10 with height=10, so top is at Y=-5
-    // Player with height=20 should be at Y=-5+10=5 to stand on the ground
+    // Player with height=30 should be at Y=-5+15=10 to stand on the ground
     registry.addComponent(entity, Transform3D{ 
         Vec3{
             0.0f,    // x: center of road
-            5.0f,    // y: on the ground (floor top at -5, player height/2 = 10, so 5)
+            10.0f,   // y: on the ground (floor top at -5, player height/2 = 15, so 10)
             50.0f,   // z: slightly ahead
         },
         20.0f,   // width
