@@ -10,7 +10,7 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
     registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
 	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
     registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // 
-    registry.addComponent(entity, PlayerTag{});                // 
+    registry.addComponent(entity, PlayerTag{ true });                // 
 	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // 
 	registry.addComponent(entity, Health{ 100, 100 });          //
 
@@ -74,16 +74,69 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
             }
 
             registry.addComponent(block, Transform3D{
-                blockX,         // x position
-                -10.0f,         // y position (below ground level)
-                nextSpawnZ,     // z position (depth)
+                Vec3{blockX, -10.0f, nextSpawnZ-blockSize},
                 blockSize,          // width
                 10.0f,          // height
                 blockSize,      // depth
                 r, g, b         // color
             });
             registry.addComponent(block, MapBlockTag{});
+            // Add collider to floor blocks
+            registry.addComponent(block, Collider3D{
+                blockSize,      // width
+                10.0f,          // height
+                blockSize,      // depth
+                true,           // isFloor
+                false           // isWall
+            });
         }
+        
+        // Create left wall
+        Entity leftWall = registry.createEntity();
+        float leftWallX = -1 * (roadWidth / 2 * blockSize) - blockSize / 2; // Left of road
+        registry.addComponent(leftWall, Transform3D{
+            Vec3{
+                leftWallX,      // x position
+                50.0f,          // y position (above ground)
+                nextSpawnZ,     // z position
+                },
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            0.6f, 0.3f, 0.1f // brown color
+        });
+        registry.addComponent(leftWall, MapBlockTag{});
+        registry.addComponent(leftWall, Collider3D{
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            false,          // isFloor
+            true            // isWall
+        });
+        
+        // Create right wall
+        Entity rightWall = registry.createEntity();
+        float rightWallX = (roadWidth / 2 * blockSize) + blockSize / 2; // Right of road
+        registry.addComponent(rightWall, Transform3D{
+            Vec3{
+                rightWallX,     // x position
+                50.0f,          // y position (above ground)
+                nextSpawnZ,     // z position
+            
+            },
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            0.6f, 0.3f, 0.1f // brown color
+        });
+        registry.addComponent(rightWall, MapBlockTag{});
+        registry.addComponent(rightWall, Collider3D{
+            20.0f,          // width
+            100.0f,         // height
+            blockSize,      // depth
+            false,          // isFloor
+            true            // isWall
+        });
         
         nextSpawnZ += blockSize; // Move spawn position forward
     }
@@ -95,7 +148,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
         // If block is too far behind player, mark for deletion
-        if (t.z < playerZ - deleteDistance) {
+        if (t.pos.z < playerZ - deleteDistance) {
             toDestroy.push_back(id);
         }
     }
@@ -109,9 +162,11 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     Entity entity = registry.createEntity();
     // Create player as a small cube, starting at center of road on the ground
     registry.addComponent(entity, Transform3D{ 
-        0.0f,    // x: center of road
-        0.0f,    // y: on the ground
-        50.0f,   // z: slightly ahead
+        Vec3{
+            0.0f,    // x: center of road
+            100.0f,    // y: on the ground
+            50.0f,   // z: slightly ahead
+        },
         20.0f,   // width
         20.0f,   // height
         20.0f,   // depth

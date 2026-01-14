@@ -76,8 +76,9 @@ void EngineSystem::ResetGame() {
 }
 void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
-    
+	
     // Update player control (handles input and movement)
+    CollisionSystem::Update(*registry);
     ControlSystem::Update(*registry, deltaTimeMs, camera, nextSpawnZ);
     
     // Update camera to follow player

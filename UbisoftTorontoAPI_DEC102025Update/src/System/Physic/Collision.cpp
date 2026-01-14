@@ -13,3 +13,10 @@ bool Collision::Circle(const Vec2& centerA, float radiusA, const Vec2& centerB, 
     float radiusSum = radiusA + radiusB;
     return distanceSquared < (radiusSum * radiusSum);
 }
+
+bool Collision::AABB3D(const Vec3& minA, const Vec3& maxA, const Vec3& minB, const Vec3& maxB)
+{
+    return (minA.x < maxB.x && maxA.x > minB.x &&
+            minA.y < maxB.y && maxA.y > minB.y &&
+            minA.z < maxB.z && maxA.z > minB.z);
+}
