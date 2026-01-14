@@ -7,6 +7,7 @@
 #include "../Game/Core/ControlSystem.h"
 #include "../Game/Core/CollisionSystem.h"
 #include "../Game/Core/CameraSystem.h"
+#include "../Game/Core/PhysicsSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 
@@ -85,7 +86,8 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Check and resolve collisions (after movement is applied)
         CollisionSystem::Update(*registry);
-        
+
+        PhysicsSystem::Update(*registry, deltaTimeMs);
         // Check for game over conditions (player fell off the world)
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {

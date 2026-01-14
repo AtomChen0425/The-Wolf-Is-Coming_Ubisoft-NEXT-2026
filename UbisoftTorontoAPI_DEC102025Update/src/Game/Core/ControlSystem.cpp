@@ -59,8 +59,8 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
             if (std::abs(vel.z) < 0.01f) vel.z = 0.0f;
         }
 
-        // 2. Apply gravity
-        vel.y += gravity * dtSec;
+        //// 2. Apply gravity
+        //vel.y += gravity * dtSec;
 
         // 3. Handle jump input (only when on ground - collision system sets this flag)
         if (App::IsKeyPressed(App::KEY_SPACE) && playerTag.isOnGround) {
