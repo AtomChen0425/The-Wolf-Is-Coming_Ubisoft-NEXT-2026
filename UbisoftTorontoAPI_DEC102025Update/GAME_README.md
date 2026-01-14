@@ -1,14 +1,17 @@
 # 3D Game Engine - User Guide
 
 ## Overview
-This is a simple 3D game engine built on top of the Ubisoft Toronto Contest API. The game features a player character that can move and jump on a procedurally generated road.
+This is a simple 3D game engine built on top of the Ubisoft Toronto Contest API. The game features a player character that can move and jump on a procedurally generated road with various obstacles and collectibles.
 
 ## Features
-- **3D Rendering**: Simple perspective projection rendering system
+- **3D Rendering**: Full 3D cube rendering with all 6 faces and proper depth sorting
 - **Player Movement**: WASD controls for moving on the road
+- **Camera Rotation**: Arrow keys to rotate the camera view
 - **Jump Mechanics**: Spacebar to jump with gravity physics
-- **Procedural Road**: Infinite road generation that extends as the player moves forward
-- **Camera System**: Third-person camera that follows the player
+- **Procedural Map Generation**: Infinite road generation with template-based level design
+- **Block Types**: Multiple block types including floors, walls, obstacles, and collectibles
+- **Collision System**: Full 3D collision detection for floors, walls, and obstacles
+- **Camera System**: Third-person camera that follows and rotates with the player
 
 ## Controls
 - `W` - Move forward
@@ -16,6 +19,8 @@ This is a simple 3D game engine built on top of the Ubisoft Toronto Contest API.
 - `A` - Move left (strafe)
 - `D` - Move right (strafe)
 - `SPACE` - Jump
+- `LEFT ARROW` - Rotate camera/player left
+- `RIGHT ARROW` - Rotate camera/player right
 
 ## Game Structure
 
@@ -24,18 +29,18 @@ The code is organized into two main directories:
 
 #### `src/Game/Core/`
 Contains the game-specific systems:
-- **CameraSystem**: Manages the 3D camera following the player
-- **ControlSystem**: Handles player input and movement
-- **GenerateSystem**: Creates the player and procedurally generates the road
-- **RenderSystem**: Renders the 3D scene using perspective projection
-- **CollisionSystem**: Handles collision detection (currently unused for 3D)
+- **CameraSystem**: Manages the 3D camera following and rotating with the player
+- **ControlSystem**: Handles player input, movement, and rotation
+- **GenerateSystem**: Creates the player and procedurally generates the map using templates
+- **RenderSystem**: Renders the full 3D scene with all 6 faces of cubes
+- **CollisionSystem**: Handles 3D collision detection for floors, walls, and obstacles
 - **MovementSystem**: Handles entity movement (currently unused for 3D)
 - **PhysicsSystem**: Handles physics simulation (currently unused for 3D)
 
 #### `src/System/`
 Contains the core engine systems:
 - **ECS/**: Entity Component System implementation
-- **Component/**: Component definitions (Transform3D, Velocity3D, PlayerTag, etc.)
+- **Component/**: Component definitions (Transform3D, Velocity3D, PlayerTag, BlockType, MapTemplate, etc.)
 - **Math/**: Vector and matrix math utilities
 - **Render/**: Rendering helper functions
 - **ECSSystem**: Main engine system that coordinates updates and rendering
@@ -43,16 +48,23 @@ Contains the core engine systems:
 ## How It Works
 
 ### 3D Rendering
-The engine uses a simple perspective projection to convert 3D world coordinates to 2D screen coordinates. The camera is positioned behind and above the player, providing a third-person view.
+The engine uses perspective projection to convert 3D world coordinates to 2D screen coordinates. Each cube is now rendered with all 6 faces, with back-face culling to improve performance. Different faces have different brightness levels to create better depth perception.
 
 ### Physics
 The player has:
-- **Gravity**: Constant downward acceleration
-- **Ground Collision**: Prevents falling through the road
-- **Jump**: Initial upward velocity when pressing spacebar
+- **Gravity**: Constant downward acceleration (-980 pixels/s²)
+- **Ground Collision**: Prevents falling through floors and allows landing on raised platforms
+- **Wall Collision**: Blocks horizontal movement when hitting walls
+- **Jump**: Initial upward velocity when pressing spacebar (only when on ground)
 
-### Road Generation
-The road is made of blocks that are procedurally generated ahead of the player and despawned behind them to maintain performance. The road is 5 blocks wide (100 units), and the player is constrained to stay within these boundaries.
+### Map Generation
+The map is generated using a template-based system:
+- **Templates**: Define block layouts with different types (floor, wall, obstacle, score point)
+- **Block Types**: 5 different types for varied gameplay
+- **Procedural**: Generates sections ahead of player and despawns behind
+- **Customizable**: Easy to create custom level patterns
+
+See `MAP_GENERATION_GUIDE.md` for detailed information on creating custom maps.
 
 ## Building the Project
 
@@ -68,9 +80,10 @@ The road is made of blocks that are procedurally generated ahead of the player a
 4. Run `make run` to execute the game
 
 ## Future Enhancements
-- Add obstacles on the road
-- Implement scoring system
-- Add more complex terrain
-- Include collectible items
-- Add sound effects
-- Improve graphics with textures
+- Score collection system implementation
+- More complex terrain patterns
+- Power-ups and special abilities
+- Enemies and hazards
+- Sound effects and music
+- Improved graphics with textures
+- Multiplayer support
