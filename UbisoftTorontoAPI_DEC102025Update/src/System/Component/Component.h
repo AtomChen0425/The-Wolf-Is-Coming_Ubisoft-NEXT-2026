@@ -81,6 +81,9 @@ struct Collider3D {
 // Map block tag
 struct MapBlockTag {};
 
+// Solid block tag - for blocks that can be placed on floors (like tall blocks)
+struct SolidBlockTag {};
+
 // Block types for map generation
 enum class BlockType {
     Empty = 0,      // No block

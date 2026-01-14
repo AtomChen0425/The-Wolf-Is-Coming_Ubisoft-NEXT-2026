@@ -255,15 +255,41 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                 }
                 
                 case BlockType::TallBlock: {
-                    // Tall blue obstacle blocks
+                    // Tall block = Floor block + Solid block on top
+                    // This makes them modular - the solid block sits on the floor
+                    
+                    // First: Create the floor block (same as regular floor)
+                    Entity floorBlock = registry.createEntity();
+                    float r_floor, g_floor, b_floor;
+                    if (int(blockZ / blockSize) % 2 == 0) {
+                        r_floor = 0.2f; g_floor = 0.6f; b_floor = 0.2f; // Dark green
+                    } else {
+                        r_floor = 0.3f; g_floor = 0.8f; b_floor = 0.3f; // Light green
+                    }
+                    
+                    registry.addComponent(floorBlock, Transform3D{
+                        Vec3{blockX, -10.0f, blockZ},
+                        blockSize, floorHeight, blockSize,
+                        r_floor, g_floor, b_floor
+                    });
+                    registry.addComponent(floorBlock, MapBlockTag{});
+                    registry.addComponent(floorBlock, Collider3D{
+                        blockSize, floorHeight, blockSize,
+                        true, false  // isFloor, not wall
+                    });
+                    
+                    // Second: Create the solid block on top of the floor
+                    // Floor top is at Y=-5, block height is 40, so center at Y=-5+20=15
+                    const float solidBlockHeight = 40.0f;
                     registry.addComponent(block, Transform3D{
-                        Vec3{blockX, 30.0f, blockZ},
-                        blockSize, tallBlockHeight, blockSize,
+                        Vec3{blockX, 15.0f, blockZ},  // Sitting on floor
+                        blockSize, solidBlockHeight, blockSize,
                         0.1f, 0.3f, 0.9f  // Blue
                     });
                     registry.addComponent(block, MapBlockTag{});
+                    registry.addComponent(block, SolidBlockTag{});  // Mark as solid block
                     registry.addComponent(block, Collider3D{
-                        blockSize, tallBlockHeight, blockSize,
+                        blockSize, solidBlockHeight, blockSize,
                         true, false  // Can stand on top, not a wall
                     });
                     break;
