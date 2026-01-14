@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Vec4.h"
-
+#include <cmath>
 struct Mat4
 {
 	float m[4][4];
@@ -47,5 +47,4 @@ struct Mat4
 			(rhs.x * m[2][0]) + (rhs.y * m[2][1]) + (rhs.z * m[2][2]) + (rhs.w * m[2][3]),
 			(rhs.x * m[3][0]) + (rhs.y * m[3][1]) + (rhs.z * m[3][2]) + (rhs.w * m[3][3]));
 	}
-	
 };

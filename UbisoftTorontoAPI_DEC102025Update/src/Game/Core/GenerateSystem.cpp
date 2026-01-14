@@ -8,7 +8,7 @@ void GenerateSystem::CreatePlayer(EntityManager& registry)
 
     registry.addComponent(entity, Position{ Vec2{ 400.0f, 400.0f } }); // 
     registry.addComponent(entity, Position3D{ 400.0f, 400.0f,0.0f });
-	registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
+	registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, Velocity{ Vec2{ 0.0f, 0.0f } });     // 
     registry.addComponent(entity, PlayerTag{ true });                // 
 	registry.addComponent(entity, RigidBody{ 20.0f, 10.0f, Vec2{0.0f,0.0f} }); // 
@@ -55,7 +55,10 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
     const float renderDistance = 1000.0f; // How far ahead to render
     const float deleteDistance = 1000.0f;  // How far behind to delete
     const int roadWidth = 5;             // Number of blocks wide (5 blocks = 100 units)
-    
+    const float floorHeight = 10.0f;
+    if (nextSpawnZ < blockSize) {
+        nextSpawnZ = blockSize;
+    }
     // --- 1. Spawn road blocks ahead of player ---
     while (nextSpawnZ < playerZ + renderDistance) {
         for (int i = 0; i < roadWidth; i++) {
@@ -73,18 +76,37 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
                 r = 0.3f; g = 0.8f; b = 0.3f; // Light green
             }
 
-            registry.addComponent(block, Transform3D{
-                Vec3{blockX, -10.0f, nextSpawnZ-blockSize},
+            const float tallBlockChance = 0.10f;   // 10% chance per block
+            const float tallBlockHeight = 60.0f;   // taller than floor (10.0f)
+            bool isTallBlueBlock = (Rand01() < tallBlockChance);
+            
+            float height = isTallBlueBlock ? tallBlockHeight : floorHeight;
+
+            if (isTallBlueBlock) {
+                r = 0.1f; g = 0.3f; b = 0.9f; // blue
+                registry.addComponent(block, Transform3D{
+                Vec3{blockX, 30.0f, nextSpawnZ - blockSize},
                 blockSize,          // width
-                10.0f,          // height
+                height,          // height
                 blockSize,      // depth
                 r, g, b         // color
-            });
+                    });
+            }
+            else{
+                registry.addComponent(block, Transform3D{
+               Vec3{blockX, -10.0f, nextSpawnZ - blockSize},
+               blockSize,          // width
+               height,          // height
+               blockSize,      // depth
+               r, g, b         // color
+                    });
+            }
+            
             registry.addComponent(block, MapBlockTag{});
             // Add collider to floor blocks
             registry.addComponent(block, Collider3D{
                 blockSize,      // width
-                10.0f,          // height
+                height,          // height
                 blockSize,      // depth
                 true,           // isFloor
                 false           // isWall
@@ -164,7 +186,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     registry.addComponent(entity, Transform3D{ 
         Vec3{
             0.0f,    // x: center of road
-            100.0f,    // y: on the ground
+            400.0f,    // y: on the ground
             50.0f,   // z: slightly ahead
         },
         20.0f,   // width
@@ -174,6 +196,6 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
         0.0f,    // g
         0.0f     // b
     });
-    registry.addComponent(entity, Velocity3D{ 0.0f, 0.0f, 0.0f });
-    registry.addComponent(entity, PlayerTag{});
+    registry.addComponent(entity, Velocity3D{});
+    registry.addComponent(entity, PlayerTag{true});
 }
