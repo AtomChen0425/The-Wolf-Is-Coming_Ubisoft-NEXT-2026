@@ -30,6 +30,12 @@ struct Camera3D {
     float rotationAngle = 0.0f;
 };
 
+enum class GameState {
+    StartScreen,
+    Playing,
+    GameOver
+};
+
 class EngineSystem
 {
 public:
@@ -43,9 +49,14 @@ public:
     void Render();
     void Shutdown();
     void ResetGame();
+    void InitializeGame();  // Initialize world without starting gameplay
+    void StartGame();       // Start gameplay
+    
+    GameState GetGameState() const { return gameState; }
     
 private:
     std::unique_ptr<EntityManager> registry;
     Camera3D camera;
     float nextSpawnZ = 0.0f;
+    GameState gameState = GameState::StartScreen;
 };

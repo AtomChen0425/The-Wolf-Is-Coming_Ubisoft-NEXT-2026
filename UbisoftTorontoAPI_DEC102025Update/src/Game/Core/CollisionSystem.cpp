@@ -160,8 +160,19 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
             if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
                 playerMin.z < floorMax.z && playerMax.z > floorMin.z) {
                 float floorTop = floorMax.y;
-                if (floorTop > groundY) {
-                    groundY = floorTop;
+                
+                // Only consider this floor if player is coming from above
+                // This prevents auto-bouncing when hitting tall blocks from the side
+                float playerBottom = playerMin.y;
+                float playerTop = playerMax.y;
+                
+                // Check if player was above this floor previously (falling/landing)
+                // Only set as ground if the player's bottom is close to the floor top
+                // and they're moving downward or stationary
+                if (playerBottom <= floorTop + 5.0f && vel.y <= 0.0f) {
+                    if (floorTop > groundY) {
+                        groundY = floorTop;
+                    }
                 }
             }
         }

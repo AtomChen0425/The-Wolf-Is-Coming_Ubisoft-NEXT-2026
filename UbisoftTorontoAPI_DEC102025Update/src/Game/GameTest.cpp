@@ -29,7 +29,7 @@ EngineSystem engineSystem;
 void Init()
 {
 	std::srand((unsigned)std::time(nullptr));
-	engineSystem.ResetGame();
+	engineSystem.InitializeGame();  // Initialize world for start screen
 }
 
 void Update(const float deltaTimeMs)
