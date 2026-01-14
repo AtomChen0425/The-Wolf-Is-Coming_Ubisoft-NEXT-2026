@@ -343,13 +343,13 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
         sortedEntities.push_back(id);
     }
 
-    // Sort by distance from camera for proper rendering order
+    // Sort by distance from camera for proper rendering order (far to near for painter's algorithm)
     std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
         auto& ta = view.get<Transform3D>(a);
         auto& tb = view.get<Transform3D>(b);
         float distA = DistanceSq(ta.pos.x, ta.pos.y, ta.pos.z, camera.x, camera.y, camera.z);
         float distB = DistanceSq(tb.pos.x, tb.pos.y, tb.pos.z, camera.x, camera.y, camera.z);
-        return distA < distB; // Render far to near
+        return distA > distB; // Render far to near (larger distance first)
     });
     
     for (EntityID id : sortedEntities) {

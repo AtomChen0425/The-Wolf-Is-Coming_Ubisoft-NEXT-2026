@@ -80,11 +80,12 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
             }
         }
         
-        // 2. Check wall collisions and correct position if needed
+        // 2. Check wall and tall block collisions (treat tall blocks as solid obstacles from sides)
         View<Collider3D, Transform3D> wallView(registry);
         for (EntityID wallId : wallView) {
             auto& wallCollider = wallView.get<Collider3D>(wallId);
-            if (!wallCollider.isWall) continue;
+            // Skip if it's not a wall and not a floor (tall blocks have isFloor=true but should also block sides)
+            if (!wallCollider.isWall && !wallCollider.isFloor) continue;
             
             auto& wallTransform = wallView.get<Transform3D>(wallId);
             Vec3 wallPos = wallTransform.pos;
@@ -95,53 +96,82 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                         wallPos.y + wallTransform.height / 2, 
                         wallPos.z + wallTransform.depth / 2);
             
-            // Check if player is colliding with wall
+            // Check if player is colliding with this obstacle
             if (gCollision->AABB3D(playerMin, playerMax, wallMin, wallMax)) {
-                // Calculate penetration depth in each axis
-                float overlapX = 0.0f;
-                float overlapZ = 0.0f;
+                // For tall blocks, only treat as wall if player is at the side (not landing on top)
+                // Check if this is a vertical landing (player center above block center and falling)
+                bool isLandingOnTop = pos.y > wallPos.y && vel.y <= 0.0f && wallCollider.isFloor;
                 
-                // Calculate how much we're penetrating from each side
-                float penetrationLeft = playerMax.x - wallMin.x;
-                float penetrationRight = wallMax.x - playerMin.x;
-                float penetrationFront = playerMax.z - wallMin.z;
-                float penetrationBack = wallMax.z - playerMin.z;
-                
-                // Find minimum penetration for X
-                if (penetrationLeft < penetrationRight) {
-                    overlapX = -penetrationLeft;
-                } else {
-                    overlapX = penetrationRight;
+                // If landing on top, let the ground collision system handle it
+                // Otherwise, treat as a wall and push the player out
+                if (!isLandingOnTop) {
+                    // Calculate penetration depth in each axis
+                    float overlapX = 0.0f;
+                    float overlapZ = 0.0f;
+                    float overlapY = 0.0f;
+                    
+                    // Calculate how much we're penetrating from each side
+                    float penetrationLeft = playerMax.x - wallMin.x;
+                    float penetrationRight = wallMax.x - playerMin.x;
+                    float penetrationFront = playerMax.z - wallMin.z;
+                    float penetrationBack = wallMax.z - playerMin.z;
+                    float penetrationTop = wallMax.y - playerMin.y;
+                    float penetrationBottom = playerMax.y - wallMin.y;
+                    
+                    // Find minimum penetration for each axis
+                    if (penetrationLeft < penetrationRight) {
+                        overlapX = -penetrationLeft;
+                    } else {
+                        overlapX = penetrationRight;
+                    }
+                    
+                    if (penetrationFront < penetrationBack) {
+                        overlapZ = -penetrationFront;
+                    } else {
+                        overlapZ = penetrationBack;
+                    }
+                    
+                    if (penetrationTop < penetrationBottom) {
+                        overlapY = -penetrationTop;
+                    } else {
+                        overlapY = penetrationBottom;
+                    }
+                    
+                    // Resolve collision by pushing out on the axis with minimum penetration
+                    float absX = std::abs(overlapX);
+                    float absZ = std::abs(overlapZ);
+                    float absY = std::abs(overlapY);
+                    
+                    if (absX < absZ && absX < absY) {
+                        // Push out in X direction
+                        pos.x += overlapX;
+                        vel.x = 0.0f;
+                    } else if (absZ < absY) {
+                        // Push out in Z direction
+                        pos.z += overlapZ;
+                        vel.z = 0.0f;
+                    } else {
+                        // Push out in Y direction (hitting from below or top)
+                        pos.y += overlapY;
+                        if (overlapY < 0) {
+                            // Hit from below
+                            vel.y = 0.0f;
+                        }
+                    }
+                    
+                    // Recalculate bounding box after correction
+                    playerMin = Vec3(pos.x - playerTransform.width / 2, 
+                                   pos.y - playerTransform.height / 2, 
+                                   pos.z - playerTransform.depth / 2);
+                    playerMax = Vec3(pos.x + playerTransform.width / 2, 
+                                   pos.y + playerTransform.height / 2, 
+                                   pos.z + playerTransform.depth / 2);
                 }
-                
-                // Find minimum penetration for Z
-                if (penetrationFront < penetrationBack) {
-                    overlapZ = -penetrationFront;
-                } else {
-                    overlapZ = penetrationBack;
-                }
-                
-                // Resolve collision by pushing out on the axis with minimum penetration
-                if (std::abs(overlapX) < std::abs(overlapZ)) {
-                    pos.x += overlapX;
-                    vel.x = 0.0f;
-                } else {
-                    pos.z += overlapZ;
-                    vel.z = 0.0f;
-                }
-                
-                // Recalculate bounding box after correction
-                playerMin = Vec3(pos.x - playerTransform.width / 2, 
-                               pos.y - playerTransform.height / 2, 
-                               pos.z - playerTransform.depth / 2);
-                playerMax = Vec3(pos.x + playerTransform.width / 2, 
-                               pos.y + playerTransform.height / 2, 
-                               pos.z + playerTransform.depth / 2);
             }
         }
         
         // 3. Find the highest floor the player is on and apply ground collision
-        const float FLOOR_PROXIMITY_THRESHOLD = 5.0f;  // Distance within which player can land on floor
+        const float FLOOR_PROXIMITY_THRESHOLD = 2.0f;  // Reduced threshold for stricter landing detection
         float groundY = -1000.0f;  // Default very low ground
         View<Collider3D, Transform3D> groundCheckView(registry);
         for (EntityID floorId : groundCheckView) {
@@ -165,12 +195,18 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                 // Only consider this floor if player is coming from above
                 // This prevents auto-bouncing when hitting tall blocks from the side
                 float playerBottom = playerMin.y;
-                float playerTop = playerMax.y;
                 
-                // Check if player was above this floor previously (falling/landing)
-                // Only set as ground if the player's bottom is close to the floor top
-                // and they're moving downward or stationary
-                if (playerBottom <= floorTop + FLOOR_PROXIMITY_THRESHOLD && vel.y <= 0.0f) {
+                // More strict check: player must be falling AND their previous position was above the floor
+                // Only set as ground if:
+                // 1. Player is falling (vel.y <= 0)
+                // 2. Player's bottom is very close to OR just below the floor top
+                // 3. Player's center is above the floor center (prevents side collision from triggering)
+                bool isFalling = vel.y <= 0.0f;
+                bool isNearFloorTop = playerBottom <= floorTop + FLOOR_PROXIMITY_THRESHOLD && 
+                                     playerBottom >= floorTop - FLOOR_PROXIMITY_THRESHOLD;
+                bool isAboveFloorCenter = pos.y > floorPos.y;  // Player center must be above floor center
+                
+                if (isFalling && isNearFloorTop && isAboveFloorCenter) {
                     if (floorTop > groundY) {
                         groundY = floorTop;
                     }
