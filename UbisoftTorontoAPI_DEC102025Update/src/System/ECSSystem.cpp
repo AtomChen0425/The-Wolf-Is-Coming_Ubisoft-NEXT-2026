@@ -11,14 +11,26 @@
 #include "../Game/Core/EnemyAISystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
+#include "Scene/GameScenes.h"
 
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)
 {
+    InitializeScenes();
 }
 
 float Lerp(float a, float b, float t) {
     return a + (b - a) * t;
+}
+
+void EngineSystem::InitializeScenes() {
+    // Register all game scenes
+    sceneManager.RegisterScene("StartScreen", std::make_unique<StartScene>(this));
+    sceneManager.RegisterScene("Playing", std::make_unique<PlayingScene>(this));
+    sceneManager.RegisterScene("GameOver", std::make_unique<GameOverScene>(this));
+    
+    // Start with the start screen
+    sceneManager.SwitchToScene("StartScreen");
 }
 
 void EngineSystem::InitializeGame() {
@@ -46,12 +58,14 @@ void EngineSystem::InitializeGame() {
 void EngineSystem::StartGame() {
     // Start the game - this is called when player presses a key on start screen
     gameState = GameState::Playing;
+    sceneManager.SwitchToScene("Playing");
 }
 
 void EngineSystem::ResetGame() {
     // Reset to start screen
     InitializeGame();
     gameState = GameState::StartScreen;
+    sceneManager.SwitchToScene("StartScreen");
 }
 
 void EngineSystem::Update(const float deltaTimeMs) {
@@ -98,6 +112,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
             auto& playerTransform = playerView.get<Transform3D>(id);
             if (playerTransform.pos.y < -500.0f) {
                 gameState = GameState::GameOver;
+                sceneManager.SwitchToScene("GameOver");
             }
         }
     }
@@ -112,23 +127,8 @@ void EngineSystem::Render() {
     // Render the 3D scene with camera
     RenderSystem::Render(*registry, camera);
     
-    // Render UI based on game state
-    if (gameState == GameState::StartScreen) {
-        App::Print(350, 300, "3D RUNNER GAME", 1.0f, 1.0f, 1.0f);
-        App::Print(300, 350, "Press SPACE to Start", 1.0f, 1.0f, 0.0f);
-        App::Print(250, 400, "Controls: WASD - Move, SPACE - Jump", 0.8f, 0.8f, 0.8f);
-        App::Print(250, 430, "Arrow Keys - Rotate Camera", 0.8f, 0.8f, 0.8f);
-        App::Print(300, 480, "Press R anytime to Reset", 0.6f, 0.6f, 0.6f);
-    } else if (gameState == GameState::GameOver) {
-        View<PlayerTag> playerView(*registry);
-        for (EntityID id : playerView) {
-            auto& playerTag = playerView.get<PlayerTag>(id);
-            App::Print(350, 350, ("Score: " + std::to_string(playerTag.score)).c_str(), 1.0f, 1.0f, 0.0f);
-        }
-        App::Print(380, 300, "GAME OVER", 1.0f, 0.0f, 0.0f);
-        
-        App::Print(300, 400, "Press R to Restart", 1.0f, 1.0f, 1.0f);
-    }
+    // Render UI using Scene Manager
+    sceneManager.Render();
 }
 
 void EngineSystem::Shutdown() {

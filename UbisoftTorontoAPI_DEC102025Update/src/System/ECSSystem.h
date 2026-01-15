@@ -1,5 +1,7 @@
 #pragma once
 #include "ECS/ECS.h"
+#include "Scene/SceneManager.h"
+#include <memory>
 
 struct Camera25D {
     float x; // World X coordinate
@@ -53,10 +55,16 @@ public:
     void StartGame();       // Start gameplay
     
     GameState GetGameState() const { return gameState; }
+    SceneManager& GetSceneManager() { return sceneManager; }
+    EntityManager& GetRegistry() { return *registry; }
+    Camera3D& GetCamera() { return camera; }
     
 private:
     std::unique_ptr<EntityManager> registry;
     Camera3D camera;
     float nextSpawnZ = 0.0f;
     GameState gameState = GameState::StartScreen;
+    SceneManager sceneManager;
+    
+    void InitializeScenes();
 };
