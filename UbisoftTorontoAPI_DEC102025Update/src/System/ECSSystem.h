@@ -29,7 +29,7 @@ struct Camera3D {
     
     // Camera rotation angle in radians (rotation around Y axis - yaw)
     // 0 = looking along +Z, PI/2 = looking along +X
-    float rotationAngle = 0.0f;
+    float yawAngle = 0.0f;
     
     // Camera pitch angle in radians (up/down viewing angle)
     // 0 = looking straight ahead, positive = looking up, negative = looking down
@@ -54,7 +54,7 @@ enum class CameraControlMode {
 };
 
 struct GameSettings {
-    CameraControlMode cameraControlMode = CameraControlMode::Mouse;
+    CameraControlMode cameraControlMode = CameraControlMode::ArrowKeys;
 };
 
 class EngineSystem

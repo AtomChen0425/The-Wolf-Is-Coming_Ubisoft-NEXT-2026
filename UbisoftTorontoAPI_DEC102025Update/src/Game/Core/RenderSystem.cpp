@@ -96,8 +96,8 @@ static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera)
         Vec3(t.pos.x - halfW, t.pos.y + halfH, t.pos.z + halfD)
     };
 
-    const float cosYaw = std::cos(camera.rotationAngle);
-    const float sinYaw = std::sin(camera.rotationAngle);
+    const float cosYaw = std::cos(camera.yawAngle);
+    const float sinYaw = std::sin(camera.yawAngle);
     const float cosPitch = std::cos(camera.pitchAngle);
     const float sinPitch = std::sin(camera.pitchAngle);
 

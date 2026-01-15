@@ -71,7 +71,7 @@ void EngineSystem::ResetGame() {
 
 void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
-    
+    sceneManager.Update(deltaTimeMs);
     // Handle input based on game state
     if (gameState == GameState::StartScreen) {
         // Check for space or enter to start
@@ -114,7 +114,6 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Update player control (handles input and movement, and camera control)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings);
-        sceneManager.Update(deltaTimeMs);
         // Update enemy AI (movement, shooting, bullets)
         //EnemyAISystem::Update(*registry, deltaTimeMs);
         

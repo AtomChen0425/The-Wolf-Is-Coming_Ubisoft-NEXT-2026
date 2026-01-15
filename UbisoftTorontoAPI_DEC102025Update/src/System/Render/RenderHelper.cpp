@@ -15,8 +15,8 @@ bool Project(float wx, float wy, float wz, const Camera3D& cam, float& outX, flo
     float rz = wz - cam.z;
 
     // First rotate around Y axis (yaw)
-    float cosYaw = std::cos(cam.rotationAngle);
-    float sinYaw = std::sin(cam.rotationAngle);
+    float cosYaw = std::cos(cam.yawAngle);
+    float sinYaw = std::sin(cam.yawAngle);
 
     float rotatedX = rx * cosYaw + rz * sinYaw;
     float rotatedZ = -rx * sinYaw + rz * cosYaw;
@@ -49,8 +49,8 @@ static bool ProjectToScreenWithDepth(float wx, float wy, float wz, const Camera3
     const float rz = wz - cam.z;
 
     // First rotate around Y axis (yaw)
-    const float cosYaw = std::cos(cam.rotationAngle);
-    const float sinYaw = std::sin(cam.rotationAngle);
+    const float cosYaw = std::cos(cam.yawAngle);
+    const float sinYaw = std::sin(cam.yawAngle);
 
     const float rotatedX = rx * cosYaw + rz * sinYaw;
     const float rotatedZ = -rx * sinYaw + rz * cosYaw;

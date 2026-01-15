@@ -60,17 +60,12 @@ void PlayingScene::Update(float deltaTimeMs) {
     EntityManager& registry = engineSystem->GetRegistry();
     View<PlayerTag> playerView(registry);
 
-    // 2. ����������� (ͨ��ֻ��һ��)
     for (EntityID id : playerView) {
         auto& player = playerView.get<PlayerTag>(id);
 
-        // 3. �������Ƿ����仯 (�Ż���ֻ�б仯ʱ�Ÿ��� UI)
         if (player.score != m_lastScore) {
             m_lastScore = player.score;
-
-            // 4. ʹ��ָ���������
             if (scoreText) {
-                // ��� text �� public �ģ�
                 scoreText->SetText("Score: " + std::to_string(m_lastScore));
 
             }

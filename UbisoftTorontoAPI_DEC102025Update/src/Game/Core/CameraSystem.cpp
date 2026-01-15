@@ -9,11 +9,11 @@ void CameraFollow3D(EntityManager& registry, Camera3D& camera) {
         auto& playerTag = view.get<PlayerTag>(id);
         
         Vec3 pos = playerTransform.pos;
-        
-        // Calculate camera position based on rotation angles
-        // Camera follows player position and uses camera's own rotation angles
-        float cosYaw = std::cos(camera.rotationAngle);
-        float sinYaw = std::sin(camera.rotationAngle);
+		camera.yawAngle = -playerTag.rotationYaw;
+		camera.pitchAngle = playerTag.rotationPitch;
+
+        float cosYaw = std::cos(camera.yawAngle);
+        float sinYaw = -std::sin(camera.yawAngle);
         float cosPitch = std::cos(camera.pitchAngle);
         float sinPitch = std::sin(camera.pitchAngle);
         

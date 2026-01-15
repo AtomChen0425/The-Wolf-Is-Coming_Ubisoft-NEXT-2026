@@ -43,17 +43,10 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
             float deltaX = (mouseX - camera.lastMouseX) * mouseSensitivity;
             float deltaY = (mouseY - camera.lastMouseY) * mouseSensitivity;
             
+			playerTag.rotationYaw += deltaX; // Rotate player with camera
             // Update camera rotation based on mouse movement
-            camera.rotationAngle += deltaX;
-            
+			playerTag.rotationPitch -= deltaY; // Invert to match typical FPS controls
             // Vertical mouse movement controls pitch (up/down viewing)
-            camera.pitchAngle -= deltaY; // Subtract because screen Y is inverted
-            
-            // Clamp pitch to prevent camera flipping
-            const float maxPitch = 1.4f; // ~80 degrees
-            const float minPitch = -1.4f; // ~-80 degrees
-            if (camera.pitchAngle > maxPitch) camera.pitchAngle = maxPitch;
-            if (camera.pitchAngle < minPitch) camera.pitchAngle = minPitch;
             
             // Store current mouse position for next frame
             camera.lastMouseX = mouseX;
@@ -61,22 +54,17 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         } else {
             // Arrow keys control mode
             if (App::IsKeyPressed(App::KEY_LEFT)) {
-                camera.rotationAngle -= rotationSpeed * dtSec;
+				playerTag.rotationYaw -= rotationSpeed * dtSec;
             }
             if (App::IsKeyPressed(App::KEY_RIGHT)) {
-                camera.rotationAngle += rotationSpeed * dtSec;
+				playerTag.rotationYaw += rotationSpeed * dtSec;
             }
             if (App::IsKeyPressed(App::KEY_UP)) {
-                camera.pitchAngle += rotationSpeed * dtSec;
-                // Clamp pitch
-                const float maxPitch = 1.4f;
-                if (camera.pitchAngle > maxPitch) camera.pitchAngle = maxPitch;
+				playerTag.rotationPitch += rotationSpeed * dtSec;
+
             }
             if (App::IsKeyPressed(App::KEY_DOWN)) {
-                camera.pitchAngle -= rotationSpeed * dtSec;
-                // Clamp pitch
-                const float minPitch = -1.4f;
-                if (camera.pitchAngle < minPitch) camera.pitchAngle = minPitch;
+				playerTag.rotationPitch -= rotationSpeed * dtSec;
             }
         }
         // === End Camera Control Logic ===
@@ -128,11 +116,11 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         // 4. Apply velocity to position
         // CollisionSystem will detect and resolve any collisions after this
 		Vec3 dirSpeed = Vec3(strafeSpeed, 1.0f, forwardSpeed);
-        float cosAngle = std::cos(playerTag.rotationY);
-        float sinAngle = -std::sin(playerTag.rotationY);
+        float cosAngle = std::cos(playerTag.rotationYaw);
+        float sinAngle = -std::sin(playerTag.rotationYaw);
 		Vec3 localMove = vel * dirSpeed * dtSec;
 
-        Vec4 worldMove4 = RotateByY(playerTag.rotationY, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
+        Vec4 worldMove4 = RotateByY(playerTag.rotationYaw, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
         pos += Vec3(worldMove4.x, worldMove4.y, worldMove4.z);
         // Record player's current Z position for map generation
             
