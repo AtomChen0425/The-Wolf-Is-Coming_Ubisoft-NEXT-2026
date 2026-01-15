@@ -127,3 +127,28 @@ struct ScorePointTag {
     int points;
     bool collected;
 };
+
+// Enemy movement component - makes enemy move toward player
+struct EnemyMoveToPlayer {
+    float speed;              // Movement speed
+    float detectionRange;     // Range within which enemy detects and moves toward player
+    bool isActive;            // Whether this component is currently active
+};
+
+// Enemy shooting component - makes enemy shoot projectiles at player
+struct EnemyShootAtPlayer {
+    float shootCooldown;      // Time between shots in milliseconds
+    float timeSinceLastShot;  // Time elapsed since last shot
+    float detectionRange;     // Range within which enemy can shoot at player
+    float projectileSpeed;    // Speed of the projectiles
+    bool isActive;            // Whether this component is currently active
+};
+
+// Bullet/Projectile component
+struct Bullet {
+    Vec3 direction;           // Direction vector (normalized)
+    float speed;              // Movement speed
+    float lifetime;           // How long the bullet lives (milliseconds)
+    float damage;             // Damage dealt on hit
+    bool isPlayerBullet;      // true if fired by player, false if fired by enemy
+};

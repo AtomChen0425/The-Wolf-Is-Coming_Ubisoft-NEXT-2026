@@ -322,7 +322,9 @@ inline float DistanceSq(float x1, float y1, float z1, float x2, float y2, float 
     float dz = z1 - z2;
     return dx * dx + dy * dy + dz * dz;
 }
-static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera) {
+// Calculate the minimum depth (closest point) of a cube in camera space
+// This is used for proper z-sorting to avoid occlusion issues
+static float MinDepthInCameraSpace(const Transform3D& t, const Camera3D& camera) {
     const float halfW = t.width * 0.5f;
     const float halfH = t.height * 0.5f;
     const float halfD = t.depth * 0.5f;
@@ -342,7 +344,7 @@ static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera)
     const float cosAngle = std::cos(camera.rotationAngle);
     const float sinAngle = std::sin(camera.rotationAngle);
 
-    float maxZ = -1e30f;
+    float minZ = 1e30f;
 
     for (int i = 0; i < 8; ++i) {
         // to camera-relative
@@ -350,31 +352,37 @@ static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera)
         const float rz = corners[i].z - camera.z;
 
         // rotate around Y (same math as Project)
-        const float rotatedZ = -rx * sinAngle + rz * cosAngle ;
+        const float rotatedZ = -rx * sinAngle + rz * cosAngle;
 
-        if (rotatedZ > maxZ) maxZ = rotatedZ;
+        if (rotatedZ < minZ) minZ = rotatedZ;
     }
 
-    return maxZ;
+    return minZ;
 }
 void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
-    View<Transform3D> view(registry);
+    // Only render map blocks, not the player
+    View<Transform3D, MapBlockTag> view(registry);
     std::vector<EntityID> sortedEntities;
     for (EntityID id : view) {
         sortedEntities.push_back(id);
     }
 
-    // Sort by distance from camera for proper rendering order (far to near for painter's algorithm)
+    // Sort by minimum depth in camera space for proper rendering order
+    // Painter's algorithm: render far to near (larger depth values first)
     std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
         auto& ta = view.get<Transform3D>(a);
         auto& tb = view.get<Transform3D>(b);
-        //float distA = DistanceSq(ta.pos.x, ta.pos.y+ta.height, ta.pos.z+ta.depth, camera.x, camera.y, camera.z);
-        //float distB = DistanceSq(tb.pos.x, tb.pos.y+tb.height, tb.pos.z+tb.depth, camera.x, camera.y, camera.z);
 
-        float distA = MaxDepthInCameraSpace(ta, camera);
-        float distB = MaxDepthInCameraSpace(tb, camera);
-		if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { return ta.pos.y > tb.pos.y; }
-        return distA < distB; // Render far to near (larger distance first)
+        float distA = MinDepthInCameraSpace(ta, camera);
+        float distB = MinDepthInCameraSpace(tb, camera);
+        
+        // If blocks are at the same position, render taller blocks first
+		if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { 
+            return ta.pos.y > tb.pos.y; 
+        }
+        
+        // Render far to near: larger depth first
+        return distA > distB;
     });
     
     for (EntityID id : sortedEntities) {
