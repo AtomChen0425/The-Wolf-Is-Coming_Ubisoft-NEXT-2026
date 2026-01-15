@@ -44,7 +44,17 @@ struct Camera3D {
 enum class GameState {
     StartScreen,
     Playing,
-    GameOver
+    GameOver,
+    Settings
+};
+
+enum class CameraControlMode {
+    Mouse,
+    ArrowKeys
+};
+
+struct GameSettings {
+    CameraControlMode cameraControlMode = CameraControlMode::Mouse;
 };
 
 class EngineSystem
@@ -67,6 +77,7 @@ public:
     SceneManager& GetSceneManager() { return sceneManager; }
     EntityManager& GetRegistry() { return *registry; }
     Camera3D& GetCamera() { return camera; }
+    GameSettings& GetSettings() { return settings; }
     
 private:
     std::unique_ptr<EntityManager> registry;
@@ -74,6 +85,7 @@ private:
     float nextSpawnZ = 0.0f;
     GameState gameState = GameState::StartScreen;
     SceneManager sceneManager;
+    GameSettings settings;
     
     void InitializeScenes();
 };

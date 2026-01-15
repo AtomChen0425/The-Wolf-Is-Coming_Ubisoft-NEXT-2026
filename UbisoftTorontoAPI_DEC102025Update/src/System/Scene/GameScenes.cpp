@@ -18,10 +18,9 @@ void StartScene::OnEnter() {
     
     // Instructions
     uiManager.AddText("Press SPACE to Start", -100, -50, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Controls: WASD - Move, SPACE - Jump", -150, 0, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Mouse - Control Camera View (Pitch/Yaw)", -165, 30, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Arrow Keys - Alternative Camera Rotation", -155, 60, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Press R anytime to Reset", -100, 100, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Press S for Settings", -90, -10, 0.9f, 0.9f, 0.0f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Controls: WASD - Move, SPACE - Jump", -150, 40, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Press R anytime to Reset", -100, 80, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
 }
 
 void StartScene::OnExit() {
@@ -123,5 +122,100 @@ void GameOverScene::Update(float deltaTimeMs) {
 }
 
 void GameOverScene::Render() {
+    uiManager.Render();
+}
+
+// SettingsScene Implementation
+SettingsScene::SettingsScene(EngineSystem* engine)
+    : engineSystem(engine), selectedOption(0) {
+}
+
+void SettingsScene::OnEnter() {
+    uiManager.Clear();
+    
+    // Get current setting
+    GameSettings& settings = engineSystem->GetSettings();
+    selectedOption = (settings.cameraControlMode == CameraControlMode::Mouse) ? 0 : 1;
+    
+    // Title
+    uiManager.AddText("SETTINGS", -50, -150, 1.0f, 1.0f, 1.0f, UIAlignment::MiddleCenter);
+    
+    // Camera control options
+    uiManager.AddText("Camera Control Mode:", -90, -80, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Use UP/DOWN arrow keys to select, ENTER to confirm", -200, 100, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Press ESC to return to main menu", -140, 130, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+}
+
+void SettingsScene::OnExit() {
+    uiManager.Clear();
+}
+
+void SettingsScene::Update(float deltaTimeMs) {
+    // Handle UP/DOWN to change selection
+    static bool upKeyWasPressed = false;
+    static bool downKeyWasPressed = false;
+    static bool enterKeyWasPressed = false;
+    static bool escKeyWasPressed = false;
+    
+    bool upKeyPressed = App::IsKeyPressed(App::KEY_UP);
+    bool downKeyPressed = App::IsKeyPressed(App::KEY_DOWN);
+    bool enterPressed = App::IsKeyPressed(App::KEY_ENTER);
+    bool escPressed = App::IsKeyPressed(App::KEY_ESC);
+    
+    // UP key - select previous option
+    if (upKeyPressed && !upKeyWasPressed) {
+        selectedOption = (selectedOption == 0) ? 1 : 0;
+    }
+    
+    // DOWN key - select next option
+    if (downKeyPressed && !downKeyWasPressed) {
+        selectedOption = (selectedOption == 0) ? 1 : 0;
+    }
+    
+    // ENTER - confirm selection
+    if (enterPressed && !enterKeyWasPressed) {
+        GameSettings& settings = engineSystem->GetSettings();
+        settings.cameraControlMode = (selectedOption == 0) ? CameraControlMode::Mouse : CameraControlMode::ArrowKeys;
+        
+        // Return to start screen
+        engineSystem->GetSceneManager().SwitchToScene("StartScreen");
+    }
+    
+    // ESC - return to start screen without changing
+    if (escPressed && !escKeyWasPressed) {
+        engineSystem->GetSceneManager().SwitchToScene("StartScreen");
+    }
+    
+    upKeyWasPressed = upKeyPressed;
+    downKeyWasPressed = downKeyPressed;
+    enterKeyWasPressed = enterPressed;
+    escKeyWasPressed = escPressed;
+}
+
+void SettingsScene::Render() {
+    // Render options with highlighting
+    float mouseColor = (selectedOption == 0) ? 1.0f : 0.5f;
+    float arrowColor = (selectedOption == 1) ? 1.0f : 0.5f;
+    
+    uiManager.Clear();
+    
+    // Title
+    uiManager.AddText("SETTINGS", -50, -150, 1.0f, 1.0f, 1.0f, UIAlignment::MiddleCenter);
+    
+    // Camera control options
+    uiManager.AddText("Camera Control Mode:", -90, -80, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
+    
+    // Option 1: Mouse
+    std::string mouseOption = (selectedOption == 0) ? "> Mouse Control" : "  Mouse Control";
+    uiManager.AddText(mouseOption, -80, -20, mouseColor, mouseColor, 0.0f, UIAlignment::MiddleCenter);
+    
+    // Option 2: Arrow Keys
+    std::string arrowOption = (selectedOption == 1) ? "> Arrow Keys Control" : "  Arrow Keys Control";
+    uiManager.AddText(arrowOption, -95, 20, arrowColor, arrowColor, 0.0f, UIAlignment::MiddleCenter);
+    
+    // Instructions
+    uiManager.AddText("Use UP/DOWN arrow keys to select, ENTER to confirm", -200, 100, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Press ESC to return to main menu", -140, 130, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    
     uiManager.Render();
 }

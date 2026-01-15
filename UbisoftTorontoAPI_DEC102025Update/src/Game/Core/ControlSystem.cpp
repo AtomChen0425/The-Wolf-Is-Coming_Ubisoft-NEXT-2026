@@ -6,7 +6,7 @@
 #include <cmath>
 #include "Math/Math.h"
 
-void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
+void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings) {
     float dtSec = dt / 1000.0f;
     float playerCurrentZ = 0.0f;
     
@@ -16,6 +16,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
     float forwardSpeed = 200.0f;  // Forward/backward speed
     const float strafeSpeed = 300.0f;   // Left/right strafe speed
     const float rotationSpeed = 2.0f; // Radians per second
+    
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
         auto& playerTag = view.get<PlayerTag>(id);
@@ -23,6 +24,63 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
         auto& vel = view.get<Velocity3D>(id).vel;
         Vec3& pos = playerTransform.pos;
         forwardSpeed += playerTag.score;
+        
+        // === Camera Control Logic (moved from CameraSystem) ===
+        if (settings.cameraControlMode == CameraControlMode::Mouse) {
+            // Mouse control mode
+            float mouseX, mouseY;
+            App::GetMousePos(mouseX, mouseY);
+            
+            // Initialize mouse position on first frame
+            if (!camera.mouseInitialized) {
+                camera.lastMouseX = mouseX;
+                camera.lastMouseY = mouseY;
+                camera.mouseInitialized = true;
+            }
+            
+            // Calculate mouse delta (sensitivity adjusted)
+            const float mouseSensitivity = 0.003f;
+            float deltaX = (mouseX - camera.lastMouseX) * mouseSensitivity;
+            float deltaY = (mouseY - camera.lastMouseY) * mouseSensitivity;
+            
+            // Update camera rotation based on mouse movement
+            camera.rotationAngle += deltaX;
+            
+            // Vertical mouse movement controls pitch (up/down viewing)
+            camera.pitchAngle -= deltaY; // Subtract because screen Y is inverted
+            
+            // Clamp pitch to prevent camera flipping
+            const float maxPitch = 1.4f; // ~80 degrees
+            const float minPitch = -1.4f; // ~-80 degrees
+            if (camera.pitchAngle > maxPitch) camera.pitchAngle = maxPitch;
+            if (camera.pitchAngle < minPitch) camera.pitchAngle = minPitch;
+            
+            // Store current mouse position for next frame
+            camera.lastMouseX = mouseX;
+            camera.lastMouseY = mouseY;
+        } else {
+            // Arrow keys control mode
+            if (App::IsKeyPressed(App::KEY_LEFT)) {
+                camera.rotationAngle -= rotationSpeed * dtSec;
+            }
+            if (App::IsKeyPressed(App::KEY_RIGHT)) {
+                camera.rotationAngle += rotationSpeed * dtSec;
+            }
+            if (App::IsKeyPressed(App::KEY_UP)) {
+                camera.pitchAngle += rotationSpeed * dtSec;
+                // Clamp pitch
+                const float maxPitch = 1.4f;
+                if (camera.pitchAngle > maxPitch) camera.pitchAngle = maxPitch;
+            }
+            if (App::IsKeyPressed(App::KEY_DOWN)) {
+                camera.pitchAngle -= rotationSpeed * dtSec;
+                // Clamp pitch
+                const float minPitch = -1.4f;
+                if (camera.pitchAngle < minPitch) camera.pitchAngle = minPitch;
+            }
+        }
+        // === End Camera Control Logic ===
+        
         // 1. Handle horizontal input (forward/backward and strafe)
         // Use damping for smooth movement instead of hard reset
         float inputX = 0.0f;
@@ -74,17 +132,9 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
         float sinAngle = -std::sin(playerTag.rotationY);
 		Vec3 localMove = vel * dirSpeed * dtSec;
 
-
         Vec4 worldMove4 = RotateByY(playerTag.rotationY, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
         pos += Vec3(worldMove4.x, worldMove4.y, worldMove4.z);
         // Record player's current Z position for map generation
-
-        if (App::IsKeyPressed(App::KEY_LEFT)) {
-            playerTag.rotationY -= rotationSpeed * dtSec;
-        }
-        if (App::IsKeyPressed(App::KEY_RIGHT)) {
-            playerTag.rotationY += rotationSpeed * dtSec;
-        }
             
         playerCurrentZ = pos.z;
     }
@@ -93,7 +143,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
     GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ);
 }
 
-void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ)
+void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings)
 {
-    PlayerControl3D(registry, dt, nextSpawnZ);
+    PlayerControl3D(registry, dt, nextSpawnZ, camera, settings);
 }

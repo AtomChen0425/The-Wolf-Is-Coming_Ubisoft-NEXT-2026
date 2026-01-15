@@ -61,3 +61,20 @@ private:
     int finalScore;
     UIText* scoreText;  // Keep a pointer to update score dynamically
 };
+
+// Settings Scene
+class SettingsScene : public IScene {
+public:
+    SettingsScene(EngineSystem* engine);
+    
+    void OnEnter() override;
+    void OnExit() override;
+    void Update(float deltaTimeMs) override;
+    void Render() override;
+    std::string GetName() const override { return "SettingsScene"; }
+    
+private:
+    EngineSystem* engineSystem;
+    UIManager uiManager;
+    int selectedOption;  // 0 = Mouse, 1 = Arrow Keys
+};

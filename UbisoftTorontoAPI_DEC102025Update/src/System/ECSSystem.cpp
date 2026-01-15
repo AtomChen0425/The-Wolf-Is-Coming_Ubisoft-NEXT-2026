@@ -28,6 +28,7 @@ void EngineSystem::InitializeScenes() {
     sceneManager.RegisterScene("StartScreen", std::make_unique<StartScene>(this));
     sceneManager.RegisterScene("Playing", std::make_unique<PlayingScene>(this));
     sceneManager.RegisterScene("GameOver", std::make_unique<GameOverScene>(this));
+    sceneManager.RegisterScene("Settings", std::make_unique<SettingsScene>(this));
     
     // Start with the start screen
     sceneManager.SwitchToScene("StartScreen");
@@ -77,7 +78,22 @@ void EngineSystem::Update(const float deltaTimeMs) {
         if (App::IsKeyPressed(App::KEY_SPACE) || App::IsKeyPressed(App::KEY_ENTER)) {
             StartGame();
         }
+        // Check for S to go to settings
+        static bool sKeyWasPressed = false;
+        bool sKeyPressed = App::IsKeyPressed(App::KEY_S);
+        if (sKeyPressed && !sKeyWasPressed) {
+            gameState = GameState::Settings;
+            sceneManager.SwitchToScene("Settings");
+        }
+        sKeyWasPressed = sKeyPressed;
         // No physics/collision updates on start screen
+        return;
+    } else if (gameState == GameState::Settings) {
+        // Settings scene handles its own input
+        // Check if we returned to start screen
+        if (sceneManager.GetCurrentSceneName() == "StartScreen") {
+            gameState = GameState::StartScreen;
+        }
         return;
     } else if (gameState == GameState::GameOver) {
         // Check for R to reset
@@ -96,8 +112,8 @@ void EngineSystem::Update(const float deltaTimeMs) {
             return;
         }
         
-        // Update player control (handles input and movement)
-        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ);
+        // Update player control (handles input and movement, and camera control)
+        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings);
         sceneManager.Update(deltaTimeMs);
         // Update enemy AI (movement, shooting, bullets)
         //EnemyAISystem::Update(*registry, deltaTimeMs);
