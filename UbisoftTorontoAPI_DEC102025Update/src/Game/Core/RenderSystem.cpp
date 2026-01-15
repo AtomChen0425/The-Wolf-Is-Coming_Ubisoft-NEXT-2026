@@ -569,6 +569,16 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
         App::Print(50, 80, "Controls: WASD to move, SPACE to jump, Arrow keys to rotate", 1.0f, 1.0f, 0.0f);
     }
 }
+
+void RenderBullets3D(EntityManager& registry, Camera3D& camera) {
+    View<Transform3D, Bullet> bulletView(registry);
+    
+    for (EntityID id : bulletView) {
+        auto& t = bulletView.get<Transform3D>(id);
+        // Render bullets as small cubes
+        RenderCube(t, camera);
+    }
+}
 void RenderSystem::Render(EntityManager& registry) {
     DrawSprite(registry);
     DrawEnemies(registry);
@@ -581,6 +591,7 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     
     
     RenderRoad3D(registry, camera);
+    RenderBullets3D(registry, camera);
     RenderPlayer3D(registry, camera);
     
 }
