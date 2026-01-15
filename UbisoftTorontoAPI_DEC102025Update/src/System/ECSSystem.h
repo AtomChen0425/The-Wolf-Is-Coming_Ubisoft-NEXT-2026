@@ -22,12 +22,18 @@ struct Camera3D {
     // Fixed offset for following target (in camera space)
     // For example: 200 units up, 300 units back
     float followOffsetY = 0.0f;
-    float followOffsetZ = -300.0f;
+    float followOffsetZ = -700.0f;
     float followOffsetX = 0.0f;
     
     // Camera rotation angle in radians (rotation around Y axis)
     // 0 = looking along +Z, PI/2 = looking along +X
     float rotationAngle = 0.0f;
+};
+
+enum class GameState {
+    StartScreen,
+    Playing,
+    GameOver
 };
 
 class EngineSystem
@@ -43,9 +49,14 @@ public:
     void Render();
     void Shutdown();
     void ResetGame();
+    void InitializeGame();  // Initialize world without starting gameplay
+    void StartGame();       // Start gameplay
+    
+    GameState GetGameState() const { return gameState; }
     
 private:
     std::unique_ptr<EntityManager> registry;
     Camera3D camera;
     float nextSpawnZ = 0.0f;
+    GameState gameState = GameState::StartScreen;
 };

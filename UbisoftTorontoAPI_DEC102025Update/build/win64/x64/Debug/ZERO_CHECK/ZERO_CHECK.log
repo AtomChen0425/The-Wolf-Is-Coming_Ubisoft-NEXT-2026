@@ -1,14 +1,1 @@
 ﻿  1>Checking Build System
-  CMake is re-running because D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/generate.stamp is out-of-date.
-    the file 'D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/CMakeLists.txt'
-    is newer than 'D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/generate.stamp.depend'
-    result='-1'
-  -- Selecting Windows SDK version 10.0.26100.0 to target Windows .
-  -- System Name is Windows
-  -- Compiler Name is MSVC
-  -- Project Source Dir is D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update
-  -- Vendor Source Dir is D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/src/ContestAPI/vendor
-  -- Project Runtime DLLS: $<TARGET_RUNTIME_DLLS:Game>
-  -- Configuring done (0.2s)
-  -- Generating done (0.1s)
-  -- Build files have been written to: D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64

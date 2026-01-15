@@ -2,7 +2,10 @@
 #include "../../System/Component/Component.h"
 #include "../../System/Physic/Collision.h"
 #include <cmath>
+
 Collision* gCollision;
+
+// 2D collision for player-enemy
 void CheckPlayerEnemyCollision(EntityManager& registry) {
     View<PlayerTag, Position, Velocity, RigidBody, Health> playerView(registry);
     View<EnemyTag, Position> enemyView(registry);
@@ -34,21 +37,21 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
         }
     }
 }
-// Helper function to check and resolve 3D collisions for the player
+
+// Simplified 3D collision system - just detect and respond
 void CheckPlayer3DCollisions(EntityManager& registry) {
-    // Process each player entity
     View<PlayerTag, Transform3D, Velocity3D> playerView(registry);
+    
     for (EntityID playerId : playerView) {
         auto& playerTag = playerView.get<PlayerTag>(playerId);
         auto& playerTransform = playerView.get<Transform3D>(playerId);
         auto& vel = playerView.get<Velocity3D>(playerId).vel;
-        
         Vec3& pos = playerTransform.pos;
         
-        // Reset collision flag
+        // Reset ground flag
         playerTag.isOnGround = false;
         
-        // Calculate player bounding box
+        // Player bounding box
         Vec3 playerMin(pos.x - playerTransform.width / 2, 
                        pos.y - playerTransform.height / 2, 
                        pos.z - playerTransform.depth / 2);
@@ -56,81 +59,63 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                        pos.y + playerTransform.height / 2, 
                        pos.z + playerTransform.depth / 2);
         
-        // 1. Check ground detection for jump (isOnGround) based on CURRENT position
-        View<Collider3D, Transform3D> floorCheckView(registry);
-        for (EntityID floorId : floorCheckView) {
-            auto& floorCollider = floorCheckView.get<Collider3D>(floorId);
-            if (!floorCollider.isFloor) continue;
-            
-            auto& floorTransform = floorCheckView.get<Transform3D>(floorId);
-            Vec3 floorPos = floorTransform.pos;
-            Vec3 floorMin(floorPos.x - floorTransform.width / 2, 
-                         floorPos.y - floorTransform.height / 2, 
-                         floorPos.z - floorTransform.depth / 2);
-            Vec3 floorMax(floorPos.x + floorTransform.width / 2, 
-                         floorPos.y + floorTransform.height / 2, 
-                         floorPos.z + floorTransform.depth / 2);
-            
-            // Check if player is standing on this floor
-            if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
-                playerMin.z < floorMax.z && playerMax.z > floorMin.z &&
-                playerMin.y <= floorMax.y + 0.1f && playerMin.y >= floorMax.y - 5.0f) {
-                playerTag.isOnGround = true;
-                break;
-            }
-        }
+        // Check all colliders
+        View<Collider3D, Transform3D> colliderView(registry);
+        float highestFloor = -1000.0f;
         
-        // 2. Check wall collisions and correct position if needed
-        View<Collider3D, Transform3D> wallView(registry);
-        for (EntityID wallId : wallView) {
-            auto& wallCollider = wallView.get<Collider3D>(wallId);
-            if (!wallCollider.isWall) continue;
+        for (EntityID colliderId : colliderView) {
+            auto& collider = colliderView.get<Collider3D>(colliderId);
+            auto& transform = colliderView.get<Transform3D>(colliderId);
             
-            auto& wallTransform = wallView.get<Transform3D>(wallId);
-            Vec3 wallPos = wallTransform.pos;
-            Vec3 wallMin(wallPos.x - wallTransform.width / 2, 
-                        wallPos.y - wallTransform.height / 2, 
-                        wallPos.z - wallTransform.depth / 2);
-            Vec3 wallMax(wallPos.x + wallTransform.width / 2, 
-                        wallPos.y + wallTransform.height / 2, 
-                        wallPos.z + wallTransform.depth / 2);
+            // Collider bounding box
+            Vec3 colliderMin(transform.pos.x - transform.width / 2,
+                            transform.pos.y - transform.height / 2,
+                            transform.pos.z - transform.depth / 2);
+            Vec3 colliderMax(transform.pos.x + transform.width / 2,
+                            transform.pos.y + transform.height / 2,
+                            transform.pos.z + transform.depth / 2);
             
-            // Check if player is colliding with wall
-            if (gCollision->AABB3D(playerMin, playerMax, wallMin, wallMax)) {
-                // Calculate penetration depth in each axis
-                float overlapX = 0.0f;
-                float overlapZ = 0.0f;
+            // Check collision using AABB
+            if (gCollision->AABB3D(playerMin, playerMax, colliderMin, colliderMax)) {
+                // Calculate penetration on each axis
+                float penetrationX = (playerMin.x < colliderMin.x) ? 
+                    (colliderMin.x - playerMax.x) : (colliderMax.x - playerMin.x);
+                float penetrationY = (playerMin.y < colliderMin.y) ? 
+                    (colliderMin.y - playerMax.y) : (colliderMax.y - playerMin.y);
+                float penetrationZ = (playerMin.z < colliderMin.z) ? 
+                    (colliderMin.z - playerMax.z) : (colliderMax.z - playerMin.z);
                 
-                // Calculate how much we're penetrating from each side
-                float penetrationLeft = playerMax.x - wallMin.x;
-                float penetrationRight = wallMax.x - playerMin.x;
-                float penetrationFront = playerMax.z - wallMin.z;
-                float penetrationBack = wallMax.z - playerMin.z;
+                float absX = std::abs(penetrationX);
+                float absY = std::abs(penetrationY);
+                float absZ = std::abs(penetrationZ);
                 
-                // Find minimum penetration for X
-                if (penetrationLeft < penetrationRight) {
-                    overlapX = -penetrationLeft;
-                } else {
-                    overlapX = penetrationRight;
-                }
-                
-                // Find minimum penetration for Z
-                if (penetrationFront < penetrationBack) {
-                    overlapZ = -penetrationFront;
-                } else {
-                    overlapZ = penetrationBack;
-                }
-                
-                // Resolve collision by pushing out on the axis with minimum penetration
-                if (std::abs(overlapX) < std::abs(overlapZ)) {
-                    pos.x += overlapX;
+                // Resolve on minimum penetration axis
+                if (absX < absY && absX < absZ) {
+                    // X-axis collision (left/right wall)
+                    pos.x += penetrationX;
                     vel.x = 0.0f;
-                } else {
-                    pos.z += overlapZ;
+                } else if (absZ < absY) {
+                    // Z-axis collision (front/back wall)
+                    pos.z += penetrationZ;
                     vel.z = 0.0f;
+                } else {
+                    // Y-axis collision (floor/ceiling)
+                    if (penetrationY > 0) {
+                        // Hit from below (floor)
+                        if (collider.isFloor) {
+                            float floorTop = colliderMax.y;
+                            if (floorTop > highestFloor) {
+                                highestFloor = floorTop;
+                            }
+                        }
+                    } else {
+                        // Hit from above (ceiling)
+                        pos.y += penetrationY;
+                        vel.y = 0.0f;
+                    }
                 }
                 
-                // Recalculate bounding box after correction
+                // Update bounding box after position change
                 playerMin = Vec3(pos.x - playerTransform.width / 2, 
                                pos.y - playerTransform.height / 2, 
                                pos.z - playerTransform.depth / 2);
@@ -140,40 +125,57 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
             }
         }
         
-        // 3. Find the highest floor the player is on and apply ground collision
-        float groundY = -1000.0f;  // Default very low ground
-        View<Collider3D, Transform3D> groundCheckView(registry);
-        for (EntityID floorId : groundCheckView) {
-            auto& floorCollider = groundCheckView.get<Collider3D>(floorId);
-            if (!floorCollider.isFloor) continue;
-            
-            auto& floorTransform = groundCheckView.get<Transform3D>(floorId);
-            Vec3 floorPos = floorTransform.pos;
-            Vec3 floorMin(floorPos.x - floorTransform.width / 2, 
-                         floorPos.y - floorTransform.height / 2, 
-                         floorPos.z - floorTransform.depth / 2);
-            Vec3 floorMax(floorPos.x + floorTransform.width / 2, 
-                         floorPos.y + floorTransform.height / 2, 
-                         floorPos.z + floorTransform.depth / 2);
-            
-            // Check if player is horizontally aligned with this floor
-            if (playerMin.x < floorMax.x && playerMax.x > floorMin.x &&
-                playerMin.z < floorMax.z && playerMax.z > floorMin.z) {
-                float floorTop = floorMax.y;
-                if (floorTop > groundY) {
-                    groundY = floorTop;
-                }
+        // Apply floor collision if detected
+        if (highestFloor > -999.0f) {
+            float playerBottom = pos.y - playerTransform.height / 2;
+            if (playerBottom <= highestFloor + 0.5f) {
+                pos.y = highestFloor + playerTransform.height / 2;
+                vel.y = 0.0f;
+                playerTag.isOnGround = true;
             }
-        }
-        
-        // Apply ground collision response
-        if (pos.y - playerTransform.height / 2 < groundY && playerTag.isOnGround) {
-            pos.y = groundY + playerTransform.height / 2;
-            vel.y = 0.0f;
         }
     }
 }
 
+void CheckPlayerGetPoints(EntityManager& registry) {
+    View<PlayerTag, Transform3D> playerView(registry);
+    EntityID playerId{};
+    Vec3 playerPos;
+    Transform3D playerTransform;
+    float playerRadius = 0.0f;
+	for (EntityID id : playerView) {
+        playerId = id;
+		playerTransform = playerView.get<Transform3D>(id);
+        playerPos = playerView.get<Transform3D>(id).pos;
+        playerRadius = playerTransform.width / 2; // Assume width as diameter
+        break;
+    }
+    Vec3 playerMin(playerPos.x - playerTransform.width / 2,
+        playerPos.y - playerTransform.height / 2,
+        playerPos.z - playerTransform.depth / 2);
+    Vec3 playerMax(playerPos.x + playerTransform.width / 2,
+        playerPos.y + playerTransform.height / 2,
+        playerPos.z + playerTransform.depth / 2);
+    View<ScorePointTag, Transform3D> scoreView(registry);
+    for (EntityID scoreId : scoreView) {
+        auto& scoreTransform = scoreView.get<Transform3D>(scoreId);
+        float scoreRadius = scoreTransform.width / 2; // Assume width as diameter
+        Vec3 colliderMin(scoreTransform.pos.x - scoreTransform.width / 2,
+            scoreTransform.pos.y - scoreTransform.height / 2,
+            scoreTransform.pos.z - scoreTransform.depth / 2);
+        Vec3 colliderMax(scoreTransform.pos.x + scoreTransform.width / 2,
+            scoreTransform.pos.y + scoreTransform.height / 2,
+            scoreTransform.pos.z + scoreTransform.depth / 2);
+        if (gCollision->AABB3D(playerMin, playerMax, colliderMin, colliderMax)) {
+            auto& scoreTag = scoreView.get<ScorePointTag>(scoreId);
+            scoreTag.collected = true;
+			auto& playerTag = playerView.get<PlayerTag>(playerId);
+			playerTag.score += scoreTag.points;
+        }
+	}
+}
+
 void CollisionSystem::Update(EntityManager& registry) {
     CheckPlayer3DCollisions(registry);
+    CheckPlayerGetPoints(registry);
 }
