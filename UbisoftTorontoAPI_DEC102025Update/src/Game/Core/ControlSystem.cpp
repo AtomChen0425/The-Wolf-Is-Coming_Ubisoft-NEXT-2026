@@ -74,13 +74,6 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
         float sinAngle = -std::sin(playerTag.rotationY);
 		Vec3 localMove = vel * dirSpeed * dtSec;
 
-        //Mat4 rotY;
-        //// Build a pure Y-rotation matrix (keep translation = 0)
-        //// Note: Mat4 is row-major in your operator*(Vec4) implementation.
-        //rotY.m[0][0] = cosAngle; rotY.m[0][1] = 0.0f; rotY.m[0][2] = sinAngle; rotY.m[0][3] = 0.0f;
-        //rotY.m[1][0] = 0.0f;    rotY.m[1][1] = 1.0f; rotY.m[1][2] = 0.0f;     rotY.m[1][3] = 0.0f;
-        //rotY.m[2][0] = -sinAngle; rotY.m[2][1] = 0.0f; rotY.m[2][2] = cosAngle; rotY.m[2][3] = 0.0f;
-        //rotY.m[3][0] = 0.0f;    rotY.m[3][1] = 0.0f; rotY.m[3][2] = 0.0f;     rotY.m[3][3] = 1.0f;
 
         Vec4 worldMove4 = RotateByY(playerTag.rotationY, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
         pos += Vec3(worldMove4.x, worldMove4.y, worldMove4.z);
