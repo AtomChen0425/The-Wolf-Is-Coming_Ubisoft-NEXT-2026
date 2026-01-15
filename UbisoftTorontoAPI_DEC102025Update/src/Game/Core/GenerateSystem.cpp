@@ -142,7 +142,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
         0.0f     // b
     });
     registry.addComponent(entity, Velocity3D{});
-    registry.addComponent(entity, PlayerTag{true});
+    registry.addComponent(entity, PlayerTag{true, 0, 0});
 }
 
 // Create a default simple template
@@ -282,7 +282,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     // Floor top is at Y=-5, block height is 40, so center at Y=-5+20=15
                     const float solidBlockHeight = 40.0f;
                     registry.addComponent(block, Transform3D{
-                        Vec3{blockX, 15.0f, blockZ},  // Sitting on floor
+                        Vec3{blockX, 20.0f, blockZ},  // Sitting on floor
                         blockSize, solidBlockHeight, blockSize,
                         0.1f, 0.3f, 0.9f  // Blue
                     });

@@ -31,6 +31,7 @@ struct SpriteComponent {
 struct PlayerTag {
     bool isOnGround;
     float rotationY;
+	int score;
 };
 struct EnemyTag {};
 

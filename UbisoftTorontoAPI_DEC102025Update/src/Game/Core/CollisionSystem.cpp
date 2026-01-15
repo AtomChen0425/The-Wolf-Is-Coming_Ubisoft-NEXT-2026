@@ -137,6 +137,45 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
     }
 }
 
+void CheckPlayerGetPoints(EntityManager& registry) {
+    View<PlayerTag, Transform3D> playerView(registry);
+    EntityID playerId{};
+    Vec3 playerPos;
+    Transform3D playerTransform;
+    float playerRadius = 0.0f;
+	for (EntityID id : playerView) {
+        playerId = id;
+		playerTransform = playerView.get<Transform3D>(id);
+        playerPos = playerView.get<Transform3D>(id).pos;
+        playerRadius = playerTransform.width / 2; // Assume width as diameter
+        break;
+    }
+    Vec3 playerMin(playerPos.x - playerTransform.width / 2,
+        playerPos.y - playerTransform.height / 2,
+        playerPos.z - playerTransform.depth / 2);
+    Vec3 playerMax(playerPos.x + playerTransform.width / 2,
+        playerPos.y + playerTransform.height / 2,
+        playerPos.z + playerTransform.depth / 2);
+    View<ScorePointTag, Transform3D> scoreView(registry);
+    for (EntityID scoreId : scoreView) {
+        auto& scoreTransform = scoreView.get<Transform3D>(scoreId);
+        float scoreRadius = scoreTransform.width / 2; // Assume width as diameter
+        Vec3 colliderMin(scoreTransform.pos.x - scoreTransform.width / 2,
+            scoreTransform.pos.y - scoreTransform.height / 2,
+            scoreTransform.pos.z - scoreTransform.depth / 2);
+        Vec3 colliderMax(scoreTransform.pos.x + scoreTransform.width / 2,
+            scoreTransform.pos.y + scoreTransform.height / 2,
+            scoreTransform.pos.z + scoreTransform.depth / 2);
+        if (gCollision->AABB3D(playerMin, playerMax, colliderMin, colliderMax)) {
+            auto& scoreTag = scoreView.get<ScorePointTag>(scoreId);
+            scoreTag.collected = true;
+			auto& playerTag = playerView.get<PlayerTag>(playerId);
+			playerTag.score += scoreTag.points;
+        }
+	}
+}
+
 void CollisionSystem::Update(EntityManager& registry) {
     CheckPlayer3DCollisions(registry);
+    CheckPlayerGetPoints(registry);
 }

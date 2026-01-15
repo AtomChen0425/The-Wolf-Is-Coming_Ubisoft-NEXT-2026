@@ -13,7 +13,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
     // Constants for physics
     const float gravity = -980.0f;      // Gravity acceleration (pixels/s^2)
     const float jumpVelocity = 400.0f;  // Initial jump velocity
-    const float forwardSpeed = 200.0f;  // Forward/backward speed
+    float forwardSpeed = 200.0f;  // Forward/backward speed
     const float strafeSpeed = 300.0f;   // Left/right strafe speed
     const float rotationSpeed = 2.0f; // Radians per second
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
@@ -22,7 +22,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
         auto& playerTransform = view.get<Transform3D>(id);
         auto& vel = view.get<Velocity3D>(id).vel;
         Vec3& pos = playerTransform.pos;
-        
+        forwardSpeed += playerTag.score;
         // 1. Handle horizontal input (forward/backward and strafe)
         // Use damping for smooth movement instead of hard reset
         float inputX = 0.0f;
@@ -74,23 +74,23 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ) {
         float sinAngle = -std::sin(playerTag.rotationY);
 		Vec3 localMove = vel * dirSpeed * dtSec;
 
-        Mat4 rotY;
-        // Build a pure Y-rotation matrix (keep translation = 0)
-        // Note: Mat4 is row-major in your operator*(Vec4) implementation.
-        rotY.m[0][0] = cosAngle; rotY.m[0][1] = 0.0f; rotY.m[0][2] = sinAngle; rotY.m[0][3] = 0.0f;
-        rotY.m[1][0] = 0.0f;    rotY.m[1][1] = 1.0f; rotY.m[1][2] = 0.0f;     rotY.m[1][3] = 0.0f;
-        rotY.m[2][0] = -sinAngle; rotY.m[2][1] = 0.0f; rotY.m[2][2] = cosAngle; rotY.m[2][3] = 0.0f;
-        rotY.m[3][0] = 0.0f;    rotY.m[3][1] = 0.0f; rotY.m[3][2] = 0.0f;     rotY.m[3][3] = 1.0f;
+        //Mat4 rotY;
+        //// Build a pure Y-rotation matrix (keep translation = 0)
+        //// Note: Mat4 is row-major in your operator*(Vec4) implementation.
+        //rotY.m[0][0] = cosAngle; rotY.m[0][1] = 0.0f; rotY.m[0][2] = sinAngle; rotY.m[0][3] = 0.0f;
+        //rotY.m[1][0] = 0.0f;    rotY.m[1][1] = 1.0f; rotY.m[1][2] = 0.0f;     rotY.m[1][3] = 0.0f;
+        //rotY.m[2][0] = -sinAngle; rotY.m[2][1] = 0.0f; rotY.m[2][2] = cosAngle; rotY.m[2][3] = 0.0f;
+        //rotY.m[3][0] = 0.0f;    rotY.m[3][1] = 0.0f; rotY.m[3][2] = 0.0f;     rotY.m[3][3] = 1.0f;
 
-        Vec4 worldMove4 = rotY * Vec4(localMove.x, localMove.y, localMove.z, 0.0f);
+        Vec4 worldMove4 = RotateByY(playerTag.rotationY, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
         pos += Vec3(worldMove4.x, worldMove4.y, worldMove4.z);
         // Record player's current Z position for map generation
 
         if (App::IsKeyPressed(App::KEY_LEFT)) {
-            playerTag.rotationY += rotationSpeed * dtSec;
+            playerTag.rotationY -= rotationSpeed * dtSec;
         }
         if (App::IsKeyPressed(App::KEY_RIGHT)) {
-            playerTag.rotationY -= rotationSpeed * dtSec;
+            playerTag.rotationY += rotationSpeed * dtSec;
         }
             
         playerCurrentZ = pos.z;

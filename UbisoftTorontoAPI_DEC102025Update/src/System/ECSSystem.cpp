@@ -116,8 +116,13 @@ void EngineSystem::Render() {
         App::Print(250, 430, "Arrow Keys - Rotate Camera", 0.8f, 0.8f, 0.8f);
         App::Print(300, 480, "Press R anytime to Reset", 0.6f, 0.6f, 0.6f);
     } else if (gameState == GameState::GameOver) {
+        View<PlayerTag> playerView(*registry);
+        for (EntityID id : playerView) {
+            auto& playerTag = playerView.get<PlayerTag>(id);
+            App::Print(350, 350, ("Score: " + std::to_string(playerTag.score)).c_str(), 1.0f, 1.0f, 0.0f);
+        }
         App::Print(380, 300, "GAME OVER", 1.0f, 0.0f, 0.0f);
-        App::Print(350, 350, ("Score: " + std::to_string(gScore)).c_str(), 1.0f, 1.0f, 0.0f);
+        
         App::Print(300, 400, "Press R to Restart", 1.0f, 1.0f, 1.0f);
     }
 }

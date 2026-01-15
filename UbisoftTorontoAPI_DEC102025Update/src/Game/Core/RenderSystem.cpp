@@ -175,7 +175,6 @@ void RenderPlayerCube(const Transform3D& t, const Camera3D& camera) {
     float halfW = t.width / 2;
     float halfH = t.height / 2;
     float halfD = t.depth / 2;
-
     // Define 8 corners of the cube
     Vec3 corners[8] = {
         Vec3(t.pos.x - halfW, t.pos.y - halfH, t.pos.z - halfD), // 0: back-bottom-left
@@ -296,29 +295,17 @@ void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
 
         if (!spr.sprite) continue;
 
-        // ===========================================
-        // �ؼ���ʽ����ȥ Camera ƫ��
-        // ===========================================
-
-        // 1. ���㡾���桿����Ļ�ϵ�λ��
-        // ��ĻX = ����X - ���X
         float screenGroundX = pos.x - camera.x;
-        // ��ĻY = ����Z - ���Y
         float screenGroundY = pos.z - camera.y;
 
-        // ��׶�޳� (Culling): �������Ļ��Ͳ���
         if (screenGroundX < -100 || screenGroundX > camera.width + 100 ||
             screenGroundY < -100 || screenGroundY > camera.height + 100) {
             continue;
         }
 
-        // 2. ������Ӱ (��Զ���ڵ���λ��)
         float shadowSize = 20.0f;
-        // ��� DrawLine ������Ҫ RGB�������ú�ɫ (0,0,0)
 		gRenderHelper->DrawShadow(screenGroundX, screenGroundY, shadowSize);
 
-        // 3. �������� (������Ծ�߶�ƫ��)
-        // ֻ�������õ��� pos.y��
         float spriteScreenY = screenGroundY - pos.y;
 
         spr.sprite->SetPosition(screenGroundX, spriteScreenY);
@@ -335,7 +322,41 @@ inline float DistanceSq(float x1, float y1, float z1, float x2, float y2, float 
     float dz = z1 - z2;
     return dx * dx + dy * dy + dz * dz;
 }
+static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera) {
+    const float halfW = t.width * 0.5f;
+    const float halfH = t.height * 0.5f;
+    const float halfD = t.depth * 0.5f;
 
+    // 8 corners (world space)
+    const Vec3 corners[8] = {
+        Vec3(t.pos.x - halfW, t.pos.y - halfH, t.pos.z - halfD),
+        Vec3(t.pos.x + halfW, t.pos.y - halfH, t.pos.z - halfD),
+        Vec3(t.pos.x + halfW, t.pos.y + halfH, t.pos.z - halfD),
+        Vec3(t.pos.x - halfW, t.pos.y + halfH, t.pos.z - halfD),
+        Vec3(t.pos.x - halfW, t.pos.y - halfH, t.pos.z + halfD),
+        Vec3(t.pos.x + halfW, t.pos.y - halfH, t.pos.z + halfD),
+        Vec3(t.pos.x + halfW, t.pos.y + halfH, t.pos.z + halfD),
+        Vec3(t.pos.x - halfW, t.pos.y + halfH, t.pos.z + halfD)
+    };
+
+    const float cosAngle = std::cos(camera.rotationAngle);
+    const float sinAngle = std::sin(camera.rotationAngle);
+
+    float maxZ = -1e30f;
+
+    for (int i = 0; i < 8; ++i) {
+        // to camera-relative
+        const float rx = corners[i].x - camera.x;
+        const float rz = corners[i].z - camera.z;
+
+        // rotate around Y (same math as Project)
+        const float rotatedZ = -rx * sinAngle + rz * cosAngle ;
+
+        if (rotatedZ > maxZ) maxZ = rotatedZ;
+    }
+
+    return maxZ;
+}
 void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     View<Transform3D> view(registry);
     std::vector<EntityID> sortedEntities;
@@ -347,8 +368,12 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
         auto& ta = view.get<Transform3D>(a);
         auto& tb = view.get<Transform3D>(b);
-        float distA = DistanceSq(ta.pos.x, ta.pos.y, ta.pos.z, camera.x, camera.y, camera.z);
-        float distB = DistanceSq(tb.pos.x, tb.pos.y, tb.pos.z, camera.x, camera.y, camera.z);
+        //float distA = DistanceSq(ta.pos.x, ta.pos.y+ta.height, ta.pos.z+ta.depth, camera.x, camera.y, camera.z);
+        //float distB = DistanceSq(tb.pos.x, tb.pos.y+tb.height, tb.pos.z+tb.depth, camera.x, camera.y, camera.z);
+
+        float distA = MaxDepthInCameraSpace(ta, camera);
+        float distB = MaxDepthInCameraSpace(tb, camera);
+		if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { return ta.pos.y > tb.pos.y; }
         return distA < distB; // Render far to near (larger distance first)
     });
     

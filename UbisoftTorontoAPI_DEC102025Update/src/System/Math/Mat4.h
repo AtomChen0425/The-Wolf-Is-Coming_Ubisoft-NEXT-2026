@@ -48,3 +48,4 @@ struct Mat4
 			(rhs.x * m[3][0]) + (rhs.y * m[3][1]) + (rhs.z * m[3][2]) + (rhs.w * m[3][3]));
 	}
 };
+Vec4 RotateByY(float angleRad, Vec4 translation);
