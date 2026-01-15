@@ -76,8 +76,33 @@ void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
         enemyPos.pos = enemyPos.pos + dir * (enemySpeed * dtSec);
     }
 }
+void BulletMovementSystem(EntityManager& registry, const float deltaTimeMs) {
+    View<Transform3D, Bullet> bulletView(registry);
+    const float dtSec = deltaTimeMs / 1000.0f;
+
+    static std::vector<EntityID> bulletsToRemove;
+    bulletsToRemove.clear();
+	for (EntityID id : bulletView) {
+		auto& bulletPos = bulletView.get<Transform3D>(id).pos;
+		auto& bullet = bulletView.get<Bullet>(id);
+        bullet.lifetime -= deltaTimeMs;
+
+        // Remove bullet if lifetime expired
+        if (bullet.lifetime <= 0.0f) {
+            bulletsToRemove.push_back(id);
+            continue;
+        }
+		// Update bullet position based on its velocity
+		bulletPos += bullet.direction * (bullet.speed * dtSec);
+	
+	}
+    for (EntityID id : bulletsToRemove) {
+        registry.destroyEntity(id);
+    }
+}
 void MovementSystem::Update(EntityManager& registry, const float dt) {
-    SpriteMovementSystem3D(registry, dt);
+    BulletMovementSystem(registry, dt);
+    //SpriteMovementSystem3D(registry, dt);
     /*SpriteMovementSystem(registry, dt);
     EnemyMovementSystem(registry, dt);*/
 }

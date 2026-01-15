@@ -32,7 +32,7 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
             const float knockbackImpulse = 10.0f;
 
             playerRigidBody.force = dir * knockbackImpulse;
-            registry.destroyEntity(Entity{ enemyId, registry.getEntityVersion(enemyId) });
+            registry.destroyEntity(enemyId);
             break;
         }
     }
@@ -174,6 +174,7 @@ void CheckPlayerGetPoints(EntityManager& registry) {
         }
 	}
 }
+
 
 void CollisionSystem::Update(EntityManager& registry) {
     CheckPlayer3DCollisions(registry);

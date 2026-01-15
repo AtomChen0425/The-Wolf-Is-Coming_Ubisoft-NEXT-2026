@@ -33,6 +33,7 @@ struct PlayerTag {
     float rotationYaw;
     int score;
     float rotationPitch;
+    float shootCooldown = 100.0f;
 };
 struct EnemyTag {};
 

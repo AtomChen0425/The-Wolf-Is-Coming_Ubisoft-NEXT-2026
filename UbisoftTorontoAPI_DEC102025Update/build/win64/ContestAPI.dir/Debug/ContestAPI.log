@@ -1,5 +1,7 @@
 ﻿  SimpleController.cpp
   SimpleSound.cpp
-  stb_image.cpp
+  SimpleSprite.cpp
+  app.cpp
+  main.cpp
   Generating Code...
   ContestAPI.vcxproj -> D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\ContestAPI.lib

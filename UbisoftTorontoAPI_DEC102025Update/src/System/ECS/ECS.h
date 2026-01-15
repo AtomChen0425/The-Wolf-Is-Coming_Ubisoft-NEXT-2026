@@ -181,23 +181,22 @@ public:
         entityMasks[e.id] &= ~(1ULL << typeId);
     }
 
-    void destroyEntity(Entity e) {
+    void destroyEntity(EntityID eID) {
+		Entity e{ eID, getEntityVersion(eID) };
         if (!isValid(e)) return;
 
-        // 1. 遍历掩码，从所有池子中移除该实体
         uint64_t mask = entityMasks[e.id];
-        // 简单循环遍历每一位（实际应用可用 __builtin_ctz 优化）
+
         for (std::size_t typeId = 0; typeId < m_componentPools.size(); ++typeId) {
             if ((mask & (1ULL << typeId)) && m_componentPools[typeId]) {
                 m_componentPools[typeId]->removeIfExists(e.id);
             }
         }
 
-        // 2. 状态重置
         aliveEntities.reset(e.id);
         entityMasks[e.id] = 0;
-        entityVersions[e.id]++; // 版本升级，使旧 Entity 句柄失效
-        freeIndices.push_back(e.id); // 加入回收站
+        entityVersions[e.id]++; 
+        freeIndices.push_back(e.id); 
     }
 
     bool isValid(Entity e) {

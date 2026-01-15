@@ -179,7 +179,7 @@ void RenderBullets3D(EntityManager& registry, Camera3D& camera) {
     for (EntityID id : bulletView) {
         auto& t = bulletView.get<Transform3D>(id);
         // Render bullets as small cubes
-        gRenderHelper->RenderCube(t, camera);
+        gRenderHelper->RenderCube_inNDC(t, camera);
     }
 }
 void RenderSystem::Render(EntityManager& registry) {

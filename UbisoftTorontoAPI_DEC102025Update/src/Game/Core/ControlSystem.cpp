@@ -131,7 +131,34 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
     GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ);
 }
 
+void FireControl(EntityManager& registry, float dt) {
+    float dtSec = dt / 1000.0f;
+	const float bulletSpeed = 600.0f; // Speed of the bullet
+    View<PlayerTag, Transform3D, Velocity3D> view(registry);
+    for (EntityID id : view) {
+        auto& playerTag = view.get<PlayerTag>(id);
+        playerTag.shootCooldown -= dt;
+        auto& playerTransform = view.get<Transform3D>(id);
+
+        if (App::IsKeyPressed(App::KEY_J) && playerTag.shootCooldown <= 0.0f) {
+            // Fire a bullet
+            Vec3 bulletDirection = Vec3{std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
+                                        std::sin(playerTag.rotationPitch), 
+                                        std::cos(playerTag.rotationPitch) * std::cos(playerTag.rotationYaw)};
+            Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+
+            // Create bullet entity
+            Entity bullet = registry.createEntity();
+			registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,10,true});
+            registry.addComponent(bullet, Transform3D{ bulletPosition, 5.0f, 5.0f, 5.0f, 0.5f, 0.0f, 0.5f });
+            registry.addComponent(bullet, Velocity3D{ bulletDirection * bulletSpeed });
+            playerTag.shootCooldown = 100.0f;
+        }
+    }
+}
+
 void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings)
 {
     PlayerControl3D(registry, dt, nextSpawnZ, camera, settings);
+    FireControl(registry, dt);
 }

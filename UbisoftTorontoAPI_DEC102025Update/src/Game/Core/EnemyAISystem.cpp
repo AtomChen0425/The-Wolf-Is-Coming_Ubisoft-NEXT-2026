@@ -170,7 +170,7 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
     
     // Remove expired bullets
     for (EntityID id : bulletsToRemove) {
-        registry.destroyEntity(Entity{id,registry.getEntityVersion(id)});
+        registry.destroyEntity(id);
     }
 }
 

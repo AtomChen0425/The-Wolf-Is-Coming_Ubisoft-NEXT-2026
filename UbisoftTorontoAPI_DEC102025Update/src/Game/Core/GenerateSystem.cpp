@@ -120,7 +120,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
     }
     
     for (EntityID id : toDestroy) {
-        registry.destroyEntity(Entity{ id, registry.getEntityVersion(id) });
+        registry.destroyEntity(id);
     }
 }
 void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
@@ -139,10 +139,10 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
         20.0f,   // depth
         1.0f,    // r: red
         0.0f,    // g
-        0.0f     // b
+        0.0f,    // b
     });
     registry.addComponent(entity, Velocity3D{});
-    registry.addComponent(entity, PlayerTag{true, 0, 0});
+    registry.addComponent(entity, PlayerTag{true, 0, 0, 0});
 }
 
 // Create a default simple template

@@ -119,7 +119,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Check and resolve collisions (after movement is applied)
         CollisionSystem::Update(*registry);
-
+        MovementSystem::Update(*registry, deltaTimeMs);
         PhysicsSystem::Update(*registry, deltaTimeMs);
         // Check for game over conditions (player fell off the world)
         View<PlayerTag, Transform3D> playerView(*registry);
