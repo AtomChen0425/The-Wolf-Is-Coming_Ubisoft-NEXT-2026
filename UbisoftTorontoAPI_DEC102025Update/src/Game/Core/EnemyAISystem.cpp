@@ -3,6 +3,9 @@
 #include "../../System/Math/Vec3.h"
 #include <cmath>
 
+// Configuration constants
+static const float MAX_BULLET_DISTANCE = 5000.0f;  // Maximum distance bullets can travel from origin
+
 // Helper function to calculate distance between two 3D points
 static float Distance3D(const Vec3& a, const Vec3& b) {
     float dx = a.x - b.x;
@@ -18,20 +21,21 @@ static Vec3 Normalize3D(const Vec3& v) {
     return Vec3(v.x / len, v.y / len, v.z / len);
 }
 
-void EnemyAISystem::UpdateEnemyMovement(EntityManager& registry, const float deltaTimeMs) {
-    // Find player position
-    Vec3 playerPos(0.0f, 0.0f, 0.0f);
-    bool playerFound = false;
-    
+// Helper function to get player position
+static bool GetPlayerPosition(EntityManager& registry, Vec3& outPosition) {
     View<PlayerTag, Transform3D> playerView(registry);
     for (EntityID id : playerView) {
         auto& transform = playerView.get<Transform3D>(id);
-        playerPos = transform.pos;
-        playerFound = true;
-        break; // Only need one player
+        outPosition = transform.pos;
+        return true;
     }
-    
-    if (!playerFound) return;
+    return false;
+}
+
+void EnemyAISystem::UpdateEnemyMovement(EntityManager& registry, const float deltaTimeMs) {
+    // Find player position
+    Vec3 playerPos;
+    if (!GetPlayerPosition(registry, playerPos)) return;
     
     // Update all enemies with EnemyMoveToPlayer component
     View<EnemyTag, Transform3D, EnemyMoveToPlayer> enemyView(registry);
@@ -67,18 +71,8 @@ void EnemyAISystem::UpdateEnemyMovement(EntityManager& registry, const float del
 
 void EnemyAISystem::UpdateEnemyShooting(EntityManager& registry, const float deltaTimeMs) {
     // Find player position
-    Vec3 playerPos(0.0f, 0.0f, 0.0f);
-    bool playerFound = false;
-    
-    View<PlayerTag, Transform3D> playerView(registry);
-    for (EntityID id : playerView) {
-        auto& transform = playerView.get<Transform3D>(id);
-        playerPos = transform.pos;
-        playerFound = true;
-        break;
-    }
-    
-    if (!playerFound) return;
+    Vec3 playerPos;
+    if (!GetPlayerPosition(registry, playerPos)) return;
     
     // Update all enemies with EnemyShootAtPlayer component
     View<EnemyTag, Transform3D, EnemyShootAtPlayer> enemyView(registry);
@@ -141,7 +135,9 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
     View<Transform3D, Bullet> bulletView(registry);
     const float dtSec = deltaTimeMs / 1000.0f;
     
-    std::vector<EntityID> bulletsToRemove;
+    // Reuse vector across frames to avoid repeated allocations
+    static std::vector<EntityID> bulletsToRemove;
+    bulletsToRemove.clear();
     
     for (EntityID id : bulletView) {
         auto& transform = bulletView.get<Transform3D>(id);
@@ -161,13 +157,13 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
         transform.pos.y += bullet.direction.y * bullet.speed * dtSec;
         transform.pos.z += bullet.direction.z * bullet.speed * dtSec;
         
-        // Optional: Remove bullets that are too far from origin
+        // Remove bullets that are too far from origin
         float distanceFromOrigin = std::sqrt(
             transform.pos.x * transform.pos.x + 
             transform.pos.y * transform.pos.y + 
             transform.pos.z * transform.pos.z
         );
-        if (distanceFromOrigin > 5000.0f) {
+        if (distanceFromOrigin > MAX_BULLET_DISTANCE) {
             bulletsToRemove.push_back(id);
         }
     }
