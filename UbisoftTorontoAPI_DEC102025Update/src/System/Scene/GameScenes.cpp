@@ -1,4 +1,5 @@
 #include "GameScenes.h"
+#include "../ECSSystem.h"
 #include "../../ContestAPI/app.h"
 #include "../Component/Component.h"
 #include "../ECS/ECS.h"

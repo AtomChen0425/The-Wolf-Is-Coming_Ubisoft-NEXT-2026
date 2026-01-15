@@ -12,3 +12,6 @@ CMakeFiles/
 *.dll
 *.exe
 *.app
+
+# Example/documentation files (not for compilation)
+SCENE_UI_EXAMPLES.cpp

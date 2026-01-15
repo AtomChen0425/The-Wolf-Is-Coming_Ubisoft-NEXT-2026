@@ -2,7 +2,9 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include "../UI/UISystem.h"
+
+// Forward declaration to avoid circular dependency
+class UIManager;
 
 // Forward declarations
 class EntityManager;

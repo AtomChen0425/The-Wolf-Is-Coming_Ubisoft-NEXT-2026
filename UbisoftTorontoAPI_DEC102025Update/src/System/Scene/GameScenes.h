@@ -1,10 +1,10 @@
 #pragma once
 #include "SceneManager.h"
-#include "../ECSSystem.h"
 #include "../UI/UISystem.h"
 #include <memory>
 
 // Forward declarations
+class EngineSystem;
 class EntityManager;
 struct Camera3D;
 
