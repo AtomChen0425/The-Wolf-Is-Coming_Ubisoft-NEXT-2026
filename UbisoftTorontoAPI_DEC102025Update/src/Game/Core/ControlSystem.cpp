@@ -140,7 +140,7 @@ void FireControl(EntityManager& registry, float dt) {
         playerTag.shootCooldown -= dt;
         auto& playerTransform = view.get<Transform3D>(id);
 
-        if (App::IsKeyPressed(App::KEY_J) && playerTag.shootCooldown <= 0.0f) {
+        if ((App::IsKeyPressed(App::KEY_J) || App::IsMousePressed(0)) && playerTag.shootCooldown <= 0.0f) {
             // Fire a bullet
             Vec3 bulletDirection = Vec3{std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
                                         std::sin(playerTag.rotationPitch), 

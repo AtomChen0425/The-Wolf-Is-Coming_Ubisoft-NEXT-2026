@@ -128,7 +128,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
         // Apply floor collision if detected
         if (highestFloor > -999.0f) {
             float playerBottom = pos.y - playerTransform.height / 2;
-            if (playerBottom <= highestFloor + 0.5f) {
+            if (playerBottom <= highestFloor + 2.0f) {
                 pos.y = highestFloor + playerTransform.height / 2;
                 vel.y = 0.0f;
                 playerTag.isOnGround = true;
