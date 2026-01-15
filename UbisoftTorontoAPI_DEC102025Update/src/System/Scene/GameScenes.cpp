@@ -38,12 +38,17 @@ void StartScene::Render() {
 
 // PlayingScene Implementation
 PlayingScene::PlayingScene(EngineSystem* engine) 
-    : engineSystem(engine) {
+    : engineSystem(engine), m_lastScore(-1), scoreText(nullptr) {
 }
 
 void PlayingScene::OnEnter() {
     uiManager.Clear();
     // No persistent UI in playing scene (could add score display here)
+    scoreText = uiManager.AddText("Score: 0", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
+
+    // 重置缓存的分数
+    m_lastScore = -1;
+    
 }
 
 void PlayingScene::OnExit() {
@@ -52,11 +57,31 @@ void PlayingScene::OnExit() {
 
 void PlayingScene::Update(float deltaTimeMs) {
     // Game logic updates are handled by EngineSystem
+    EntityManager& registry = engineSystem->GetRegistry();
+    View<PlayerTag> playerView(registry);
+
+    // 2. 遍历查找玩家 (通常只有一个)
+    for (EntityID id : playerView) {
+        auto& player = playerView.get<PlayerTag>(id);
+
+        // 3. 检查分数是否发生变化 (优化：只有变化时才更新 UI)
+        if (player.score != m_lastScore) {
+            m_lastScore = player.score;
+
+            // 4. 使用指针更新文字
+            if (scoreText) {
+                // 如果 text 是 public 的：
+                scoreText->SetText("Score: " + std::to_string(m_lastScore));
+
+            }
+        }
+    }
 }
 
 void PlayingScene::Render() {
     // Optional: Render HUD elements like score
     uiManager.Render();
+
 }
 
 // GameOverScene Implementation

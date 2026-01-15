@@ -43,6 +43,15 @@
     <ClCompile Include="..\..\src\Game\Core\EnemyAISystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\System\Scene\GameScenes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\System\Scene\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\System\UI\UISystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.h">
@@ -103,6 +112,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Game\Core\EnemyAISystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Scene\GameScenes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\Scene\SceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\System\UI\UISystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

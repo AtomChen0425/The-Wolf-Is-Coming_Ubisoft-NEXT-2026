@@ -162,7 +162,7 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
             1.0f, 1.0f, 1.0f);
         
         // Display controls info
-        App::Print(50, 80, "Controls: WASD to move, SPACE to jump, Arrow keys to rotate", 1.0f, 1.0f, 0.0f);
+        //App::Print(50, 80, "Controls: WASD to move, SPACE to jump, Arrow keys to rotate", 1.0f, 1.0f, 0.0f);
     }
 }
 

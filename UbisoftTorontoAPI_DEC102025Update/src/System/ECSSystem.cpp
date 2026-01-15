@@ -98,7 +98,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Update player control (handles input and movement)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ);
-        
+        sceneManager.Update(deltaTimeMs);
         // Update enemy AI (movement, shooting, bullets)
         //EnemyAISystem::Update(*registry, deltaTimeMs);
         

@@ -38,6 +38,8 @@ public:
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
+    int m_lastScore;
+    UIText* scoreText;
 };
 
 // Game Over Scene

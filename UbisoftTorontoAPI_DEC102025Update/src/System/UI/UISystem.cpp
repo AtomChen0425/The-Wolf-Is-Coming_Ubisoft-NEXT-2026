@@ -9,13 +9,13 @@ void UIElement::GetScreenPosition(float& outX, float& outY) const {
     
     // Apply alignment offset
     switch (alignment) {
-        case UIAlignment::TopLeft:
+        case UIAlignment::BottomLeft:
             // No offset needed, x and y are already absolute
             break;
-        case UIAlignment::TopCenter:
+        case UIAlignment::BottomCenter:
             outX = (APP_VIRTUAL_WIDTH / 2.0f) + x;
             break;
-        case UIAlignment::TopRight:
+        case UIAlignment::BottomRight:
             outX = APP_VIRTUAL_WIDTH - x;
             break;
         case UIAlignment::MiddleLeft:
@@ -29,16 +29,16 @@ void UIElement::GetScreenPosition(float& outX, float& outY) const {
             outX = APP_VIRTUAL_WIDTH - x;
             outY = (APP_VIRTUAL_HEIGHT / 2.0f) + y;
             break;
-        case UIAlignment::BottomLeft:
-            outY = APP_VIRTUAL_HEIGHT - y;
+        case UIAlignment::TopLeft:
+            outY = APP_VIRTUAL_HEIGHT * 0.95 - y;
             break;
-        case UIAlignment::BottomCenter:
+        case UIAlignment::TopCenter:
             outX = (APP_VIRTUAL_WIDTH / 2.0f) + x;
-            outY = APP_VIRTUAL_HEIGHT - y;
+            outY = APP_VIRTUAL_HEIGHT * 0.95 - y;
             break;
-        case UIAlignment::BottomRight:
+        case UIAlignment::TopRight:
             outX = APP_VIRTUAL_WIDTH - x;
-            outY = APP_VIRTUAL_HEIGHT - y;
+            outY = APP_VIRTUAL_HEIGHT * 0.95 - y;
             break;
     }
 }
