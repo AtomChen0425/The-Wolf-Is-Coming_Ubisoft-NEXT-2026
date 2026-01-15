@@ -259,7 +259,7 @@ void RenderHelper::RenderCube_inNDC(const Transform3D& t, const Camera3D& camera
 
         // Vector to camera
         const Vec3 toCam(camera.x - c.x, camera.y - c.y, camera.z - c.z);
-        const float dot = toCam.x * n.x + toCam.y * n.y + toCam.z * n.z;
+		const float dot = Dot3(toCam, n);
         if (dot >= 0.0f) continue;
 
         const float r = faceColors[f][0];

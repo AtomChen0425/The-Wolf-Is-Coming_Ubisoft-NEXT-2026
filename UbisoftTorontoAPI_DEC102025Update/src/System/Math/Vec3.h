@@ -89,3 +89,7 @@ static Vec3 Cross3(const Vec3& a, const Vec3& b)
 		a.z * b.x - a.x * b.z,
 		a.x * b.y - a.y * b.x);
 }
+static float Dot3(const Vec3& a, const Vec3& b)
+{
+	return a.x * b.x + a.y * b.y + a.z * b.z;
+}

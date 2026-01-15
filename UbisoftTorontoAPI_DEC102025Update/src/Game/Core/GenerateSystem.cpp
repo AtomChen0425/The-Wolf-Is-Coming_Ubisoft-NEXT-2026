@@ -45,7 +45,7 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
         registry.addComponent(enemy, Position{ pos });
         registry.addComponent(enemy, Velocity{ Vec2{ 0.0f, 0.0f } });
         registry.addComponent(enemy, EnemyTag{});
-        registry.addComponent(enemy, RigidBody{ 20.0f, 20.0f, Vec2{ 0.0f, 0.0f } }); // �������
+        registry.addComponent(enemy, RigidBody{ 20.0f, 20.0f, Vec2{ 0.0f, 0.0f } }); 
         registry.addComponent(enemy, Health{ 100, 100 });
     }
 }

@@ -17,8 +17,6 @@ void SpriteMovementSystem(EntityManager& registry, float dtMs) {
             const float invMass = (rb.mass > 0.0001f) ? (1.0f / rb.mass) : 0.0f;
             const Vec2 accel = rb.force * invMass;
             vel.vel = vel.vel + accel * dtMs;
-
-            // 2) force ��һ���Եģ����ֻ����һ֡���������������
             rb.force = { 0.0f, 0.0f };
         }
 
@@ -44,7 +42,7 @@ void SpriteMovementSystem3D(EntityManager& registry, float dtMs) {
             rb.force = { 0.0f, 0.0f };
         }
         pos.x = pos.x + vel.x * dtSec;
-        pos.z = pos.z + vel.x * dtSec;
+        pos.z = pos.z + vel.z * dtSec;
     }
 }
 void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
@@ -56,20 +54,17 @@ void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
 
     for (EntityID id : playerView) {
         auto& pos = playerView.get<Position>(id);
-        targetPos = pos.pos; // ��¼���λ��
+        targetPos = pos.pos; //
         playerFound = true;
-        break; // ֻҪ�ҵ�һ����Ҿ�ֹͣ��������Ϸ��
+        break; // 
     }
 
-    // ���������˻��߻�û���ɣ��Ͳ�Ҫ���е��˵��߼�����ֹ��������
+    //
     if (!playerFound) return;
 
 
-    // ==================================================
-    // 2. �ڶ������������е��� (Process Enemies)
-    // ==================================================
 
-    // View<EnemyTag, Position, Velocity>: ֻɸѡ����
+    // View<EnemyTag, Position, Velocity>: 
     View<EnemyTag, Position, Velocity> enemyView(registry);
     const float enemySpeed = 130.0f;
     const float dtSec = deltaTimeMs / 1000.0f;

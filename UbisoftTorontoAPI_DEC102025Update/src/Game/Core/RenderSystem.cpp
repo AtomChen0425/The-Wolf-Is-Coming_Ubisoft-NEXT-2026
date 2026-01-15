@@ -38,7 +38,6 @@ void UpdateSpriteAnimation(EntityManager& registry, const float dt) {
 void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
     View<Position3D, SpriteComponent> view(registry);
 
-    // �����߼� (Y-Sorting) - ��ѡ�����������
     std::vector<EntityID> sortedEntities;
     for (EntityID id : view) sortedEntities.push_back(id);
     std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
@@ -117,29 +116,29 @@ static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera)
 }
 void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
     // Only render map blocks, not the player
-    View<Transform3D> view(registry);
+    View<Transform3D, MapBlockTag> view(registry);
     std::vector<EntityID> sortedEntities;
     for (EntityID id : view) {
         sortedEntities.push_back(id);
     }
 
-    // Sort by minimum depth in camera space for proper rendering order
-    // Painter's algorithm: render far to near (larger depth values first)
-    std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
-        auto& ta = view.get<Transform3D>(a);
-        auto& tb = view.get<Transform3D>(b);
+    //// Sort by minimum depth in camera space for proper rendering order
+    //// Painter's algorithm: render far to near (larger depth values first)
+    //std::sort(sortedEntities.begin(), sortedEntities.end(), [&](EntityID a, EntityID b) {
+    //    auto& ta = view.get<Transform3D>(a);
+    //    auto& tb = view.get<Transform3D>(b);
 
-        float distA = MaxDepthInCameraSpace(ta, camera);
-        float distB = MaxDepthInCameraSpace(tb, camera);
-        
-        // If blocks are at the same position, render taller blocks first
-        if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { 
-            return ta.pos.y > tb.pos.y; 
-        }
-        
-        // Render far to near: larger depth first
-        return distA < distB;
-    });
+    //    float distA = MaxDepthInCameraSpace(ta, camera);
+    //    float distB = MaxDepthInCameraSpace(tb, camera);
+    //    
+    //    // If blocks are at the same position, render taller blocks first
+    //    if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { 
+    //        return ta.pos.y > tb.pos.y; 
+    //    }
+    //    
+    //    
+    //    return distA < distB;
+    //});
     
     for (EntityID id : sortedEntities) {
         auto& t = view.get<Transform3D>(id);
@@ -154,7 +153,7 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
         //RenderPlayerCube(t, camera);
-        
+        gRenderHelper->RenderCube_inNDC(t, camera);
         // Display player position info
         App::Print(50, 50, 
             ("Player Pos - X:" + std::to_string((int)t.pos.x) + 
