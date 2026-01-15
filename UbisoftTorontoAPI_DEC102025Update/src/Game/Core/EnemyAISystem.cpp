@@ -106,7 +106,7 @@ void EnemyAISystem::UpdateEnemyShooting(EntityManager& registry, const float del
             direction = Normalize3D(direction);
             
             // Create bullet entity
-            EntityID bulletId = registry.CreateEntity();
+            Entity bulletId = registry.createEntity();
             
             // Add Transform3D component (bullet starts at enemy position)
             Transform3D bulletTransform;
@@ -117,7 +117,7 @@ void EnemyAISystem::UpdateEnemyShooting(EntityManager& registry, const float del
             bulletTransform.r = 1.0f;
             bulletTransform.g = 0.0f;
             bulletTransform.b = 0.0f; // Red color for enemy bullets
-            registry.AddComponent(bulletId, bulletTransform);
+            registry.addComponent(bulletId, bulletTransform);
             
             // Add Bullet component
             Bullet bulletComponent;
@@ -126,7 +126,7 @@ void EnemyAISystem::UpdateEnemyShooting(EntityManager& registry, const float del
             bulletComponent.lifetime = 5000.0f; // 5 seconds
             bulletComponent.damage = 10.0f;
             bulletComponent.isPlayerBullet = false;
-            registry.AddComponent(bulletId, bulletComponent);
+            registry.addComponent(bulletId, bulletComponent);
         }
     }
 }
@@ -170,7 +170,7 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
     
     // Remove expired bullets
     for (EntityID id : bulletsToRemove) {
-        registry.DestroyEntity(id);
+        registry.destroyEntity(Entity{id,registry.getEntityVersion(id)});
     }
 }
 

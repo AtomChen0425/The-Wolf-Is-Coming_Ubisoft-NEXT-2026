@@ -86,7 +86,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ);
         
         // Update enemy AI (movement, shooting, bullets)
-        EnemyAISystem::Update(*registry, deltaTimeMs);
+        //EnemyAISystem::Update(*registry, deltaTimeMs);
         
         // Check and resolve collisions (after movement is applied)
         CollisionSystem::Update(*registry);

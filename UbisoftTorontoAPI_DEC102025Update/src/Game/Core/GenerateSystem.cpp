@@ -338,7 +338,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
 // Create a test enemy with AI components
 // This function demonstrates how to create enemies with movement and shooting AI
 void GenerateSystem::CreateTestEnemyWithAI(EntityManager& registry, float x, float y, float z, bool enableMovement, bool enableShooting) {
-    EntityID enemy = registry.CreateEntity();
+    Entity enemy = registry.createEntity();
     
     // Add Transform3D component for 3D positioning
     Transform3D transform;
@@ -349,10 +349,10 @@ void GenerateSystem::CreateTestEnemyWithAI(EntityManager& registry, float x, flo
     transform.r = 1.0f;
     transform.g = 0.5f;
     transform.b = 0.0f;  // Orange color for enemies
-    registry.AddComponent(enemy, transform);
+    registry.addComponent(enemy, transform);
     
     // Add EnemyTag to mark this as an enemy
-    registry.AddComponent(enemy, EnemyTag{});
+    registry.addComponent(enemy, EnemyTag{});
     
     // Add movement AI component if enabled
     if (enableMovement) {
@@ -360,7 +360,7 @@ void GenerateSystem::CreateTestEnemyWithAI(EntityManager& registry, float x, flo
         moveComponent.speed = 50.0f;           // 50 units per second
         moveComponent.detectionRange = 500.0f; // Can detect player within 500 units
         moveComponent.isActive = true;
-        registry.AddComponent(enemy, moveComponent);
+        registry.addComponent(enemy, moveComponent);
     }
     
     // Add shooting AI component if enabled
@@ -371,6 +371,6 @@ void GenerateSystem::CreateTestEnemyWithAI(EntityManager& registry, float x, flo
         shootComponent.detectionRange = 400.0f;      // Can shoot player within 400 units
         shootComponent.projectileSpeed = 200.0f;     // Bullet speed: 200 units/sec
         shootComponent.isActive = true;
-        registry.AddComponent(enemy, shootComponent);
+        registry.addComponent(enemy, shootComponent);
     }
 }
