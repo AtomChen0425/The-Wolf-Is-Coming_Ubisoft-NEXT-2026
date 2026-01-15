@@ -292,6 +292,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                         blockSize, solidBlockHeight, blockSize,
                         true, false  // Can stand on top, not a wall
                     });
+					registry.addComponent(block, Health{ 50,50 });
                     break;
                 }
                 

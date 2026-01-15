@@ -174,9 +174,51 @@ void CheckPlayerGetPoints(EntityManager& registry) {
         }
 	}
 }
-
+void CheckBulletDamage(EntityManager& registry) {
+    static std::vector<EntityID> blockToRemove;
+    blockToRemove.clear();
+    static std::vector<EntityID> bulletToRemove;
+    bulletToRemove.clear();
+    View<Bullet, Transform3D> bulletView(registry);
+    View<Health, Transform3D> enemyView(registry);
+    for (EntityID bulletId : bulletView) {
+		float bulletDamage = bulletView.get<Bullet>(bulletId).damage;
+        auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+        Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
+            bulletPos.y - bulletTransform.height / 2,
+            bulletPos.z - bulletTransform.depth / 2);
+        Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
+            bulletPos.y + bulletTransform.height / 2,
+            bulletPos.z + bulletTransform.depth / 2);
+        for (EntityID enemyId : enemyView) {
+            auto& enemyHealth = enemyView.get<Health>(enemyId);
+			auto& enemyTransform = enemyView.get<Transform3D>(enemyId);
+            Vec3 colliderMin(enemyTransform.pos.x - enemyTransform.width / 2,
+                enemyTransform.pos.y - enemyTransform.height / 2,
+                enemyTransform.pos.z - enemyTransform.depth / 2);
+            Vec3 colliderMax(enemyTransform.pos.x + enemyTransform.width / 2,
+                enemyTransform.pos.y + enemyTransform.height / 2,
+                enemyTransform.pos.z + enemyTransform.depth / 2);
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+				bulletToRemove.push_back(bulletId);
+                enemyHealth.currentHealth -= bulletDamage;
+                if (enemyHealth.currentHealth <= 0) {
+                    blockToRemove.push_back(enemyId);
+                }
+            }
+        }
+    }
+    for (EntityID id : bulletToRemove) {
+        registry.destroyEntity(id);
+	}
+    for (EntityID id : blockToRemove) {
+        registry.destroyEntity(id);
+	}
+}
 
 void CollisionSystem::Update(EntityManager& registry) {
     CheckPlayer3DCollisions(registry);
     CheckPlayerGetPoints(registry);
+    CheckBulletDamage(registry);
 }
