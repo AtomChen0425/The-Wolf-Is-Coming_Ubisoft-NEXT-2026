@@ -8,6 +8,7 @@
 #include "../Game/Core/CollisionSystem.h"
 #include "../Game/Core/CameraSystem.h"
 #include "../Game/Core/PhysicsSystem.h"
+#include "../Game/Core/EnemyAISystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 
@@ -83,6 +84,9 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Update player control (handles input and movement)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ);
+        
+        // Update enemy AI (movement, shooting, bullets)
+        EnemyAISystem::Update(*registry, deltaTimeMs);
         
         // Check and resolve collisions (after movement is applied)
         CollisionSystem::Update(*registry);
