@@ -27,9 +27,18 @@ struct Camera3D {
     float followOffsetZ = -700.0f;
     float followOffsetX = 0.0f;
     
-    // Camera rotation angle in radians (rotation around Y axis)
+    // Camera rotation angle in radians (rotation around Y axis - yaw)
     // 0 = looking along +Z, PI/2 = looking along +X
     float rotationAngle = 0.0f;
+    
+    // Camera pitch angle in radians (up/down viewing angle)
+    // 0 = looking straight ahead, positive = looking up, negative = looking down
+    float pitchAngle = 0.0f;
+    
+    // Mouse control state
+    float lastMouseX = 0.0f;
+    float lastMouseY = 0.0f;
+    bool mouseInitialized = false;
 };
 
 enum class GameState {

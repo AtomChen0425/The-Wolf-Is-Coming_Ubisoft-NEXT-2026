@@ -96,20 +96,27 @@ static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera)
         Vec3(t.pos.x - halfW, t.pos.y + halfH, t.pos.z + halfD)
     };
 
-    const float cosAngle = std::cos(camera.rotationAngle);
-    const float sinAngle = std::sin(camera.rotationAngle);
+    const float cosYaw = std::cos(camera.rotationAngle);
+    const float sinYaw = std::sin(camera.rotationAngle);
+    const float cosPitch = std::cos(camera.pitchAngle);
+    const float sinPitch = std::sin(camera.pitchAngle);
 
     float maxZ = -1e30f;
 
     for (int i = 0; i < 8; ++i) {
         // to camera-relative
         const float rx = corners[i].x - camera.x;
-        const float rz = corners[i].z - camera.z +camera.followOffsetZ;
+        const float ry = corners[i].y - camera.y;
+        const float rz = corners[i].z - camera.z + camera.followOffsetZ;
 
-        // rotate around Y (same math as Project)
-        const float rotatedZ = -rx * sinAngle + rz * cosAngle;
+        // First rotate around Y (yaw)
+        const float rotatedX = rx * cosYaw + rz * sinYaw;
+        const float rotatedZ = -rx * sinYaw + rz * cosYaw;
+        
+        // Then apply pitch
+        const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
 
-        if (rotatedZ > maxZ) maxZ = rotatedZ;
+        if (pitchedZ > maxZ) maxZ = pitchedZ;
     }
 
     return maxZ;

@@ -19,8 +19,9 @@ void StartScene::OnEnter() {
     // Instructions
     uiManager.AddText("Press SPACE to Start", -100, -50, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Controls: WASD - Move, SPACE - Jump", -150, 0, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Arrow Keys - Rotate Camera", -120, 30, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Press R anytime to Reset", -100, 80, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Mouse - Control Camera View (Pitch/Yaw)", -165, 30, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Arrow Keys - Alternative Camera Rotation", -155, 60, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Press R anytime to Reset", -100, 100, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
 }
 
 void StartScene::OnExit() {
@@ -46,7 +47,7 @@ void PlayingScene::OnEnter() {
     // No persistent UI in playing scene (could add score display here)
     scoreText = uiManager.AddText("Score: 0", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
 
-    // ÖØÖÃ»º´æµÄ·ÖÊý
+    // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
     m_lastScore = -1;
     
 }
@@ -60,17 +61,17 @@ void PlayingScene::Update(float deltaTimeMs) {
     EntityManager& registry = engineSystem->GetRegistry();
     View<PlayerTag> playerView(registry);
 
-    // 2. ±éÀú²éÕÒÍæ¼Ò (Í¨³£Ö»ÓÐÒ»¸ö)
+    // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Í¨ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½)
     for (EntityID id : playerView) {
         auto& player = playerView.get<PlayerTag>(id);
 
-        // 3. ¼ì²é·ÖÊýÊÇ·ñ·¢Éú±ä»¯ (ÓÅ»¯£ºÖ»ÓÐ±ä»¯Ê±²Å¸üÐÂ UI)
+        // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ä»¯ (ï¿½Å»ï¿½ï¿½ï¿½Ö»ï¿½Ð±ä»¯Ê±ï¿½Å¸ï¿½ï¿½ï¿½ UI)
         if (player.score != m_lastScore) {
             m_lastScore = player.score;
 
-            // 4. Ê¹ÓÃÖ¸Õë¸üÐÂÎÄ×Ö
+            // 4. Ê¹ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (scoreText) {
-                // Èç¹û text ÊÇ public µÄ£º
+                // ï¿½ï¿½ï¿½ text ï¿½ï¿½ public ï¿½Ä£ï¿½
                 scoreText->SetText("Score: " + std::to_string(m_lastScore));
 
             }

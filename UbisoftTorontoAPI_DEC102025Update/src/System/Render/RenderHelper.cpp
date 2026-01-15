@@ -14,22 +14,29 @@ bool Project(float wx, float wy, float wz, const Camera3D& cam, float& outX, flo
     float ry = wy - cam.y;
     float rz = wz - cam.z;
 
-    // Rotate the view coordinates by the camera's rotation angle (around Y axis)
-    float cosAngle = std::cos(cam.rotationAngle);
-    float sinAngle = std::sin(cam.rotationAngle);
+    // First rotate around Y axis (yaw)
+    float cosYaw = std::cos(cam.rotationAngle);
+    float sinYaw = std::sin(cam.rotationAngle);
 
-    float rotatedX = rx * cosAngle + rz * sinAngle;
-    float rotatedZ = -rx * sinAngle + rz * cosAngle;
+    float rotatedX = rx * cosYaw + rz * sinYaw;
+    float rotatedZ = -rx * sinYaw + rz * cosYaw;
+    
+    // Then apply pitch rotation (rotate around X axis in camera space)
+    float cosPitch = std::cos(cam.pitchAngle);
+    float sinPitch = std::sin(cam.pitchAngle);
+    
+    float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+    float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
 
-    // Use rotated coordinates for projection
-    if (rotatedZ <= 1.0f) return false;
+    // Use pitch-adjusted coordinates for projection
+    if (pitchedZ <= 1.0f) return false;
 
     float fov = 600.0f;
     float centerX = 1024.0f / 2.0f;
     float centerY = 768.0f / 2.0f;
 
-    outX = rotatedX * (fov / rotatedZ) + centerX;
-    outY = ry * (fov / rotatedZ) + centerY;
+    outX = rotatedX * (fov / pitchedZ) + centerX;
+    outY = pitchedY * (fov / pitchedZ) + centerY;
 
     return true;
 }
@@ -41,29 +48,36 @@ static bool ProjectToScreenWithDepth(float wx, float wy, float wz, const Camera3
     const float ry = wy - cam.y;
     const float rz = wz - cam.z;
 
-    // Rotate around Y (same as Project())
-    const float cosAngle = std::cos(cam.rotationAngle);
-    const float sinAngle = std::sin(cam.rotationAngle);
+    // First rotate around Y axis (yaw)
+    const float cosYaw = std::cos(cam.rotationAngle);
+    const float sinYaw = std::sin(cam.rotationAngle);
 
-    const float rotatedX = rx * cosAngle + rz * sinAngle;
-    const float rotatedZ = -rx * sinAngle + rz * cosAngle;
+    const float rotatedX = rx * cosYaw + rz * sinYaw;
+    const float rotatedZ = -rx * sinYaw + rz * cosYaw;
+    
+    // Then apply pitch rotation (rotate around X axis in camera space)
+    const float cosPitch = std::cos(cam.pitchAngle);
+    const float sinPitch = std::sin(cam.pitchAngle);
+    
+    const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+    const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
 
     // Near plane reject
     const float nearZ = 1.0f;
-    if (rotatedZ <= nearZ) return false;
+    if (pitchedZ <= nearZ) return false;
 
     // Match your existing "pixel space" projection
     const float fov = 600.0f;
     const float centerX = 1024.0f / 2.0f;
     const float centerY = 768.0f / 2.0f;
 
-    outX = rotatedX * (fov / rotatedZ) + centerX;
-    outY = ry * (fov / rotatedZ) + centerY;
+    outX = rotatedX * (fov / pitchedZ) + centerX;
+    outY = pitchedY * (fov / pitchedZ) + centerY;
 
-    // Depth: map rotatedZ into 0..1 for GL_LESS depth test.
+    // Depth: map pitchedZ into 0..1 for GL_LESS depth test.
     // Smaller z => closer => smaller outZ (passes against larger values).
     const float farZ = 3000.0f; // tune to your world scale
-    float zn = (rotatedZ - nearZ) / (farZ - nearZ);
+    float zn = (pitchedZ - nearZ) / (farZ - nearZ);
     if (zn < 0.0f) zn = 0.0f;
     if (zn > 1.0f) zn = 1.0f;
 
