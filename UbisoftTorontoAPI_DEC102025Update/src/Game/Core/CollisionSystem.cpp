@@ -1,6 +1,7 @@
 #include "CollisionSystem.h"
 #include "../../System/Component/Component.h"
 #include "../../System/Physic/Collision.h"
+#include "../../Game/Core/ParticleSystem.h"
 #include <cmath>
 
 Collision* gCollision;
@@ -204,6 +205,7 @@ void CheckBulletDamage(EntityManager& registry) {
 				bulletToRemove.push_back(bulletId);
                 enemyHealth.currentHealth -= bulletDamage;
                 if (enemyHealth.currentHealth <= 0) {
+                    ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
                     blockToRemove.push_back(enemyId);
                 }
             }

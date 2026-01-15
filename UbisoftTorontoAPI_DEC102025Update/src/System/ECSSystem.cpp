@@ -9,6 +9,7 @@
 #include "../Game/Core/CameraSystem.h"
 #include "../Game/Core/PhysicsSystem.h"
 #include "../Game/Core/EnemyAISystem.h"
+#include "../Game/Core/ParticleSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 #include "Scene/GameScenes.h"
@@ -121,6 +122,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         CollisionSystem::Update(*registry);
         MovementSystem::Update(*registry, deltaTimeMs);
         PhysicsSystem::Update(*registry, deltaTimeMs);
+        ParticleSystem::Update(*registry, deltaTimeMs);
         // Check for game over conditions (player fell off the world)
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {

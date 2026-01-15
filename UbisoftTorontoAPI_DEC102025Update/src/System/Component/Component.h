@@ -154,3 +154,20 @@ struct Bullet {
     float damage;             // Damage dealt on hit
     bool isPlayerBullet;      // true if fired by player, false if fired by enemy
 };
+
+struct ParticleTag {};
+
+struct ParticlePhysics {
+    Vec3 velocity;
+	float life;       // remaining life
+	float maxLife;    // total life
+    float gravity;    // 
+};
+
+struct TrailEmitter {
+    float interval;        
+    float timeSinceLast;   
+    float particleLife;   
+    float size;           
+    float r, g, b;         
+};

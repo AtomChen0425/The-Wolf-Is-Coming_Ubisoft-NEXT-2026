@@ -182,6 +182,15 @@ void RenderBullets3D(EntityManager& registry, Camera3D& camera) {
         gRenderHelper->RenderCube_inNDC(t, camera);
     }
 }
+
+void RenderParticles(EntityManager& registry, Camera3D& camera) {
+    View<Transform3D, ParticleTag> view(registry);
+    // 也可以像 RenderRoad3D 那样做深度排序，为了性能粒子通常可以不做，或者简单的做
+    for (EntityID id : view) {
+        auto& t = view.get<Transform3D>(id);
+        gRenderHelper->RenderCube_inNDC(t, camera);
+    }
+}
 void RenderSystem::Render(EntityManager& registry) {
     DrawSprite(registry);
     DrawEnemies(registry);
@@ -196,6 +205,7 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     RenderRoad3D(registry, camera);
     RenderBullets3D(registry, camera);
     RenderPlayer3D(registry, camera);
+	RenderParticles(registry, camera);
     
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
