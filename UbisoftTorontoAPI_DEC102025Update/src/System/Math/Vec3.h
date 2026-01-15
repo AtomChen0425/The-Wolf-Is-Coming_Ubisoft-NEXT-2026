@@ -82,3 +82,10 @@ struct Vec3
 
 	float x, y, z;
 };
+static Vec3 Cross3(const Vec3& a, const Vec3& b)
+{
+	return Vec3(
+		a.y * b.z - a.z * b.y,
+		a.z * b.x - a.x * b.z,
+		a.x * b.y - a.y * b.x);
+}
