@@ -377,7 +377,7 @@ void RenderRoad3D(EntityManager& registry, Camera3D& camera) {
         float distB = MinDepthInCameraSpace(tb, camera);
         
         // If blocks are at the same position, render taller blocks first
-		if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { 
+        if (ta.pos.x == tb.pos.x && ta.pos.z == tb.pos.z) { 
             return ta.pos.y > tb.pos.y; 
         }
         

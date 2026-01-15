@@ -43,9 +43,13 @@ void RenderHelper::DrawShadow(float x, float y, float ShadowSize)
 // This is a simple implementation using latitude/longitude segments
 void RenderHelper::DrawSphere(float centerX, float centerY, float centerZ, float radius, float r, float g, float b, int segments)
 {
+    // Segment count constraints for performance and quality balance
+    const int MIN_SEGMENTS = 4;
+    const int MAX_SEGMENTS = 32;
+    
     // Clamp segments to reasonable values
-    if (segments < 4) segments = 4;
-    if (segments > 32) segments = 32;
+    if (segments < MIN_SEGMENTS) segments = MIN_SEGMENTS;
+    if (segments > MAX_SEGMENTS) segments = MAX_SEGMENTS;
     
     const int latSegments = segments;
     const int lonSegments = segments * 2;
