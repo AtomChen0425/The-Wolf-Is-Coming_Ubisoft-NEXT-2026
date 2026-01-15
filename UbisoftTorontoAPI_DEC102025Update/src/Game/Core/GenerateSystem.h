@@ -12,4 +12,7 @@ namespace GenerateSystem
 	void GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ);
 	MapTemplate CreateDefaultTemplate();
 	MapTemplate CreateTestTemplate();
+	
+	// Create a test enemy with AI components (for demonstration purposes)
+	void CreateTestEnemyWithAI(EntityManager& registry, float x, float y, float z, bool enableMovement, bool enableShooting);
 };
