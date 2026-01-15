@@ -6,16 +6,16 @@
 #include <cmath>
 #include "Math/Math.h"
 
-void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings) {
+void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings, const GameConfig& config) {
     float dtSec = dt / 1000.0f;
     float playerCurrentZ = 0.0f;
     
-    // Constants for physics
-    const float gravity = -980.0f;      // Gravity acceleration (pixels/s^2)
-    const float jumpVelocity = 400.0f;  // Initial jump velocity
-    float forwardSpeed = 200.0f;  // Forward/backward speed
-    const float strafeSpeed = 300.0f;   // Left/right strafe speed
-    const float rotationSpeed = 2.0f; // Radians per second
+    // Get constants from config
+    const float gravity = config.gravity;
+    const float jumpVelocity = config.jumpVelocity;
+    float forwardSpeed = config.forwardSpeed;
+    const float strafeSpeed = config.strafeSpeed;
+    const float rotationSpeed = config.rotationSpeed;
     
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
@@ -39,7 +39,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
             }
             
             // Calculate mouse delta (sensitivity adjusted)
-            const float mouseSensitivity = 0.003f;
+            const float mouseSensitivity = config.mouseSensitivity;
             float deltaX = (mouseX - camera.lastMouseX) * mouseSensitivity;
             float deltaY = (mouseY - camera.lastMouseY) * mouseSensitivity;
             
@@ -80,8 +80,8 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         if (App::IsKeyPressed(App::KEY_S)) inputZ = -1.0f;
         
         // Apply input with smooth acceleration/deceleration
-        const float acceleration = 2000.0f; // How fast to reach target speed
-        const float damping = 8.0f;         // How fast to slow down when no input
+        const float acceleration = config.acceleration;
+        const float damping = config.damping;
         
         if (inputX != 0.0f) {
             vel.x += inputX * acceleration * dtSec;
@@ -128,12 +128,12 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
     }
     
     // 6. Update map generation system based on player position
-    GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ);
+    GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ, config);
 }
 
-void FireControl(EntityManager& registry, float dt) {
+void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
     float dtSec = dt / 1000.0f;
-	const float bulletSpeed = 600.0f; // Speed of the bullet
+	const float bulletSpeed = config.bulletSpeed;
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
         auto& playerTag = view.get<PlayerTag>(id);
@@ -157,8 +157,8 @@ void FireControl(EntityManager& registry, float dt) {
     }
 }
 
-void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings)
+void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings, const GameConfig& config)
 {
-    PlayerControl3D(registry, dt, nextSpawnZ, camera, settings);
-    FireControl(registry, dt);
+    PlayerControl3D(registry, dt, nextSpawnZ, camera, settings, config);
+    FireControl(registry, dt, config);
 }

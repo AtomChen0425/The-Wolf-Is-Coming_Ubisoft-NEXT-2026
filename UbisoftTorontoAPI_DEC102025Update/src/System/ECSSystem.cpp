@@ -17,6 +17,12 @@
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)
 {
+    // Load game configuration from file
+    if (!config.LoadFromFile("game_config.txt")) {
+        // If loading fails, save default config for next time
+        config.SaveToFile("game_config.txt");
+    }
+    
     InitializeScenes();
 }
 
@@ -50,11 +56,11 @@ void EngineSystem::InitializeGame() {
     camera.y = camera.followOffsetY;
     camera.z = camera.followOffsetZ;
 
-    // Create the player
-    GenerateSystem::CreatePlayer3D(*registry);
+    // Create the player using config values
+    GenerateSystem::CreatePlayer3D(*registry, config);
 
-    // Generate initial map
-    GenerateSystem::MapGenerationSystem(*registry, 0.0f, nextSpawnZ);
+    // Generate initial map using config values
+    GenerateSystem::MapGenerationSystem(*registry, 0.0f, nextSpawnZ, config);
 }
 
 void EngineSystem::StartGame() {
@@ -114,7 +120,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         }
         
         // Update player control (handles input and movement, and camera control)
-        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings);
+        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
         // Update enemy AI (movement, shooting, bullets)
         //EnemyAISystem::Update(*registry, deltaTimeMs);
         

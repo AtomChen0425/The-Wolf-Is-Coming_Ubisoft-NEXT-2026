@@ -1,6 +1,7 @@
 #pragma once
 #include "ECS/ECS.h"
 #include "Scene/SceneManager.h"
+#include "../Game/Core/GameConfig.h"
 #include <memory>
 
 struct Camera25D {
@@ -78,6 +79,7 @@ public:
     EntityManager& GetRegistry() { return *registry; }
     Camera3D& GetCamera() { return camera; }
     GameSettings& GetSettings() { return settings; }
+    GameConfig& GetConfig() { return config; }
     
 private:
     std::unique_ptr<EntityManager> registry;
@@ -86,6 +88,7 @@ private:
     GameState gameState = GameState::StartScreen;
     SceneManager sceneManager;
     GameSettings settings;
+    GameConfig config;
     
     void InitializeScenes();
 };

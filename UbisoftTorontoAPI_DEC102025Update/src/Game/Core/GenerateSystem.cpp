@@ -50,10 +50,10 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
     }
 }
 
-void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ) {
-    const float blockSize = 100.0f;       // Length of each road block
-    const float renderDistance = 1000.0f; // How far ahead to render
-    const float deleteDistance = 1000.0f;  // How far behind to delete
+void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ, const GameConfig& config) {
+    const float blockSize = config.blockSize;       // Length of each road block
+    const float renderDistance = config.renderDistance; // How far ahead to render
+    const float deleteDistance = config.deleteDistance;  // How far behind to delete
     
     if (nextSpawnZ < blockSize) {
         nextSpawnZ = blockSize;
@@ -62,36 +62,36 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
     // --- 1. Spawn road sections ahead of player using templates ---
     while (nextSpawnZ < playerZ + renderDistance) {
         // Generate a random template for this section
-        MapTemplate tmpl = CreateTestTemplate();
-        GenerateMapFromTemplate(registry, tmpl, nextSpawnZ);
+        MapTemplate tmpl = CreateTestTemplate(config);
+        GenerateMapFromTemplate(registry, tmpl, nextSpawnZ, config);
         
         // Create side walls for this section
-        const int roadWidth = 5;
+        const int roadWidth = config.roadWidth;
         const float wallX = roadWidth / 2 * blockSize + blockSize / 2;
         
         // Left wall
         Entity leftWall = registry.createEntity();
         registry.addComponent(leftWall, Transform3D{
-            Vec3{-wallX, 50.0f, nextSpawnZ},
-            20.0f, 100.0f, blockSize,
+            Vec3{-wallX, config.wallHeight / 2.0f, nextSpawnZ},
+            20.0f, config.wallHeight, blockSize,
             0.6f, 0.3f, 0.1f  // Brown
         });
         registry.addComponent(leftWall, MapBlockTag{});
         registry.addComponent(leftWall, Collider3D{
-            20.0f, 100.0f, blockSize,
+            20.0f, config.wallHeight, blockSize,
             false, true  // not floor, isWall
         });
         
         // Right wall
         Entity rightWall = registry.createEntity();
         registry.addComponent(rightWall, Transform3D{
-            Vec3{wallX, 50.0f, nextSpawnZ},
-            20.0f, 100.0f, blockSize,
+            Vec3{wallX, config.wallHeight / 2.0f, nextSpawnZ},
+            20.0f, config.wallHeight, blockSize,
             0.6f, 0.3f, 0.1f  // Brown
         });
         registry.addComponent(rightWall, MapBlockTag{});
         registry.addComponent(rightWall, Collider3D{
-            20.0f, 100.0f, blockSize,
+            20.0f, config.wallHeight, blockSize,
             false, true  // not floor, isWall
         });
         
@@ -130,9 +130,9 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     // Player with height=30 should be at Y=-5+15=10 to stand on the ground
     registry.addComponent(entity, Transform3D{ 
         Vec3{
-            0.0f,    // x: center of road
+            config.playerSpawnX,    // x: from config
             10.0f,   // y: on the ground (floor top at -5, player height/2 = 15, so 10)
-            50.0f,   // z: slightly ahead
+            config.playerSpawnZ,   // z: from config
         },
         20.0f,   // width
         30.0f,   // height
@@ -146,9 +146,9 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
 }
 
 // Create a default simple template
-MapTemplate GenerateSystem::CreateDefaultTemplate() {
-    const int roadWidth = 5;
-    MapTemplate tmpl(roadWidth, 1); // 5 wide, 1 deep
+MapTemplate GenerateSystem::CreateDefaultTemplate(const GameConfig& config) {
+    const int roadWidth = config.roadWidth;
+    MapTemplate tmpl(roadWidth, 1); // roadWidth wide, 1 deep
     
     // Fill with floor blocks
     for (int x = 0; x < roadWidth; x++) {
@@ -159,36 +159,36 @@ MapTemplate GenerateSystem::CreateDefaultTemplate() {
 }
 
 // Create a more interesting test template with obstacles
-MapTemplate GenerateSystem::CreateTestTemplate() {
-    const int roadWidth = 5;
+MapTemplate GenerateSystem::CreateTestTemplate(const GameConfig& config) {
+    const int roadWidth = config.roadWidth;
     MapTemplate tmpl(roadWidth, 1);
     
     // Randomly decide what to put in this row
     float chance = Rand01();
     
-    if (chance < 0.6f) {
-        // 60% chance: Normal floor
+    if (chance < config.normalFloorChance) {
+        // Normal floor
         for (int x = 0; x < roadWidth; x++) {
             tmpl.setBlock(x, 0, BlockType::Floor);
         }
-    } else if (chance < 0.75f) {
-        // 15% chance: Floor with a tall block obstacle in the middle
+    } else if (chance < config.normalFloorChance + config.obstacleChance) {
+        // Floor with a tall block obstacle in the middle
         for (int x = 0; x < roadWidth; x++) {
             tmpl.setBlock(x, 0, BlockType::Floor);
         }
         int obstacleX = (int)(Rand01() * roadWidth);
         tmpl.setBlock(obstacleX, 0, BlockType::TallBlock);
-    } else if (chance < 0.90f) {
-        // 15% chance: Floor with score points
+    } else if (chance < config.normalFloorChance + config.obstacleChance + config.scorePointChance) {
+        // Floor with score points
         for (int x = 0; x < roadWidth; x++) {
             tmpl.setBlock(x, 0, BlockType::Floor);
         }
         int scoreX = (int)(Rand01() * roadWidth);
         tmpl.setBlock(scoreX, 0, BlockType::ScorePoint);
     } else {
-        // 10% chance: Gap with some floor blocks missing
+        // Gap with some floor blocks missing
         for (int x = 0; x < roadWidth; x++) {
-            if (Rand01() > 0.3f) {
+            if (Rand01() > config.gapFloorChance) {
                 tmpl.setBlock(x, 0, BlockType::Floor);
             }
         }
@@ -198,11 +198,11 @@ MapTemplate GenerateSystem::CreateTestTemplate() {
 }
 
 // Generate map blocks from a template at a specific Z position
-void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ) {
-    const float blockSize = 100.0f;
-    const float floorHeight = 10.0f;
-    const float tallBlockHeight = 60.0f;
-    const float scorePointHeight = 30.0f;
+void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ, const GameConfig& config) {
+    const float blockSize = config.blockSize;
+    const float floorHeight = config.floorHeight;
+    const float tallBlockHeight = config.tallBlockHeight;
+    const float scorePointHeight = config.scorePointHeight;
     const int roadWidth = mapTemplate.width;
     
     for (int z = 0; z < mapTemplate.depth; z++) {
@@ -242,13 +242,13 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                 case BlockType::Wall: {
                     // Walls are vertical barriers
                     registry.addComponent(block, Transform3D{
-                        Vec3{blockX, 50.0f, blockZ},
-                        blockSize, 100.0f, blockSize,
+                        Vec3{blockX, config.wallHeight / 2.0f, blockZ},
+                        blockSize, config.wallHeight, blockSize,
                         0.6f, 0.3f, 0.1f  // Brown color
                     });
                     registry.addComponent(block, MapBlockTag{});
                     registry.addComponent(block, Collider3D{
-                        blockSize, 100.0f, blockSize,
+                        blockSize, config.wallHeight, blockSize,
                         false, true  // not floor, isWall
                     });
                     break;
