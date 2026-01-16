@@ -238,8 +238,9 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
         }
     }
 
-    // Handle wolf collisions (same logic as sheep)
-    View<PhysicsTag, WolfTag, Transform3D, Velocity3D> wolfView(registry);
+    // Handle wolf/enemy collisions (same logic as sheep)
+    // Note: Wolves now use EnemyTag instead of WolfTag
+    View<PhysicsTag, EnemyTag, WolfComponent, Transform3D, Velocity3D> wolfView(registry);
 
     for (EntityID entityId : wolfView) {
         auto& physicsTag = wolfView.get<PhysicsTag>(entityId);

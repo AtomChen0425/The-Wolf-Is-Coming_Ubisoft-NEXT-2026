@@ -22,47 +22,56 @@ inline void WolfLimit(Vec3& v, float max) {
 }
 
 namespace WolfSystem {
+    // Static variables for spawn timer
+    static float spawnTimer = 0.0f;
+    static const float SPAWN_INTERVAL = 3.0f;  // Spawn a wolf every 3 seconds
+    static const float SPAWN_DISTANCE = 1000.0f; // Spawn 1000 pixels away from player
 
-    void InitWolves(EntityManager& registry, float startX, float startZ, int count) {
-        for (int i = 0; i < count; i++) {
-            Entity wolf = registry.createEntity();
+    void SpawnWolf(EntityManager& registry, float playerX, float playerZ, float spawnDistance) {
+        Entity wolf = registry.createEntity();
 
-            // Random starting position within a range
-            float offsetX = (rand() % 300 - 150.0f);
-            float offsetZ = (rand() % 300 - 150.0f);
+        // Calculate random angle for spawn position
+        float angle = (rand() % 360) * 3.14159f / 180.0f;
+        
+        // Spawn at specified distance from player in random direction
+        float spawnX = playerX + std::cos(angle) * spawnDistance;
+        float spawnZ = playerZ + std::sin(angle) * spawnDistance;
 
-            registry.addComponent(wolf, Transform3D{
-                Vec3{startX + offsetX, 20.0f, startZ + offsetZ},
-                20.0f, 20.0f, 20.0f,  // Size (slightly bigger than sheep)
-                0.4f, 0.2f, 0.1f      // Color (dark brown/gray)
-                });
-            registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
-            registry.addComponent(wolf, WolfTag{});
-            registry.addComponent(wolf, WolfComponent{}); // Use default parameters
-            registry.addComponent(wolf, PhysicsTag{ true }); // Enable physics for ground collision
-        }
+        registry.addComponent(wolf, Transform3D{
+            Vec3{spawnX, 20.0f, spawnZ},
+            20.0f, 20.0f, 20.0f,  // Size (slightly bigger than sheep)
+            0.4f, 0.2f, 0.1f      // Color (dark brown/gray)
+            });
+        registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
+        registry.addComponent(wolf, EnemyTag{});  // Use EnemyTag instead of WolfTag
+        registry.addComponent(wolf, WolfComponent{}); // Keep WolfComponent for chase parameters
+        registry.addComponent(wolf, PhysicsTag{ true }); // Enable physics for ground collision
     }
 
-    void Update(EntityManager& registry, float dtMs) {
+    void Update(EntityManager& registry, float dtMs, float playerX, float playerZ) {
         float dt = dtMs / 1000.0f;
         if (dt <= 0) return;
 
+        // Update spawn timer
+        spawnTimer += dt;
+        if (spawnTimer >= SPAWN_INTERVAL) {
+            SpawnWolf(registry, playerX, playerZ, SPAWN_DISTANCE);
+            spawnTimer = 0.0f;
+        }
+
         // Get all potential targets (players and sheep)
         std::vector<Vec3> targetPositions;
-        std::vector<bool> isPlayerTarget;  // Track if target is player (true) or sheep (false)
 
         // Add all players as potential targets
         View<PlayerTag, Transform3D> playerView(registry);
         for (auto id : playerView) {
             targetPositions.push_back(playerView.get<Transform3D>(id).pos);
-            isPlayerTarget.push_back(true);
         }
 
         // Add all sheep as potential targets
         View<SheepTag, Transform3D> sheepView(registry);
         for (auto id : sheepView) {
             targetPositions.push_back(sheepView.get<Transform3D>(id).pos);
-            isPlayerTarget.push_back(false);
         }
 
         // If no targets exist, wolves just stay idle
@@ -70,8 +79,8 @@ namespace WolfSystem {
             return;
         }
 
-        // Update each wolf
-        View<WolfTag, Transform3D, Velocity3D, WolfComponent> wolfView(registry);
+        // Update each wolf (now using EnemyTag)
+        View<EnemyTag, Transform3D, Velocity3D, WolfComponent> wolfView(registry);
 
         for (auto id : wolfView) {
             auto& t = wolfView.get<Transform3D>(id);
@@ -81,7 +90,7 @@ namespace WolfSystem {
             Vec3 pos = t.pos;
             Vec3 vel = v.vel;
 
-            // Find nearest target
+            // Find nearest target (no detection range limit)
             float nearestDistSq = std::numeric_limits<float>::max();
             Vec3 nearestTarget = pos;
             bool foundTarget = false;
@@ -104,7 +113,7 @@ namespace WolfSystem {
 
             float nearestDist = std::sqrt(nearestDistSq);
 
-            // Calculate chase force toward nearest target
+            // Calculate chase force toward nearest target (always chase, no distance check)
             Vec3 chaseForce = { 0, 0, 0 };
             
             if (nearestDist > params.minChaseDistance) {
@@ -113,17 +122,12 @@ namespace WolfSystem {
                 float dz = nearestTarget.z - pos.z;
                 chaseForce = WolfNorm({ dx, 0, dz });
                 
-                // Apply stronger force when target is farther
-                float forceMagnitude = params.chaseForce;
-                if (nearestDist > params.detectionRange * 0.5f) {
-                    forceMagnitude *= 1.5f;  // Speed up when far away
-                }
-                
-                chaseForce.x *= forceMagnitude;
-                chaseForce.z *= forceMagnitude;
+                // Apply force
+                chaseForce.x *= params.chaseForce;
+                chaseForce.z *= params.chaseForce;
             }
             else {
-                // Too close, slow down or circle
+                // Too close, slow down
                 chaseForce.x = vel.x * -0.5f;  // Damping force
                 chaseForce.z = vel.z * -0.5f;
             }
@@ -142,9 +146,6 @@ namespace WolfSystem {
             // Update velocity component
             v.vel.x = vel.x;
             v.vel.z = vel.z;
-
-            // Simple rotation toward movement direction (optional, for visual feedback)
-            // Could be expanded to actually rotate the wolf model
         }
     }
 }

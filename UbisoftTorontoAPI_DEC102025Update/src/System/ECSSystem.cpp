@@ -66,7 +66,7 @@ void EngineSystem::InitializeGame() {
     // Generate initial chunks around spawn point using chunk-based system
     GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks, config);
     SheepSystem::InitSheep(*registry, config.playerSpawnX, config.playerSpawnZ + 200.0f, 50);
-    WolfSystem::InitWolves(*registry, config.playerSpawnX + 300.0f, config.playerSpawnZ + 400.0f, 5);
+    // Wolves now spawn continuously during gameplay, no initial spawn needed
 }
 
 void EngineSystem::StartGame() {
@@ -131,8 +131,20 @@ void EngineSystem::Update(const float deltaTimeMs) {
         //EnemyAISystem::Update(*registry, deltaTimeMs);
 		// Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
+        
         // Update wolf behavior (wolves chase nearest player or sheep)
-        WolfSystem::Update(*registry, deltaTimeMs);
+        // Get player position for wolf spawning
+        float playerX = config.playerSpawnX;
+        float playerZ = config.playerSpawnZ;
+        View<PlayerTag, Transform3D> playerView(*registry);
+        for (auto id : playerView) {
+            auto& t = playerView.get<Transform3D>(id);
+            playerX = t.pos.x;
+            playerZ = t.pos.z;
+            break; // Only need first player
+        }
+        WolfSystem::Update(*registry, deltaTimeMs, playerX, playerZ);
+        
         // Check and resolve collisions (after movement is applied)
         PhysicsSystem::Update(*registry, deltaTimeMs);
         

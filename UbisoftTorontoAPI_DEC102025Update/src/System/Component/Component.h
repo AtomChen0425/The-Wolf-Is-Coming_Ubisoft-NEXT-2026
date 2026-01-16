@@ -215,6 +215,5 @@ struct WolfTag {};
 struct WolfComponent {
     float chaseForce = 200.0f;      // Force applied when chasing
     float maxSpeed = 180.0f;        // Maximum movement speed
-    float detectionRange = 400.0f;  // Range to detect and chase targets
     float minChaseDistance = 25.0f; // Stop chasing when this close to target
 };

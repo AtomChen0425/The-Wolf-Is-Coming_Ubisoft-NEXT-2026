@@ -2,9 +2,9 @@
 #include "../../System/ECS/ECS.h"
 
 namespace WolfSystem {
-    // Initialize wolves at a specific location
-    void InitWolves(EntityManager& registry, float startX, float startZ, int count);
+    // Spawn a single wolf outside player's view range
+    void SpawnWolf(EntityManager& registry, float playerX, float playerZ, float spawnDistance);
 
-    // Update wolf behavior each frame (should be called from EngineSystem::Update)
-    void Update(EntityManager& registry, float dtMs);
+    // Update wolf spawning timer and behavior (should be called from EngineSystem::Update)
+    void Update(EntityManager& registry, float dtMs, float playerX, float playerZ);
 }
