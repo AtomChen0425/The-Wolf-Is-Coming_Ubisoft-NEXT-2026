@@ -126,6 +126,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Check and resolve collisions (after movement is applied)
         PhysicsSystem::Update(*registry, deltaTimeMs);
+        
         MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
         CollisionSystem::Update(*registry);
