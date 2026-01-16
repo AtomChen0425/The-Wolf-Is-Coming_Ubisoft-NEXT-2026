@@ -161,7 +161,7 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
 
             // Create bullet entity
             Entity bullet = registry.createEntity();
-			registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,10,true});
+			registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,20,true});
             registry.addComponent(bullet, Transform3D{ bulletPosition, 5.0f, 5.0f, 5.0f, config.bulletColorR, config.bulletColorG, config.bulletColorB });
             registry.addComponent(bullet, Velocity3D{ bulletDirection * bulletSpeed });
             playerTag.shootCooldown = 100.0f;

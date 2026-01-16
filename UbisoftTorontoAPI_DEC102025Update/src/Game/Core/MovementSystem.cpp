@@ -103,14 +103,14 @@ void BulletMovementSystem(EntityManager& registry, const float deltaTimeMs) {
 
 void SheepMovementSystem(EntityManager& registry, const float deltaTimeMs) {
     View<Transform3D, SheepTag, Velocity3D> sheepView(registry);
-    //const float dtSec = deltaTimeMs / 1000.0f;
+    const float dtSec = deltaTimeMs / 1000.0f;
     for (EntityID id : sheepView) {
         auto& sheepPos = sheepView.get<Transform3D>(id).pos;
         auto& sheepVel = sheepView.get<Velocity3D>(id).vel;
         // Update sheep position based on its velocity
-        sheepPos.x += sheepVel.x * deltaTimeMs;
-        //sheepPos.y += sheepVel.y * deltaTimeMs;
-        sheepPos.z += sheepVel.z * deltaTimeMs;
+        sheepPos.x += sheepVel.x * dtSec;
+        //sheepPos.y += sheepVel.y * dtSec;
+        sheepPos.z += sheepVel.z * dtSec;
     }
 }
 void MovementSystem::Update(EntityManager& registry, const float dt) {

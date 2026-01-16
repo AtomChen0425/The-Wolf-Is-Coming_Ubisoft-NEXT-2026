@@ -197,7 +197,7 @@ struct SheepTag {};
 
 // Boids 行为参数 (可用于不同种类的羊)
 struct SheepComponent {
-    float separationWeight = 5.0f; // 分离权重 (防重叠) - 调大一点避免穿模
+    float separationWeight = 6.0f; // 分离权重 (防重叠) - 调大一点避免穿模
     float alignmentWeight = 1.0f; // 对齐权重 (顺流)
     float cohesionWeight = 1.0f; // 凝聚权重 (抱团)
     float targetWeight = 1.2f; // 跟随权重 (找牧羊人)
@@ -205,6 +205,21 @@ struct SheepComponent {
 
     float viewRadius = 60.0f;      // 邻居感知半径
     float enemyDetectRange = 150.0f; // 敌人检测半径
-    float maxSpeed = 150.0f;        // 最大速度
-    float maxForce = 150.0f;       // 转向灵活性
+    float maxSpeed = 90.0f;        // 最大速度
+    float maxForce = 50.0f;       // 转向灵活性
+};
+
+struct WolfTag {};
+
+// Wolf behavior component - wolves chase nearest player or sheep
+struct WolfComponent {
+    float chaseForce = 200.0f;      // Force applied when chasing
+    float maxSpeed = 300.0f;        // Maximum movement speed
+    float detectionRange = 400.0f;  // Range to detect and chase targets
+    float minChaseDistance = 10.0f; // Stop chasing when this close to target
+};
+
+struct  GameSetting
+{
+    float spawTimer =500.0f;
 };

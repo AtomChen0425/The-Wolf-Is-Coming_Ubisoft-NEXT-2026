@@ -1,16 +1,10 @@
-﻿  EnemyAISystem.cpp
-  ParticleSystem.cpp
-  SheepSystem.cpp
-  GameScenes.cpp
+﻿  GameScenes.cpp
 D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\GameScenes.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
   CameraSystem.cpp
-  CollisionSystem.cpp
   ControlSystem.cpp
   GenerateSystem.cpp
-  MovementSystem.cpp
-D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
-  PhysicsSystem.cpp
   RenderSystem.cpp
+  GameTest.cpp
   ECSSystem.cpp
   RenderHelper.cpp
   Generating Code...

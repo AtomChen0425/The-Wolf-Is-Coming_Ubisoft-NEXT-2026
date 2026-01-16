@@ -1,5 +1,6 @@
 #include "GenerateSystem.h"
 #include "../../System/Component/Component.h"
+#include "Core/WolfSystem.h"
 #include "../../ContestAPI/app.h"
 #include <set>
 #include <utility>
@@ -504,5 +505,45 @@ void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float player
     // Despawn distant chunks
     DespawnDistantChunks(registry, playerX, playerZ, loadedChunks, config);
 }
+void GenerateSystem::GenerateWolf(EntityManager& registry) {
+    // Implementation for generating a wolf
+    View<PlayerTag, Transform3D> playerView(registry);
+    Vec3 playerPos;
+    bool foundPlayer = false;
+    for (EntityID id : playerView) {
+        auto& playerTransform = playerView.get<Transform3D>(id);
+        playerPos = playerTransform.pos;
+        foundPlayer = true;
+        break;
+    }
+    if (!foundPlayer) return;
 
+    constexpr float kRadius = 3000.0f;
+    constexpr float kPi = 3.14159265358979323846f;
 
+    float theta = RandRange(0.0f, 2.0f * kPi);
+    float r = sqrtf(Rand01()) * kRadius;
+
+    float dx = cosf(theta) * r;
+    float dz = sinf(theta) * r;
+
+    Vec3 spawnPos{
+        playerPos.x + dx,
+        20.0f,          // keep same Y; adjust if you have a fixed ground height
+        playerPos.z + dz
+    };
+
+    // 3) Create wolf entity
+    Entity wolf = registry.createEntity();
+    registry.addComponent(wolf, Transform3D{
+                spawnPos,
+                20.0f, 20.0f, 20.0f,  // Size (slightly bigger than sheep)
+                0.4f, 0.2f, 0.1f      // Color (dark brown/gray)
+        });
+    registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
+    registry.addComponent(wolf, WolfTag{});
+    registry.addComponent(wolf, WolfComponent{}); // Use default parameters
+    registry.addComponent(wolf, PhysicsTag{ true }); // Enable physics for ground collision
+    registry.addComponent(wolf, EnemyTag{});
+    registry.addComponent(wolf, Health{ 100, 100 }); // So they can be targeted like sheep
+}

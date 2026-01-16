@@ -424,6 +424,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\..\src\Game\Core\GameConfig.h" />
     <ClInclude Include="..\..\src\Game\Core\ParticleSystem.h" />
     <ClInclude Include="..\..\src\Game\Core\SheepSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\WolfSystem.h" />
     <ClInclude Include="..\..\src\System\Scene\GameScenes.h" />
     <ClInclude Include="..\..\src\System\Scene\SceneManager.h" />
     <ClInclude Include="..\..\src\System\UI\UISystem.h" />
@@ -438,6 +439,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\..\src\Game\Core\GameConfig.cpp" />
     <ClCompile Include="..\..\src\Game\Core\ParticleSystem.cpp" />
     <ClCompile Include="..\..\src\Game\Core\SheepSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\WolfSystem.cpp" />
     <ClCompile Include="..\..\src\System\Math\Mat4.cpp" />
     <ClCompile Include="..\..\src\System\Scene\GameScenes.cpp" />
     <ClCompile Include="..\..\src\System\Scene\SceneManager.cpp" />

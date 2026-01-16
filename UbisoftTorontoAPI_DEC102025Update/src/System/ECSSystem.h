@@ -44,7 +44,6 @@ struct Camera3D {
     float lastMouseY = 0.0f;
     bool mouseInitialized = false;
 };
-
 enum class GameState {
     StartScreen,
     Playing,
@@ -58,7 +57,7 @@ enum class CameraControlMode {
 };
 
 struct GameSettings {
-    CameraControlMode cameraControlMode = CameraControlMode::ArrowKeys;
+    CameraControlMode cameraControlMode = CameraControlMode::Mouse;
 };
 
 class EngineSystem
@@ -66,8 +65,9 @@ class EngineSystem
 public:
     EngineSystem();
     ~EngineSystem() = default;
-    
+	float gTimerMs = 0.0f;
     float gSpawnTimerMs = 0.0f;
+	float gSpawnIntervalMs = 2000.0f;
     int   gScore = 0;
     
     void Update(const float deltaTimeMs);

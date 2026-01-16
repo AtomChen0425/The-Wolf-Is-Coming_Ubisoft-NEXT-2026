@@ -11,6 +11,7 @@
 #include "../Game/Core/EnemyAISystem.h"
 #include "../Game/Core/ParticleSystem.h"
 #include "../Game/Core/SheepSystem.h"
+#include "../Game/Core/WolfSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 #include "Scene/GameScenes.h"
@@ -65,6 +66,8 @@ void EngineSystem::InitializeGame() {
     // Generate initial chunks around spawn point using chunk-based system
     GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks, config);
     SheepSystem::InitSheep(*registry, config.playerSpawnX, config.playerSpawnZ + 200.0f, 50);
+
+    //WolfSystem::InitWolves(*registry, config.playerSpawnX + 300.0f, config.playerSpawnZ + 400.0f, 5);
 }
 
 void EngineSystem::StartGame() {
@@ -82,6 +85,7 @@ void EngineSystem::ResetGame() {
 
 void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
+    gSpawnTimerMs += deltaTimeMs;
     sceneManager.Update(deltaTimeMs);
     // Handle input based on game state
     if (gameState == GameState::StartScreen) {
@@ -130,6 +134,13 @@ void EngineSystem::Update(const float deltaTimeMs) {
 		// Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
         // Check and resolve collisions (after movement is applied)
+        // Update wolf behavior (wolves chase nearest player or sheep)
+        if (gSpawnTimerMs >= gSpawnIntervalMs) {
+            GenerateSystem::GenerateWolf(*registry);
+            gSpawnTimerMs = 0.0f;
+		}
+        WolfSystem::Update(*registry, deltaTimeMs);
+
         PhysicsSystem::Update(*registry, deltaTimeMs);
         
         MovementSystem::Update(*registry, deltaTimeMs);
@@ -142,12 +153,12 @@ void EngineSystem::Update(const float deltaTimeMs) {
             auto& playerTransform = playerView.get<Transform3D>(id);
             GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
             
-            // Check if player fell off the world
-            if (playerTransform.pos.y < -500.0f) {
-                gameState = GameState::GameOver;
-                sceneManager.SwitchToScene("GameOver");
-                return;
-            }
+            //// Check if player fell off the world
+            //if (playerTransform.pos.y < -500.0f) {
+            //    gameState = GameState::GameOver;
+            //    sceneManager.SwitchToScene("GameOver");
+            //    return;
+            //}
         }
         
         // Check for upgrade point collection

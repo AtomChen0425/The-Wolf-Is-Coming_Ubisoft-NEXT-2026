@@ -88,7 +88,7 @@ namespace SheepSystem {
     }
 
     void Update(EntityManager& registry, float dtMs) {
-        float dt = dtMs / 1000.0f;
+        float dt = dtMs / 10.0f;
         if (dt <= 0) return;
 
         // 1. 获取玩家位置 (作为领头羊/目标)
