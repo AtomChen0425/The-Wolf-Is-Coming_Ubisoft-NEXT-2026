@@ -138,12 +138,113 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
     }
 }
 void CheckPhysics3DCollisions(EntityManager& registry) {
-    View<PhysicsTag, SheepTag, Transform3D, Velocity3D> entityView(registry);
+    // Handle sheep collisions
+    View<PhysicsTag, SheepTag, Transform3D, Velocity3D> sheepView(registry);
 
-    for (EntityID entityId : entityView) {
-        auto& physicsTag = entityView.get<PhysicsTag>(entityId);
-        auto& entityTransform = entityView.get<Transform3D>(entityId);
-        auto& vel = entityView.get<Velocity3D>(entityId).vel;
+    for (EntityID entityId : sheepView) {
+        auto& physicsTag = sheepView.get<PhysicsTag>(entityId);
+        auto& entityTransform = sheepView.get<Transform3D>(entityId);
+        auto& vel = sheepView.get<Velocity3D>(entityId).vel;
+        Vec3& pos = entityTransform.pos;
+
+        // Reset ground flag
+        physicsTag.isOnGround = false;
+
+        // Entity bounding box
+        Vec3 entityMin(pos.x - entityTransform.width / 2,
+            pos.y - entityTransform.height / 2,
+            pos.z - entityTransform.depth / 2);
+        Vec3 entityMax(pos.x + entityTransform.width / 2,
+            pos.y + entityTransform.height / 2,
+            pos.z + entityTransform.depth / 2);
+
+        // Check all colliders
+        View<Collider3D, Transform3D> colliderView(registry);
+        float highestFloor = -1000.0f;
+
+        for (EntityID colliderId : colliderView) {
+            auto& collider = colliderView.get<Collider3D>(colliderId);
+            auto& transform = colliderView.get<Transform3D>(colliderId);
+
+            // Collider bounding box
+            Vec3 colliderMin(transform.pos.x - transform.width / 2,
+                transform.pos.y - transform.height / 2,
+                transform.pos.z - transform.depth / 2);
+            Vec3 colliderMax(transform.pos.x + transform.width / 2,
+                transform.pos.y + transform.height / 2,
+                transform.pos.z + transform.depth / 2);
+
+            // Check collision using AABB
+            if (gCollision->AABB3D(entityMin, entityMax, colliderMin, colliderMax)) {
+                // Calculate penetration on each axis
+                float penetrationX = (entityMin.x < colliderMin.x) ?
+                    (colliderMin.x - entityMax.x) : (colliderMax.x - entityMin.x);
+                float penetrationY = (entityMin.y < colliderMin.y) ?
+                    (colliderMin.y - entityMax.y) : (colliderMax.y - entityMin.y);
+                float penetrationZ = (entityMin.z < colliderMin.z) ?
+                    (colliderMin.z - entityMax.z) : (colliderMax.z - entityMin.z);
+
+                float absX = std::abs(penetrationX);
+                float absY = std::abs(penetrationY);
+                float absZ = std::abs(penetrationZ);
+
+                // Resolve on minimum penetration axis
+                if (absX < absY && absX < absZ) {
+                    // X-axis collision (left/right wall)
+                    pos.x += penetrationX;
+                    vel.x = 0.0f;
+                }
+                else if (absZ < absY) {
+                    // Z-axis collision (front/back wall)
+                    pos.z += penetrationZ;
+                    vel.z = 0.0f;
+                }
+                else {
+                    // Y-axis collision (floor/ceiling)
+                    if (penetrationY > 0) {
+                        // Hit from below (floor)
+                        if (collider.isFloor) {
+                            float floorTop = colliderMax.y;
+                            if (floorTop > highestFloor) {
+                                highestFloor = floorTop;
+                            }
+                        }
+                    }
+                    else {
+                        // Hit from above (ceiling)
+                        pos.y += penetrationY;
+                        vel.y = 0.0f;
+                    }
+                }
+
+                // Update bounding box after position change
+                entityMin = Vec3(pos.x - entityTransform.width / 2,
+                    pos.y - entityTransform.height / 2,
+                    pos.z - entityTransform.depth / 2);
+                entityMax = Vec3(pos.x + entityTransform.width / 2,
+                    pos.y + entityTransform.height / 2,
+                    pos.z + entityTransform.depth / 2);
+            }
+        }
+
+        // Apply floor collision if detected
+        if (highestFloor > -999.0f) {
+            float entityBottom = pos.y - entityTransform.height / 2;
+            if (entityBottom <= highestFloor + 2.0f) {
+                pos.y = highestFloor + entityTransform.height / 2;
+                vel.y = 0.0f;
+                physicsTag.isOnGround = true;
+            }
+        }
+    }
+
+    // Handle wolf collisions (same logic as sheep)
+    View<PhysicsTag, WolfTag, Transform3D, Velocity3D> wolfView(registry);
+
+    for (EntityID entityId : wolfView) {
+        auto& physicsTag = wolfView.get<PhysicsTag>(entityId);
+        auto& entityTransform = wolfView.get<Transform3D>(entityId);
+        auto& vel = wolfView.get<Velocity3D>(entityId).vel;
         Vec3& pos = entityTransform.pos;
 
         // Reset ground flag

@@ -11,6 +11,7 @@
 #include "../Game/Core/EnemyAISystem.h"
 #include "../Game/Core/ParticleSystem.h"
 #include "../Game/Core/SheepSystem.h"
+#include "../Game/Core/WolfSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 #include "Scene/GameScenes.h"
@@ -65,6 +66,7 @@ void EngineSystem::InitializeGame() {
     // Generate initial chunks around spawn point using chunk-based system
     GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks, config);
     SheepSystem::InitSheep(*registry, config.playerSpawnX, config.playerSpawnZ + 200.0f, 50);
+    WolfSystem::InitWolves(*registry, config.playerSpawnX + 300.0f, config.playerSpawnZ + 400.0f, 5);
 }
 
 void EngineSystem::StartGame() {
@@ -129,6 +131,8 @@ void EngineSystem::Update(const float deltaTimeMs) {
         //EnemyAISystem::Update(*registry, deltaTimeMs);
 		// Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
+        // Update wolf behavior (wolves chase nearest player or sheep)
+        WolfSystem::Update(*registry, deltaTimeMs);
         // Check and resolve collisions (after movement is applied)
         PhysicsSystem::Update(*registry, deltaTimeMs);
         
