@@ -263,7 +263,7 @@ void UpgradeScene::Update(float deltaTimeMs) {
         // Advance to next round (this will eventually be moved to LevelSystem too)
         engineSystem->GetLevelData().NextRound();
         // Return to playing scene
-        engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
+        engineSystem->GetSceneManager().SwitchToScene("Playing");
     }
     
     spaceWasPressed = spacePressed;

@@ -101,7 +101,7 @@ struct GameConfig {
     float bulletSpeedUpgradeAmount = 100.0f;
     
     // Level/Round system parameters
-    float roundDurationMs = 60000.0f;           // Duration of each round (60 seconds)
+    float roundDurationMs = 10000.0f;           // Duration of each round (60 seconds)
     float baseWolfSpawnIntervalMs = 5000.0f;    // Initial wolf spawn interval (5 seconds)
     float wolfSpawnReductionPerRound = 200.0f;  // Spawn interval reduction per round
     float minWolfSpawnIntervalMs = 1000.0f;     // Minimum wolf spawn interval (1 second)

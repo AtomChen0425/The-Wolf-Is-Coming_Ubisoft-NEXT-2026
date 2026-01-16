@@ -175,48 +175,42 @@ void EngineSystem::Update(const float deltaTimeMs) {
             auto& playerTransform = playerView.get<Transform3D>(id);
             GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
             
-            //// Check if player fell off the world
-            //if (playerTransform.pos.y < -500.0f) {
-            //    gameState = GameState::GameOver;
-            //    sceneManager.SwitchToScene("GameOver");
-            //    return;
-            //}
         }
         
         // Check for upgrade point collection
-        View<UpgradePointTag, Transform3D> upgradeView(*registry);
-        std::vector<EntityID> collectedUpgrades;
-        
-        for (EntityID upgradeId : upgradeView) {
-            auto& upgradeTag = upgradeView.get<UpgradePointTag>(upgradeId);
-            auto& upgradeTransform = upgradeView.get<Transform3D>(upgradeId);
-            
-            if (!upgradeTag.collected) {
-                // Check collision with player
-                for (EntityID playerId : playerView) {
-                    auto& playerTransform = playerView.get<Transform3D>(playerId);
-                    
-                    float dx = playerTransform.pos.x - upgradeTransform.pos.x;
-                    float dy = playerTransform.pos.y - upgradeTransform.pos.y;
-                    float dz = playerTransform.pos.z - upgradeTransform.pos.z;
-                    float distSq = dx*dx + dy*dy + dz*dz;
-                    
-                    if (distSq < 50.0f * 50.0f) {  // Collection radius
-                        upgradeTag.collected = true;
-                        collectedUpgrades.push_back(upgradeId);
-                        
-                        // Switch to upgrade scene
-                        sceneManager.SwitchToScene("UpgradeScene");
-                        break;
-                    }
-                }
-            }
-        }
+        //View<UpgradePointTag, Transform3D> upgradeView(*registry);
+        //std::vector<EntityID> collectedUpgrades;
+        //
+        //for (EntityID upgradeId : upgradeView) {
+        //    auto& upgradeTag = upgradeView.get<UpgradePointTag>(upgradeId);
+        //    auto& upgradeTransform = upgradeView.get<Transform3D>(upgradeId);
+        //    
+        //    if (!upgradeTag.collected) {
+        //        // Check collision with player
+        //        for (EntityID playerId : playerView) {
+        //            auto& playerTransform = playerView.get<Transform3D>(playerId);
+        //            
+        //            float dx = playerTransform.pos.x - upgradeTransform.pos.x;
+        //            float dy = playerTransform.pos.y - upgradeTransform.pos.y;
+        //            float dz = playerTransform.pos.z - upgradeTransform.pos.z;
+        //            float distSq = dx*dx + dy*dy + dz*dz;
+        //            
+        //            if (distSq < 50.0f * 50.0f) {  // Collection radius
+        //                upgradeTag.collected = true;
+        //                collectedUpgrades.push_back(upgradeId);
+        //                
+        //                // Switch to upgrade scene
+        //                sceneManager.SwitchToScene("UpgradeScene");
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
         
         // Remove collected upgrade points
-        for (EntityID id : collectedUpgrades) {
+        /*for (EntityID id : collectedUpgrades) {
             registry->destroyEntity(id);
-        }
+        }*/
     }
 }
 
