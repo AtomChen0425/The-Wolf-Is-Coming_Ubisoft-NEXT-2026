@@ -419,143 +419,43 @@ void GenerateSystem::GenerateChunk(EntityManager& registry, int chunkX, int chun
     const float blockSize = config.blockSize;
     const int chunkSize = config.chunkSize;
     const float floorHeight = config.floorHeight;
-    const float tallBlockHeight = config.tallBlockHeight;
-    const float scorePointHeight = config.scorePointHeight;
     const float chunkWorldSize = blockSize * chunkSize;
     
     // Calculate world position for this chunk
     float chunkWorldX = chunkX * chunkWorldSize;
     float chunkWorldZ = chunkZ * chunkWorldSize;
     
-    // Generate blocks for this chunk
+    // Generate only floor blocks for this chunk - simplified version
     for (int localZ = 0; localZ < chunkSize; localZ++) {
         for (int localX = 0; localX < chunkSize; localX++) {
             float blockX = chunkWorldX + localX * blockSize;
             float blockZ = chunkWorldZ + localZ * blockSize;
             
-            // Determine what type of block to generate
-            float chance = Rand01();
+            // Create floor block
+            Entity floor = registry.createEntity();
             
-            if (chance < config.normalFloorChance) {
-                // Normal floor
-                Entity floor = registry.createEntity();
-                float r, g, b;
-                if ((localX + localZ) % 2 == 0) {
-                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
-                } else {
-                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
-                }
-                
-                registry.addComponent(floor, Transform3D{
-                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
-                    blockSize, floorHeight, blockSize,
-                    r, g, b
-                });
-                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(floor, Collider3D{
-                    blockSize, floorHeight, blockSize,
-                    true, false  // isFloor, not wall
-                });
+            // Alternate colors for visual depth (checkerboard pattern)
+            float r, g, b;
+            if ((localX + localZ) % 2 == 0) {
+                r = config.floorColor1R; 
+                g = config.floorColor1G; 
+                b = config.floorColor1B;
+            } else {
+                r = config.floorColor2R; 
+                g = config.floorColor2G; 
+                b = config.floorColor2B;
             }
-            else if (chance < config.normalFloorChance + config.obstacleChance) {
-                // Floor with tall block
-                Entity floor = registry.createEntity();
-                float r, g, b;
-                if ((localX + localZ) % 2 == 0) {
-                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
-                } else {
-                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
-                }
-                
-                registry.addComponent(floor, Transform3D{
-                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
-                    blockSize, floorHeight, blockSize,
-                    r, g, b
-                });
-                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(floor, Collider3D{
-                    blockSize, floorHeight, blockSize,
-                    true, false
-                });
-                
-                // Add tall block on top
-                Entity tallBlock = registry.createEntity();
-                registry.addComponent(tallBlock, Transform3D{
-                    Vec3{blockX, tallBlockHeight/2 - floorHeight/2, blockZ},
-                    blockSize, tallBlockHeight, blockSize,
-                    config.tallBlockColorR, config.tallBlockColorG, config.tallBlockColorB
-                });
-                registry.addComponent(tallBlock, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(tallBlock, SolidBlockTag{});
-                registry.addComponent(tallBlock, Collider3D{
-                    blockSize, tallBlockHeight, blockSize,
-                    true, false
-                });
-                registry.addComponent(tallBlock, Health{50, 50});
-            }
-            else if (chance < config.normalFloorChance + config.obstacleChance + config.scorePointChance) {
-                // Floor with score point
-                Entity floor = registry.createEntity();
-                float r, g, b;
-                if ((localX + localZ) % 2 == 0) {
-                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
-                } else {
-                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
-                }
-                
-                registry.addComponent(floor, Transform3D{
-                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
-                    blockSize, floorHeight, blockSize,
-                    r, g, b
-                });
-                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(floor, Collider3D{
-                    blockSize, floorHeight, blockSize,
-                    true, false
-                });
-                
-                // Add score point
-                Entity scorePoint = registry.createEntity();
-                registry.addComponent(scorePoint, Transform3D{
-                    Vec3{blockX, 10.0f, blockZ},
-                    30.0f, scorePointHeight, 30.0f,
-                    config.scorePointColorR, config.scorePointColorG, config.scorePointColorB
-                });
-                registry.addComponent(scorePoint, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(scorePoint, ScorePointTag{10, false});
-            }
-            else if (chance < config.normalFloorChance + config.obstacleChance + config.scorePointChance + config.upgradePointChance) {
-                // Floor with upgrade point (rare!)
-                Entity floor = registry.createEntity();
-                float r, g, b;
-                if ((localX + localZ) % 2 == 0) {
-                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
-                } else {
-                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
-                }
-                
-                registry.addComponent(floor, Transform3D{
-                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
-                    blockSize, floorHeight, blockSize,
-                    r, g, b
-                });
-                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(floor, Collider3D{
-                    blockSize, floorHeight, blockSize,
-                    true, false
-                });
-                
-                // Add upgrade point
-                Entity upgradePoint = registry.createEntity();
-                registry.addComponent(upgradePoint, Transform3D{
-                    Vec3{blockX, 10.0f, blockZ},
-                    40.0f, 40.0f, 40.0f,
-                    config.upgradePointColorR, config.upgradePointColorG, config.upgradePointColorB
-                });
-                registry.addComponent(upgradePoint, ChunkTag{chunkX, chunkZ});
-                registry.addComponent(upgradePoint, UpgradePointTag{false});
-            }
-            // else: gap - no floor block
+            
+            registry.addComponent(floor, Transform3D{
+                Vec3{blockX, -floorHeight / 2.0f, blockZ},
+                blockSize, floorHeight, blockSize,
+                r, g, b
+            });
+            registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
+            registry.addComponent(floor, Collider3D{
+                blockSize, floorHeight, blockSize,
+                true, false  // isFloor, not wall
+            });
         }
     }
 }
