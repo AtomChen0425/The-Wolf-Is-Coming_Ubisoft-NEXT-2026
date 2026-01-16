@@ -2,6 +2,7 @@
 #include "ECS/ECS.h"
 #include "Scene/SceneManager.h"
 #include "../Game/Core/GameConfig.h"
+#include "../Game/Core/GameLevelData.h"
 #include <memory>
 #include <set>
 #include <utility>
@@ -84,6 +85,7 @@ public:
     Camera3D& GetCamera() { return camera; }
     GameSettings& GetSettings() { return settings; }
     GameConfig& GetGameConfig() { return config; }  // Renamed from GetConfig for clarity
+    GameLevelData& GetLevelData() { return levelData; }  // Access to level/round data
     
 private:
     std::unique_ptr<EntityManager> registry;
@@ -94,6 +96,7 @@ private:
     SceneManager sceneManager;
     GameSettings settings;
     GameConfig config;
+    GameLevelData levelData;  // Track level progression and round data
     
     void InitializeScenes();
 };

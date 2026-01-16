@@ -3,6 +3,8 @@
 #include "../../ContestAPI/app.h"
 #include "../Component/Component.h"
 #include "../ECS/ECS.h"
+#include "../../Game/Core/LevelSystem.h"
+#include "../../Game/Core/SheepSystem.h"
 
 // StartScene Implementation
 StartScene::StartScene(EngineSystem* engine) 
@@ -38,17 +40,19 @@ void StartScene::Render() {
 
 // PlayingScene Implementation
 PlayingScene::PlayingScene(EngineSystem* engine) 
-    : engineSystem(engine), m_lastScore(-1), scoreText(nullptr) {
+    : engineSystem(engine), m_lastScore(-1), scoreText(nullptr), 
+      roundText(nullptr), timeText(nullptr), sheepText(nullptr) {
 }
 
 void PlayingScene::OnEnter() {
     uiManager.Clear();
-    // No persistent UI in playing scene (could add score display here)
+    // Add UI elements
     scoreText = uiManager.AddText("Score: 0", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
+    roundText = uiManager.AddText("Round: 1", 10, 35, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
+    timeText = uiManager.AddText("Time: 60s", 10, 60, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
+    sheepText = uiManager.AddText("Sheep: 0", 10, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopLeft);
 
-    // ���û���ķ���
     m_lastScore = -1;
-    
 }
 
 void PlayingScene::OnExit() {
@@ -58,8 +62,10 @@ void PlayingScene::OnExit() {
 void PlayingScene::Update(float deltaTimeMs) {
     // Game logic updates are handled by EngineSystem
     EntityManager& registry = engineSystem->GetRegistry();
+    GameLevelData& levelData = engineSystem->GetLevelData();
+    
+    // Update score display
     View<PlayerTag> playerView(registry);
-
     for (EntityID id : playerView) {
         auto& player = playerView.get<PlayerTag>(id);
 
@@ -67,9 +73,25 @@ void PlayingScene::Update(float deltaTimeMs) {
             m_lastScore = player.score;
             if (scoreText) {
                 scoreText->SetText("Score: " + std::to_string(m_lastScore));
-
             }
         }
+    }
+    
+    // Update round display
+    if (roundText) {
+        roundText->SetText("Round: " + std::to_string(levelData.currentRound));
+    }
+    
+    // Update time display (show remaining time in round)
+    if (timeText) {
+        int remainingSeconds = static_cast<int>(levelData.GetRemainingRoundTime());
+        timeText->SetText("Time: " + std::to_string(remainingSeconds) + "s");
+    }
+    
+    // Update sheep count display
+    if (sheepText) {
+        int sheepCount = LevelSystem::GetSheepCount(registry);
+        sheepText->SetText("Sheep: " + std::to_string(sheepCount));
     }
 }
 
@@ -259,6 +281,8 @@ void UpgradeScene::Update(float deltaTimeMs) {
     // Confirm selection
     if (enterPressed && !enterWasPressed) {
         ApplyUpgrade(upgradeOptions[selectedUpgrade]);
+        // Advance to next round
+        engineSystem->GetLevelData().NextRound();
         // Return to playing scene
         engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
     }
@@ -315,7 +339,8 @@ void UpgradeScene::GenerateRandomUpgrades() {
         UpgradeType::SpeedBoost,
         UpgradeType::JumpBoost,
         UpgradeType::GravityReduction,
-        UpgradeType::BulletSpeed
+        UpgradeType::BulletSpeed,
+        UpgradeType::AddSheep  // Add the new sheep upgrade option
     };
     
     // Simple shuffle for 3 picks
@@ -328,6 +353,22 @@ void UpgradeScene::GenerateRandomUpgrades() {
 }
 
 void UpgradeScene::ApplyUpgrade(UpgradeType type) {
+    // Handle AddSheep separately (doesn't need player stats)
+    if (type == UpgradeType::AddSheep) {
+        // Add 10 new sheep near the player
+        View<PlayerTag, Transform3D> playerView(*engineSystem->GetEntityManager());
+        for (EntityID id : playerView) {
+            auto& playerTransform = playerView.get<Transform3D>(id);
+            // Spawn new sheep near the player's position
+            SheepSystem::InitSheep(engineSystem->GetRegistry(), 
+                                   playerTransform.pos.x, 
+                                   playerTransform.pos.z + 100.0f, 
+                                   10);
+            break;  // Only need to do this once
+        }
+        return;
+    }
+    
     // Find player and apply upgrade
     View<PlayerTag, PlayerStats> view(*engineSystem->GetEntityManager());
     
@@ -361,6 +402,10 @@ void UpgradeScene::ApplyUpgrade(UpgradeType type) {
             case UpgradeType::BulletSpeed:
                 stats.bulletSpeedBonus += config.bulletSpeedUpgradeAmount;
                 break;
+                
+            case UpgradeType::AddSheep:
+                // Already handled above
+                break;
         }
     }
 }
@@ -372,6 +417,7 @@ std::string UpgradeScene::GetUpgradeName(UpgradeType type) {
         case UpgradeType::JumpBoost: return "Jump Boost";
         case UpgradeType::GravityReduction: return "Gravity Reduction";
         case UpgradeType::BulletSpeed: return "Bullet Speed";
+        case UpgradeType::AddSheep: return "Add Sheep";
         default: return "Unknown";
     }
 }
@@ -383,6 +429,7 @@ std::string UpgradeScene::GetUpgradeDescription(UpgradeType type) {
         case UpgradeType::JumpBoost: return "Jump velocity +100";
         case UpgradeType::GravityReduction: return "Lighter jumps (gravity -100)";
         case UpgradeType::BulletSpeed: return "Bullet speed +100";
+        case UpgradeType::AddSheep: return "Add 10 more sheep";
         default: return "Unknown effect";
     }
 }

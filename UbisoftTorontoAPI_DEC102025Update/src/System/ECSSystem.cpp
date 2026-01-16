@@ -12,6 +12,7 @@
 #include "../Game/Core/ParticleSystem.h"
 #include "../Game/Core/SheepSystem.h"
 #include "../Game/Core/WolfSystem.h"
+#include "../Game/Core/LevelSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 #include "Scene/GameScenes.h"
@@ -51,6 +52,7 @@ void EngineSystem::InitializeGame() {
     gScore = 0;
     nextSpawnZ = 0.0f;
     loadedChunks.clear();  // Clear loaded chunks
+    levelData.Reset();  // Reset level data for new game
 
     // Initialize camera position and offsets for 3D view
     camera.followOffsetX = 0.0f;
@@ -127,6 +129,22 @@ void EngineSystem::Update(const float deltaTimeMs) {
             return;
         }
         
+        // Update level system (track time and round progression)
+        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs);
+        
+        // Check if all sheep are dead (game over condition)
+        if (LevelSystem::CheckGameOver(*registry)) {
+            gameState = GameState::GameOver;
+            sceneManager.SwitchToScene("GameOver");
+            return;
+        }
+        
+        // If round is complete, go to upgrade scene
+        if (roundComplete) {
+            sceneManager.SwitchToScene("UpgradeScene");
+            return;  // Don't continue game logic this frame
+        }
+        
         // Update player control (handles input and movement, and camera control)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
         // Update enemy AI (movement, shooting, bullets)
@@ -135,7 +153,8 @@ void EngineSystem::Update(const float deltaTimeMs) {
         SheepSystem::Update(*registry, deltaTimeMs);
         // Check and resolve collisions (after movement is applied)
         // Update wolf behavior (wolves chase nearest player or sheep)
-        if (gSpawnTimerMs >= gSpawnIntervalMs) {
+        // Use dynamic spawn interval from level data
+        if (gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
             GenerateSystem::GenerateWolf(*registry);
             gSpawnTimerMs = 0.0f;
 		}

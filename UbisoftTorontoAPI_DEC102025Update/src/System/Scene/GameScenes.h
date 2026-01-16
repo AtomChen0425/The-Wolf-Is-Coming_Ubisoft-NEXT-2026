@@ -40,6 +40,9 @@ private:
     UIManager uiManager;
     int m_lastScore;
     UIText* scoreText;
+    UIText* roundText;
+    UIText* timeText;
+    UIText* sheepText;
 };
 
 // Game Over Scene
@@ -101,7 +104,8 @@ private:
         SpeedBoost,
         JumpBoost,
         GravityReduction,
-        BulletSpeed
+        BulletSpeed,
+        AddSheep  // New upgrade type to add more sheep
     };
     
     UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
