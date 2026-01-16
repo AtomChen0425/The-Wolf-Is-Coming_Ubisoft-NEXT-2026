@@ -422,6 +422,7 @@ void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameCo
                 r, g, b
                 });
             registry.addComponent(floor, ChunkTag{ chunkX, chunkZ });
+            registry.addComponent(floor, MapBlockTag{});
             registry.addComponent(floor, Collider3D{
                 blockSize, floorHeight, blockSize,
                 true, false  // isFloor, not wall
