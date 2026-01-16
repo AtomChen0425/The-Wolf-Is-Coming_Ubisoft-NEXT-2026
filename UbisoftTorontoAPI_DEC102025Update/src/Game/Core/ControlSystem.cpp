@@ -26,14 +26,14 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         Vec3& pos = playerTransform.pos;
         
         // Apply player stats upgrades if they have PlayerStats component
-        if (view.has<PlayerStats>(id)) {
-            auto& stats = view.get<PlayerStats>(id);
-            forwardSpeed += stats.speedBonus;
-            strafeSpeed += stats.speedBonus;
-            jumpVelocity += stats.jumpBonus;
-            gravity += stats.gravityBonus;  // Note: gravityBonus is negative, so this reduces gravity
-            bulletSpeed += stats.bulletSpeedBonus;
-        }
+        //if (view.has<PlayerStats>(id)) {
+        //    auto& stats = view.get<PlayerStats>(id);
+        //    forwardSpeed += stats.speedBonus;
+        //    strafeSpeed += stats.speedBonus;
+        //    jumpVelocity += stats.jumpBonus;
+        //    gravity += stats.gravityBonus;  // Note: gravityBonus is negative, so this reduces gravity
+        //    bulletSpeed += stats.bulletSpeedBonus;
+        //}
         
         forwardSpeed += playerTag.score;
         
@@ -151,10 +151,10 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
         auto& playerTransform = view.get<Transform3D>(id);
         
         // Apply player stats bonuses if they exist
-        if (view.has<PlayerStats>(id)) {
+        /*if (view.has<PlayerStats>(id)) {
             auto& stats = view.get<PlayerStats>(id);
             bulletSpeed += stats.bulletSpeedBonus;
-        }
+        }*/
 
         if ((App::IsKeyPressed(App::KEY_J) || App::IsMousePressed(0)) && playerTag.shootCooldown <= 0.0f) {
             // Fire a bullet

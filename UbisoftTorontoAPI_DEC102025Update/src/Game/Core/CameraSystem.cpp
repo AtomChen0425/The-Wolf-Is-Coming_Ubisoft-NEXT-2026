@@ -4,6 +4,7 @@
 
 void CameraFollow3D(EntityManager& registry, Camera3D& camera) {
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
+	float sholderOffsetX = 0.0f; // Shoulder offset to the right
     for (EntityID id : view) {
         auto& playerTransform = view.get<Transform3D>(id);
         auto& playerTag = view.get<PlayerTag>(id);
@@ -25,7 +26,7 @@ void CameraFollow3D(EntityManager& registry, Camera3D& camera) {
         float pitchAdjustedOffsetY = camera.followOffsetY + camera.followOffsetZ * sinPitch * 0.5f;
         float pitchAdjustedOffsetZ = rotatedOffsetZ * cosPitch;
         
-        camera.x = pos.x + rotatedOffsetX;
+        camera.x = pos.x+ sholderOffsetX + rotatedOffsetX;
         camera.y = pos.y + pitchAdjustedOffsetY;
         camera.z = pos.z + pitchAdjustedOffsetZ;
     }

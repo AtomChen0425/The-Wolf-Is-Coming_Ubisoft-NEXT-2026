@@ -1,4 +1,119 @@
-﻿  CameraSystem.cpp
+﻿  EnemyAISystem.cpp
+  ParticleSystem.cpp
+  GameScenes.cpp
+D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\GameScenes.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  CameraSystem.cpp
+  CollisionSystem.cpp
+  ControlSystem.cpp
+  GenerateSystem.cpp
+D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.h(14,89): error C2039: 'unordered_set': is not a member of 'std'
+  (compiling source file '../../src/Game/Core/GenerateSystem.cpp')
+      D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\string(23,1):
+      see declaration of 'std'
+  
+D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.h(14,89): error C2061: syntax error: identifier 'unordered_set'
+  (compiling source file '../../src/Game/Core/GenerateSystem.cpp')
+  
+D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,62): error C2064: term does not evaluate to a function taking 1 arguments
+  (compiling source file '../../src/Game/Core/GenerateSystem.cpp')
+      D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,62):
+      the template instantiation context (the oldest one first) is
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(1143,64):
+          while compiling class template member function 'unsigned __int64 std::_Hash<std::_Uset_traits<_Kty,std::_Uhash_compare<_Kty,_Hasher,_Keyeq>,_Alloc,false>>::_Erase<std::pair<int,int>>(const _Keytype &) noexcept(<expr>)'
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Alloc=std::allocator<std::pair<int,int>>,
+              _Keytype=std::pair<int,int>
+          ]
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(1110,56):
+          see reference to function template instantiation 'bool std::_Hash<std::_Uset_traits<_Kty,std::_Uhash_compare<_Kty,_Hasher,_Keyeq>,_Alloc,false>>::_Noexcept_heterogeneous_erasure<_Keytype>(void)' being compiled
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Alloc=std::allocator<std::pair<int,int>>,
+              _Keytype=std::pair<int,int>
+          ]
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(1105,16):
+          see reference to variable template 'const bool _Nothrow_hash<std::_Uset_traits<std::pair<int,int>,std::_Uhash_compare<std::pair<int,int>,std::hash<std::pair<int,int> >,std::equal_to<std::pair<int,int> > >,std::allocator<std::pair<int,int> >,0>,std::pair<int,int> >' being compiled
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,62):
+          while compiling class template member function 'size_t std::_Uhash_compare<_Kty,_Hasher,_Keyeq>::operator ()<_Kty>(const _Keyty &) noexcept(<expr>) const'
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Keyty=std::pair<int,int>
+          ]
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(141,72):
+          see reference to variable template 'const bool _Nothrow_hash<std::hash<std::pair<int,int> >,std::pair<int,int> >' being compiled
+  
+D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,5): error C2056: illegal expression
+  (compiling source file '../../src/Game/Core/GenerateSystem.cpp')
+  
+D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.cpp(581,22): error C2244: 'ChunkGenerationSystem': unable to match function definition to an existing declaration
+      D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.cpp(581,22):
+      see declaration of 'ChunkGenerationSystem'
+  
+  MovementSystem.cpp
+D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  PhysicsSystem.cpp
+  RenderSystem.cpp
+  GameTest.cpp
   ECSSystem.cpp
+D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,62): error C2064: term does not evaluate to a function taking 1 arguments
+  (compiling source file '../../src/System/ECSSystem.cpp')
+      D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,62):
+      the template instantiation context (the oldest one first) is
+          D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\ECSSystem.h(92,44):
+          see reference to class template instantiation 'std::unordered_set<std::pair<int,int>,std::hash<std::pair<int,int>>,std::equal_to<std::pair<int,int>>,std::allocator<std::pair<int,int>>>' being compiled
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\unordered_set(59,30):
+          see reference to class template instantiation 'std::_Hash<std::_Uset_traits<_Kty,std::_Uhash_compare<_Kty,_Hasher,_Keyeq>,_Alloc,false>>' being compiled
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Alloc=std::allocator<std::pair<int,int>>
+          ]
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(1155,10):
+          while compiling class template member function 'void std::_Hash<std::_Uset_traits<_Kty,std::_Uhash_compare<_Kty,_Hasher,_Keyeq>,_Alloc,false>>::clear(void) noexcept'
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Alloc=std::allocator<std::pair<int,int>>
+          ]
+              D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\ECSSystem.cpp(51,23):
+              see the first reference to 'std::_Hash<std::_Uset_traits<_Kty,std::_Uhash_compare<_Kty,_Hasher,_Keyeq>,_Alloc,false>>::clear' in 'EngineSystem::InitializeGame'
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Alloc=std::allocator<std::pair<int,int>>
+          ]
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(1168,23):
+          see reference to variable template 'const bool _Nothrow_hash<std::_Uset_traits<std::pair<int,int>,std::_Uhash_compare<std::pair<int,int>,std::hash<std::pair<int,int> >,std::equal_to<std::pair<int,int> > >,std::allocator<std::pair<int,int> >,0>,std::pair<int,int> >' being compiled
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,62):
+          while compiling class template member function 'size_t std::_Uhash_compare<_Kty,_Hasher,_Keyeq>::operator ()<_Kty>(const _Keyty &) noexcept(<expr>) const'
+          with
+          [
+              _Kty=std::pair<int,int>,
+              _Hasher=std::hash<std::pair<int,int>>,
+              _Keyeq=std::equal_to<std::pair<int,int>>,
+              _Keyty=std::pair<int,int>
+          ]
+          D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(141,72):
+          see reference to variable template 'const bool _Nothrow_hash<std::hash<std::pair<int,int> >,std::pair<int,int> >' being compiled
+  
+D:\PC_Tool\VisualStudio\VC\Tools\MSVC\14.44.35207\include\xhash(118,5): error C2056: illegal expression
+  (compiling source file '../../src/System/ECSSystem.cpp')
+  
+  RenderHelper.cpp
   Generating Code...
-  Game.vcxproj -> D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\Game.exe

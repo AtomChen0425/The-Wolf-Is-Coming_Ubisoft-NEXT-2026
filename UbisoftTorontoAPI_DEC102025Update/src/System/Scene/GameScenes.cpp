@@ -239,10 +239,10 @@ void UpgradeScene::Update(float deltaTimeMs) {
     static bool leftWasPressed = false;
     static bool rightWasPressed = false;
     static bool enterWasPressed = false;
-    
-    bool leftPressed = App::GetController().GetLeftThumbStickX() < -0.5f || App::IsKeyPressed(VK_LEFT);
-    bool rightPressed = App::GetController().GetLeftThumbStickX() > 0.5f || App::IsKeyPressed(VK_RIGHT);
-    bool enterPressed = App::IsKeyPressed(VK_RETURN) || App::IsKeyPressed(VK_SPACE);
+
+    bool leftPressed = App::GetController().GetLeftThumbStickX() < -0.5f || App::IsKeyPressed(App::KEY_LEFT);
+    bool rightPressed = App::GetController().GetLeftThumbStickX() > 0.5f || App::IsKeyPressed(App::KEY_RIGHT);
+    bool enterPressed = App::IsKeyPressed(App::KEY_ENTER) || App::IsKeyPressed(App::KEY_SPACE);
     
     // Navigate left
     if (leftPressed && !leftWasPressed) {
@@ -339,11 +339,11 @@ void UpgradeScene::ApplyUpgrade(UpgradeType type) {
             case UpgradeType::HealthBoost:
                 stats.healthBonus += config.healthUpgradeAmount;
                 // Also heal player
-                if (view.has<Health>(id)) {
+                /*if (view.has<Health>(id)) {
                     auto& health = view.get<Health>(id);
                     health.maxHealth += (int)config.healthUpgradeAmount;
                     health.currentHealth += (int)config.healthUpgradeAmount;
-                }
+                }*/
                 break;
                 
             case UpgradeType::SpeedBoost:
