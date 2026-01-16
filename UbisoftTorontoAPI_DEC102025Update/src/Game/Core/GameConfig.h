@@ -28,8 +28,13 @@ struct GameConfig {
     float normalFloorChance = 0.6f;
     float obstacleChance = 0.15f;
     float scorePointChance = 0.15f;
+    float upgradePointChance = 0.05f;  // Chance for upgrade points
     float gapChance = 0.10f;
     float gapFloorChance = 0.3f;
+    
+    // Chunk-based generation
+    int chunkSize = 5;           // Blocks per chunk (width and depth)
+    int chunkRenderRadius = 3;   // How many chunks to render in each direction
     
     // Block heights
     float floorHeight = 10.0f;
@@ -82,6 +87,18 @@ struct GameConfig {
     float scorePointColorR = 1.0f;
     float scorePointColorG = 1.0f;
     float scorePointColorB = 0.0f;
+    
+    // Upgrade point color
+    float upgradePointColorR = 1.0f;
+    float upgradePointColorG = 0.5f;
+    float upgradePointColorB = 0.0f;
+    
+    // Upgrade values
+    float healthUpgradeAmount = 20.0f;
+    float speedUpgradeAmount = 50.0f;
+    float jumpUpgradeAmount = 100.0f;
+    float gravityUpgradeAmount = -100.0f;  // Negative makes you lighter
+    float bulletSpeedUpgradeAmount = 100.0f;
     
     // Load config from file (returns true if successful)
     bool LoadFromFile(const std::string& filename);

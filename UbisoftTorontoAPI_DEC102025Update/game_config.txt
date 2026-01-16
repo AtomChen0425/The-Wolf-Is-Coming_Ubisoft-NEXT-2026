@@ -24,8 +24,13 @@ wallHeight=100
 normalFloorChance=0.6
 obstacleChance=0.15
 scorePointChance=0.15
+upgradePointChance=0.05
 gapChance=0.1
 gapFloorChance=0.3
+
+# Chunk Generation
+chunkSize=5
+chunkRenderRadius=3
 
 # Block Heights
 floorHeight=30
@@ -78,3 +83,15 @@ tallBlockColorB=0.9
 scorePointColorR=1.0
 scorePointColorG=1.0
 scorePointColorB=0.0
+
+# Upgrade Point Color
+upgradePointColorR=1.0
+upgradePointColorG=0.5
+upgradePointColorB=0.0
+
+# Upgrade Values
+healthUpgradeAmount=20
+speedUpgradeAmount=50
+jumpUpgradeAmount=100
+gravityUpgradeAmount=-100
+bulletSpeedUpgradeAmount=100

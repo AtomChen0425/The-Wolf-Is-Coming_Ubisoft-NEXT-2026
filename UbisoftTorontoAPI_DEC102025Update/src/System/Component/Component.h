@@ -171,3 +171,23 @@ struct TrailEmitter {
     float size;           
     float r, g, b;         
 };
+
+// Upgrade point component for roguelike progression
+struct UpgradePointTag {
+    bool collected;
+};
+
+// Player stats component for tracking upgrades
+struct PlayerStats {
+    float healthBonus = 0.0f;      // Additional max health from upgrades
+    float speedBonus = 0.0f;       // Additional movement speed from upgrades
+    float jumpBonus = 0.0f;        // Additional jump velocity from upgrades
+    float gravityBonus = 0.0f;     // Gravity reduction from upgrades (negative = lighter)
+    float bulletSpeedBonus = 0.0f; // Additional bullet speed from upgrades
+};
+
+// Chunk identifier for map generation
+struct ChunkTag {
+    int chunkX;  // Chunk X coordinate
+    int chunkZ;  // Chunk Z coordinate
+};

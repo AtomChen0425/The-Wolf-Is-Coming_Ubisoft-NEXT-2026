@@ -10,6 +10,11 @@ namespace GenerateSystem
 	void SpawnEnemy(EntityManager& registry);
 	void MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ, const GameConfig& config);
 	
+	// Chunk-based map generation for infinite 4-direction map
+	void ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config);
+	void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameConfig& config);
+	void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config);
+	
 	// Template-based map generation
 	void GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ, const GameConfig& config);
 	MapTemplate CreateDefaultTemplate(const GameConfig& config);

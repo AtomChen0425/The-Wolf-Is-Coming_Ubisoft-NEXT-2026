@@ -3,6 +3,8 @@
 #include "Scene/SceneManager.h"
 #include "../Game/Core/GameConfig.h"
 #include <memory>
+#include <set>
+#include <utility>
 
 struct Camera25D {
     float x; // World X coordinate
@@ -77,14 +79,16 @@ public:
     GameState GetGameState() const { return gameState; }
     SceneManager& GetSceneManager() { return sceneManager; }
     EntityManager& GetRegistry() { return *registry; }
+    EntityManager* GetEntityManager() { return registry.get(); }  // Add this for UpgradeScene
     Camera3D& GetCamera() { return camera; }
     GameSettings& GetSettings() { return settings; }
-    GameConfig& GetConfig() { return config; }
+    GameConfig& GetGameConfig() { return config; }  // Renamed from GetConfig for clarity
     
 private:
     std::unique_ptr<EntityManager> registry;
     Camera3D camera;
     float nextSpawnZ = 0.0f;
+    std::set<std::pair<int, int>> loadedChunks;  // Track loaded map chunks
     GameState gameState = GameState::StartScreen;
     SceneManager sceneManager;
     GameSettings settings;

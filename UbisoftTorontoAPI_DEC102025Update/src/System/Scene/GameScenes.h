@@ -78,3 +78,35 @@ private:
     UIManager uiManager;
     int selectedOption;  // 0 = Mouse, 1 = Arrow Keys
 };
+
+// Upgrade Scene for Roguelike progression
+class UpgradeScene : public IScene {
+public:
+    UpgradeScene(EngineSystem* engine);
+    
+    void OnEnter() override;
+    void OnExit() override;
+    void Update(float deltaTimeMs) override;
+    void Render() override;
+    std::string GetName() const override { return "UpgradeScene"; }
+    
+private:
+    EngineSystem* engineSystem;
+    UIManager uiManager;
+    int selectedUpgrade;  // Currently selected upgrade (0-2)
+    
+    // Upgrade types available
+    enum class UpgradeType {
+        HealthBoost,
+        SpeedBoost,
+        JumpBoost,
+        GravityReduction,
+        BulletSpeed
+    };
+    
+    UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
+    void GenerateRandomUpgrades();
+    void ApplyUpgrade(UpgradeType type);
+    std::string GetUpgradeName(UpgradeType type);
+    std::string GetUpgradeDescription(UpgradeType type);
+};

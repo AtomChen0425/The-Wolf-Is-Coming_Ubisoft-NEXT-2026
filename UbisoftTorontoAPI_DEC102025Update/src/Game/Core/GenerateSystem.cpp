@@ -1,6 +1,9 @@
 #include "GenerateSystem.h"
 #include "../../System/Component/Component.h"
 #include "../../ContestAPI/app.h"
+#include <set>
+#include <utility>
+
 void GenerateSystem::CreatePlayer(EntityManager& registry)
 {
     Entity entity = registry.createEntity();
@@ -143,6 +146,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     });
     registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, PlayerTag{true, 0, 0, 0});
+    registry.addComponent(entity, PlayerStats{});  // Add player stats for upgrades
 }
 
 // Create a default simple template
@@ -185,6 +189,12 @@ MapTemplate GenerateSystem::CreateTestTemplate(const GameConfig& config) {
         }
         int scoreX = (int)(Rand01() * roadWidth);
         tmpl.setBlock(scoreX, 0, BlockType::ScorePoint);
+    } else if (chance < config.normalFloorChance + config.obstacleChance + config.scorePointChance + config.upgradePointChance) {
+        // Floor with upgrade point (rare!)
+        for (int x = 0; x < roadWidth; x++) {
+            tmpl.setBlock(x, 0, BlockType::Floor);
+        }
+        // Don't add upgrade point to template, we'll spawn it separately in chunk generation
     } else {
         // Gap with some floor blocks missing
         for (int x = 0; x < roadWidth; x++) {
@@ -372,5 +382,224 @@ void GenerateSystem::CreateTestEnemyWithAI(EntityManager& registry, float x, flo
         shootComponent.projectileSpeed = 200.0f;     // Bullet speed: 200 units/sec
         shootComponent.isActive = true;
         registry.addComponent(enemy, shootComponent);
+    }
+}
+
+// Chunk-based generation system for infinite 4-direction map
+void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+    const float blockSize = config.blockSize;
+    const int chunkSize = config.chunkSize;
+    const int renderRadius = config.chunkRenderRadius;
+    const float chunkWorldSize = blockSize * chunkSize;
+    
+    // Calculate which chunk the player is in
+    int playerChunkX = (int)floor(playerX / chunkWorldSize);
+    int playerChunkZ = (int)floor(playerZ / chunkWorldSize);
+    
+    // Generate chunks around the player
+    for (int dx = -renderRadius; dx <= renderRadius; dx++) {
+        for (int dz = -renderRadius; dz <= renderRadius; dz++) {
+            int chunkX = playerChunkX + dx;
+            int chunkZ = playerChunkZ + dz;
+            std::pair<int, int> chunkKey = {chunkX, chunkZ};
+            
+            // Only generate if not already loaded
+            if (loadedChunks.find(chunkKey) == loadedChunks.end()) {
+                GenerateChunk(registry, chunkX, chunkZ, config);
+                loadedChunks.insert(chunkKey);
+            }
+        }
+    }
+    
+    // Despawn distant chunks
+    DespawnDistantChunks(registry, playerX, playerZ, loadedChunks, config);
+}
+
+void GenerateSystem::GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameConfig& config) {
+    const float blockSize = config.blockSize;
+    const int chunkSize = config.chunkSize;
+    const float floorHeight = config.floorHeight;
+    const float tallBlockHeight = config.tallBlockHeight;
+    const float scorePointHeight = config.scorePointHeight;
+    const float chunkWorldSize = blockSize * chunkSize;
+    
+    // Calculate world position for this chunk
+    float chunkWorldX = chunkX * chunkWorldSize;
+    float chunkWorldZ = chunkZ * chunkWorldSize;
+    
+    // Generate blocks for this chunk
+    for (int localZ = 0; localZ < chunkSize; localZ++) {
+        for (int localX = 0; localX < chunkSize; localX++) {
+            float blockX = chunkWorldX + localX * blockSize;
+            float blockZ = chunkWorldZ + localZ * blockSize;
+            
+            // Determine what type of block to generate
+            float chance = Rand01();
+            
+            if (chance < config.normalFloorChance) {
+                // Normal floor
+                Entity floor = registry.createEntity();
+                float r, g, b;
+                if ((localX + localZ) % 2 == 0) {
+                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
+                } else {
+                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
+                }
+                
+                registry.addComponent(floor, Transform3D{
+                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
+                    blockSize, floorHeight, blockSize,
+                    r, g, b
+                });
+                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(floor, Collider3D{
+                    blockSize, floorHeight, blockSize,
+                    true, false  // isFloor, not wall
+                });
+            }
+            else if (chance < config.normalFloorChance + config.obstacleChance) {
+                // Floor with tall block
+                Entity floor = registry.createEntity();
+                float r, g, b;
+                if ((localX + localZ) % 2 == 0) {
+                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
+                } else {
+                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
+                }
+                
+                registry.addComponent(floor, Transform3D{
+                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
+                    blockSize, floorHeight, blockSize,
+                    r, g, b
+                });
+                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(floor, Collider3D{
+                    blockSize, floorHeight, blockSize,
+                    true, false
+                });
+                
+                // Add tall block on top
+                Entity tallBlock = registry.createEntity();
+                registry.addComponent(tallBlock, Transform3D{
+                    Vec3{blockX, tallBlockHeight/2 - floorHeight/2, blockZ},
+                    blockSize, tallBlockHeight, blockSize,
+                    config.tallBlockColorR, config.tallBlockColorG, config.tallBlockColorB
+                });
+                registry.addComponent(tallBlock, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(tallBlock, SolidBlockTag{});
+                registry.addComponent(tallBlock, Collider3D{
+                    blockSize, tallBlockHeight, blockSize,
+                    true, false
+                });
+                registry.addComponent(tallBlock, Health{50, 50});
+            }
+            else if (chance < config.normalFloorChance + config.obstacleChance + config.scorePointChance) {
+                // Floor with score point
+                Entity floor = registry.createEntity();
+                float r, g, b;
+                if ((localX + localZ) % 2 == 0) {
+                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
+                } else {
+                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
+                }
+                
+                registry.addComponent(floor, Transform3D{
+                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
+                    blockSize, floorHeight, blockSize,
+                    r, g, b
+                });
+                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(floor, Collider3D{
+                    blockSize, floorHeight, blockSize,
+                    true, false
+                });
+                
+                // Add score point
+                Entity scorePoint = registry.createEntity();
+                registry.addComponent(scorePoint, Transform3D{
+                    Vec3{blockX, 10.0f, blockZ},
+                    30.0f, scorePointHeight, 30.0f,
+                    config.scorePointColorR, config.scorePointColorG, config.scorePointColorB
+                });
+                registry.addComponent(scorePoint, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(scorePoint, ScorePointTag{10, false});
+            }
+            else if (chance < config.normalFloorChance + config.obstacleChance + config.scorePointChance + config.upgradePointChance) {
+                // Floor with upgrade point (rare!)
+                Entity floor = registry.createEntity();
+                float r, g, b;
+                if ((localX + localZ) % 2 == 0) {
+                    r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
+                } else {
+                    r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
+                }
+                
+                registry.addComponent(floor, Transform3D{
+                    Vec3{blockX, -floorHeight / 2.0f, blockZ},
+                    blockSize, floorHeight, blockSize,
+                    r, g, b
+                });
+                registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(floor, Collider3D{
+                    blockSize, floorHeight, blockSize,
+                    true, false
+                });
+                
+                // Add upgrade point
+                Entity upgradePoint = registry.createEntity();
+                registry.addComponent(upgradePoint, Transform3D{
+                    Vec3{blockX, 10.0f, blockZ},
+                    40.0f, 40.0f, 40.0f,
+                    config.upgradePointColorR, config.upgradePointColorG, config.upgradePointColorB
+                });
+                registry.addComponent(upgradePoint, ChunkTag{chunkX, chunkZ});
+                registry.addComponent(upgradePoint, UpgradePointTag{false});
+            }
+            // else: gap - no floor block
+        }
+    }
+}
+
+void GenerateSystem::DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+    const float blockSize = config.blockSize;
+    const int chunkSize = config.chunkSize;
+    const int renderRadius = config.chunkRenderRadius;
+    const float chunkWorldSize = blockSize * chunkSize;
+    const float despawnDistance = chunkWorldSize * (renderRadius + 2);  // Add buffer
+    
+    // Calculate player chunk
+    int playerChunkX = (int)floor(playerX / chunkWorldSize);
+    int playerChunkZ = (int)floor(playerZ / chunkWorldSize);
+    
+    // Find chunks to unload
+    std::vector<std::pair<int, int>> chunksToUnload;
+    for (const auto& chunkKey : loadedChunks) {
+        int dx = chunkKey.first - playerChunkX;
+        int dz = chunkKey.second - playerChunkZ;
+        
+        // If chunk is too far, mark for unloading
+        if (abs(dx) > renderRadius + 1 || abs(dz) > renderRadius + 1) {
+            chunksToUnload.push_back(chunkKey);
+        }
+    }
+    
+    // Despawn entities in chunks being unloaded
+    for (const auto& chunkKey : chunksToUnload) {
+        View<ChunkTag> view(registry);
+        std::vector<EntityID> toDestroy;
+        
+        for (EntityID id : view) {
+            auto& chunkTag = view.get<ChunkTag>(id);
+            if (chunkTag.chunkX == chunkKey.first && chunkTag.chunkZ == chunkKey.second) {
+                toDestroy.push_back(id);
+            }
+        }
+        
+        for (EntityID id : toDestroy) {
+            registry.destroyEntity(id);
+        }
+        
+        // Remove from loaded chunks
+        loadedChunks.erase(chunkKey);
     }
 }

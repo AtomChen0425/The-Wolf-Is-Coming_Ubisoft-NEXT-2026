@@ -29,8 +29,13 @@ void GameConfig::LoadDefaults() {
     normalFloorChance = 0.6f;
     obstacleChance = 0.15f;
     scorePointChance = 0.15f;
+    upgradePointChance = 0.05f;
     gapChance = 0.10f;
     gapFloorChance = 0.3f;
+    
+    // Chunk-based generation
+    chunkSize = 5;
+    chunkRenderRadius = 3;
     
     // Block heights
     floorHeight = 10.0f;
@@ -77,6 +82,17 @@ void GameConfig::LoadDefaults() {
     scorePointColorR = 1.0f;
     scorePointColorG = 1.0f;
     scorePointColorB = 0.0f;
+    
+    upgradePointColorR = 1.0f;
+    upgradePointColorG = 0.5f;
+    upgradePointColorB = 0.0f;
+    
+    // Upgrade values
+    healthUpgradeAmount = 20.0f;
+    speedUpgradeAmount = 50.0f;
+    jumpUpgradeAmount = 100.0f;
+    gravityUpgradeAmount = -100.0f;
+    bulletSpeedUpgradeAmount = 100.0f;
 }
 
 bool GameConfig::LoadFromFile(const std::string& filename) {
@@ -163,6 +179,18 @@ bool GameConfig::LoadFromFile(const std::string& filename) {
             else if (key == "scorePointColorR") scorePointColorR = std::stof(value);
             else if (key == "scorePointColorG") scorePointColorG = std::stof(value);
             else if (key == "scorePointColorB") scorePointColorB = std::stof(value);
+            // Upgrade and chunk parameters
+            else if (key == "upgradePointChance") upgradePointChance = std::stof(value);
+            else if (key == "chunkSize") chunkSize = std::stoi(value);
+            else if (key == "chunkRenderRadius") chunkRenderRadius = std::stoi(value);
+            else if (key == "upgradePointColorR") upgradePointColorR = std::stof(value);
+            else if (key == "upgradePointColorG") upgradePointColorG = std::stof(value);
+            else if (key == "upgradePointColorB") upgradePointColorB = std::stof(value);
+            else if (key == "healthUpgradeAmount") healthUpgradeAmount = std::stof(value);
+            else if (key == "speedUpgradeAmount") speedUpgradeAmount = std::stof(value);
+            else if (key == "jumpUpgradeAmount") jumpUpgradeAmount = std::stof(value);
+            else if (key == "gravityUpgradeAmount") gravityUpgradeAmount = std::stof(value);
+            else if (key == "bulletSpeedUpgradeAmount") bulletSpeedUpgradeAmount = std::stof(value);
         } catch (const std::exception& e) {
             std::cout << "Error parsing config value for key: " << key << std::endl;
         }
@@ -203,8 +231,12 @@ bool GameConfig::SaveToFile(const std::string& filename) const {
     file << "normalFloorChance=" << normalFloorChance << "\n";
     file << "obstacleChance=" << obstacleChance << "\n";
     file << "scorePointChance=" << scorePointChance << "\n";
+    file << "upgradePointChance=" << upgradePointChance << "\n";
     file << "gapChance=" << gapChance << "\n";
     file << "gapFloorChance=" << gapFloorChance << "\n";
+    file << "\n# Chunk Generation\n";
+    file << "chunkSize=" << chunkSize << "\n";
+    file << "chunkRenderRadius=" << chunkRenderRadius << "\n";
     file << "\n# Block Heights\n";
     file << "floorHeight=" << floorHeight << "\n";
     file << "tallBlockHeight=" << tallBlockHeight << "\n";
@@ -247,6 +279,16 @@ bool GameConfig::SaveToFile(const std::string& filename) const {
     file << "scorePointColorR=" << scorePointColorR << "\n";
     file << "scorePointColorG=" << scorePointColorG << "\n";
     file << "scorePointColorB=" << scorePointColorB << "\n";
+    file << "\n# Upgrade Point Color\n";
+    file << "upgradePointColorR=" << upgradePointColorR << "\n";
+    file << "upgradePointColorG=" << upgradePointColorG << "\n";
+    file << "upgradePointColorB=" << upgradePointColorB << "\n";
+    file << "\n# Upgrade Values\n";
+    file << "healthUpgradeAmount=" << healthUpgradeAmount << "\n";
+    file << "speedUpgradeAmount=" << speedUpgradeAmount << "\n";
+    file << "jumpUpgradeAmount=" << jumpUpgradeAmount << "\n";
+    file << "gravityUpgradeAmount=" << gravityUpgradeAmount << "\n";
+    file << "bulletSpeedUpgradeAmount=" << bulletSpeedUpgradeAmount << "\n";
     
     file.close();
     std::cout << "Config saved to: " << filename << std::endl;

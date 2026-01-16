@@ -11,10 +11,12 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
     float playerCurrentZ = 0.0f;
     
     // Get constants from config
-    const float jumpVelocity = config.jumpVelocity;
+    float jumpVelocity = config.jumpVelocity;
     float forwardSpeed = config.forwardSpeed;
-    const float strafeSpeed = config.strafeSpeed;
+    float strafeSpeed = config.strafeSpeed;
     const float rotationSpeed = config.rotationSpeed;
+    float gravity = config.gravity;
+    float bulletSpeed = config.bulletSpeed;
     
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
@@ -22,6 +24,17 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         auto& playerTransform = view.get<Transform3D>(id);
         auto& vel = view.get<Velocity3D>(id).vel;
         Vec3& pos = playerTransform.pos;
+        
+        // Apply player stats upgrades if they have PlayerStats component
+        if (view.has<PlayerStats>(id)) {
+            auto& stats = view.get<PlayerStats>(id);
+            forwardSpeed += stats.speedBonus;
+            strafeSpeed += stats.speedBonus;
+            jumpVelocity += stats.jumpBonus;
+            gravity += stats.gravityBonus;  // Note: gravityBonus is negative, so this reduces gravity
+            bulletSpeed += stats.bulletSpeedBonus;
+        }
+        
         forwardSpeed += playerTag.score;
         
         // === Camera Control Logic (moved from CameraSystem) ===
@@ -130,12 +143,18 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
 
 void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
     float dtSec = dt / 1000.0f;
-	const float bulletSpeed = config.bulletSpeed;
+	float bulletSpeed = config.bulletSpeed;
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
         auto& playerTag = view.get<PlayerTag>(id);
         playerTag.shootCooldown -= dt;
         auto& playerTransform = view.get<Transform3D>(id);
+        
+        // Apply player stats bonuses if they exist
+        if (view.has<PlayerStats>(id)) {
+            auto& stats = view.get<PlayerStats>(id);
+            bulletSpeed += stats.bulletSpeedBonus;
+        }
 
         if ((App::IsKeyPressed(App::KEY_J) || App::IsMousePressed(0)) && playerTag.shootCooldown <= 0.0f) {
             // Fire a bullet

@@ -36,6 +36,7 @@ void EngineSystem::InitializeScenes() {
     sceneManager.RegisterScene("Playing", std::make_unique<PlayingScene>(this));
     sceneManager.RegisterScene("GameOver", std::make_unique<GameOverScene>(this));
     sceneManager.RegisterScene("Settings", std::make_unique<SettingsScene>(this));
+    sceneManager.RegisterScene("UpgradeScene", std::make_unique<UpgradeScene>(this));  // Add upgrade scene
     
     // Start with the start screen
     sceneManager.SwitchToScene("StartScreen");
@@ -47,6 +48,7 @@ void EngineSystem::InitializeGame() {
     gSpawnTimerMs = 0.0f;
     gScore = 0;
     nextSpawnZ = 0.0f;
+    loadedChunks.clear();  // Clear loaded chunks
 
     // Initialize camera position and offsets for 3D view
     camera.followOffsetX = 0.0f;
@@ -59,8 +61,8 @@ void EngineSystem::InitializeGame() {
     // Create the player using config values
     GenerateSystem::CreatePlayer3D(*registry, config);
 
-    // Generate initial map using config values
-    GenerateSystem::MapGenerationSystem(*registry, 0.0f, nextSpawnZ, config);
+    // Generate initial chunks around spawn point using chunk-based system
+    GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks, config);
 }
 
 void EngineSystem::StartGame() {
@@ -130,14 +132,54 @@ void EngineSystem::Update(const float deltaTimeMs) {
         MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
         CollisionSystem::Update(*registry);
-        // Check for game over conditions (player fell off the world)
+        
+        // Generate chunks based on player position
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {
             auto& playerTransform = playerView.get<Transform3D>(id);
+            GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
+            
+            // Check if player fell off the world
             if (playerTransform.pos.y < -500.0f) {
                 gameState = GameState::GameOver;
                 sceneManager.SwitchToScene("GameOver");
+                return;
             }
+        }
+        
+        // Check for upgrade point collection
+        View<UpgradePointTag, Transform3D> upgradeView(*registry);
+        std::vector<EntityID> collectedUpgrades;
+        
+        for (EntityID upgradeId : upgradeView) {
+            auto& upgradeTag = upgradeView.get<UpgradePointTag>(upgradeId);
+            auto& upgradeTransform = upgradeView.get<Transform3D>(upgradeId);
+            
+            if (!upgradeTag.collected) {
+                // Check collision with player
+                for (EntityID playerId : playerView) {
+                    auto& playerTransform = playerView.get<Transform3D>(playerId);
+                    
+                    float dx = playerTransform.pos.x - upgradeTransform.pos.x;
+                    float dy = playerTransform.pos.y - upgradeTransform.pos.y;
+                    float dz = playerTransform.pos.z - upgradeTransform.pos.z;
+                    float distSq = dx*dx + dy*dy + dz*dz;
+                    
+                    if (distSq < 50.0f * 50.0f) {  // Collection radius
+                        upgradeTag.collected = true;
+                        collectedUpgrades.push_back(upgradeId);
+                        
+                        // Switch to upgrade scene
+                        sceneManager.SwitchToScene("UpgradeScene");
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Remove collected upgrade points
+        for (EntityID id : collectedUpgrades) {
+            registry->destroyEntity(id);
         }
     }
 }

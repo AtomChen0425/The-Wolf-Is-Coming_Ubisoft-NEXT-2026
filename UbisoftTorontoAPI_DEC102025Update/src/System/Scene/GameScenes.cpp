@@ -214,3 +214,162 @@ void SettingsScene::Render() {
     
     uiManager.Render();
 }
+
+// UpgradeScene Implementation
+UpgradeScene::UpgradeScene(EngineSystem* engine)
+    : engineSystem(engine), selectedUpgrade(0) {
+}
+
+void UpgradeScene::OnEnter() {
+    uiManager.Clear();
+    selectedUpgrade = 0;
+    GenerateRandomUpgrades();
+    
+    // Title
+    uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
+}
+
+void UpgradeScene::OnExit() {
+    uiManager.Clear();
+}
+
+void UpgradeScene::Update(float deltaTimeMs) {
+    // Handle input for upgrade selection
+    static bool upWasPressed = false;
+    static bool downWasPressed = false;
+    static bool enterWasPressed = false;
+    
+    bool upPressed = App::GetController().GetLeftThumbStickY() > 0.5f || App::IsKeyPressed(VK_UP);
+    bool downPressed = App::GetController().GetLeftThumbStickY() < -0.5f || App::IsKeyPressed(VK_DOWN);
+    bool enterPressed = App::IsKeyPressed(VK_RETURN) || App::IsKeyPressed(VK_SPACE);
+    
+    // Navigate up
+    if (upPressed && !upWasPressed) {
+        selectedUpgrade--;
+        if (selectedUpgrade < 0) selectedUpgrade = 2;
+    }
+    
+    // Navigate down
+    if (downPressed && !downWasPressed) {
+        selectedUpgrade++;
+        if (selectedUpgrade > 2) selectedUpgrade = 0;
+    }
+    
+    // Confirm selection
+    if (enterPressed && !enterWasPressed) {
+        ApplyUpgrade(upgradeOptions[selectedUpgrade]);
+        // Return to playing scene
+        engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
+    }
+    
+    upWasPressed = upPressed;
+    downWasPressed = downPressed;
+    enterWasPressed = enterPressed;
+}
+
+void UpgradeScene::Render() {
+    // Render the 3 upgrade options
+    uiManager.Clear();
+    
+    // Title
+    uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
+    
+    // Render each option
+    for (int i = 0; i < 3; i++) {
+        float yPos = -50.0f + i * 60.0f;
+        float color = (i == selectedUpgrade) ? 1.0f : 0.6f;
+        std::string prefix = (i == selectedUpgrade) ? "> " : "  ";
+        
+        std::string optionText = prefix + GetUpgradeName(upgradeOptions[i]);
+        uiManager.AddText(optionText, -120, yPos, color, color, 0.0f, UIAlignment::MiddleCenter);
+        
+        std::string descText = "  " + GetUpgradeDescription(upgradeOptions[i]);
+        uiManager.AddText(descText, -150, yPos + 25, 0.7f * color, 0.7f * color, 0.7f * color, UIAlignment::MiddleCenter);
+    }
+    
+    // Instructions
+    uiManager.AddText("Use UP/DOWN to select, ENTER to confirm", -160, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    
+    uiManager.Render();
+}
+
+void UpgradeScene::GenerateRandomUpgrades() {
+    // Generate 3 random unique upgrades
+    std::vector<UpgradeType> allUpgrades = {
+        UpgradeType::HealthBoost,
+        UpgradeType::SpeedBoost,
+        UpgradeType::JumpBoost,
+        UpgradeType::GravityReduction,
+        UpgradeType::BulletSpeed
+    };
+    
+    // Simple shuffle for 3 picks
+    for (int i = 0; i < 3; i++) {
+        int randomIndex = i + (int)(Rand01() * (allUpgrades.size() - i));
+        upgradeOptions[i] = allUpgrades[randomIndex];
+        // Swap to avoid duplicates
+        std::swap(allUpgrades[i], allUpgrades[randomIndex]);
+    }
+}
+
+void UpgradeScene::ApplyUpgrade(UpgradeType type) {
+    // Find player and apply upgrade
+    View<PlayerTag, PlayerStats> view(*engineSystem->GetEntityManager());
+    
+    for (EntityID id : view) {
+        auto& stats = view.get<PlayerStats>(id);
+        auto& config = engineSystem->GetGameConfig();
+        
+        switch (type) {
+            case UpgradeType::HealthBoost:
+                stats.healthBonus += config.healthUpgradeAmount;
+                // Also heal player
+                if (view.has<Health>(id)) {
+                    auto& health = view.get<Health>(id);
+                    health.maxHealth += (int)config.healthUpgradeAmount;
+                    health.currentHealth += (int)config.healthUpgradeAmount;
+                }
+                break;
+                
+            case UpgradeType::SpeedBoost:
+                stats.speedBonus += config.speedUpgradeAmount;
+                break;
+                
+            case UpgradeType::JumpBoost:
+                stats.jumpBonus += config.jumpUpgradeAmount;
+                break;
+                
+            case UpgradeType::GravityReduction:
+                stats.gravityBonus += config.gravityUpgradeAmount;
+                break;
+                
+            case UpgradeType::BulletSpeed:
+                stats.bulletSpeedBonus += config.bulletSpeedUpgradeAmount;
+                break;
+        }
+    }
+}
+
+std::string UpgradeScene::GetUpgradeName(UpgradeType type) {
+    switch (type) {
+        case UpgradeType::HealthBoost: return "Health Boost";
+        case UpgradeType::SpeedBoost: return "Speed Boost";
+        case UpgradeType::JumpBoost: return "Jump Boost";
+        case UpgradeType::GravityReduction: return "Gravity Reduction";
+        case UpgradeType::BulletSpeed: return "Bullet Speed";
+        default: return "Unknown";
+    }
+}
+
+std::string UpgradeScene::GetUpgradeDescription(UpgradeType type) {
+    switch (type) {
+        case UpgradeType::HealthBoost: return "Increase max health +20";
+        case UpgradeType::SpeedBoost: return "Movement speed +50";
+        case UpgradeType::JumpBoost: return "Jump velocity +100";
+        case UpgradeType::GravityReduction: return "Lighter jumps (gravity -100)";
+        case UpgradeType::BulletSpeed: return "Bullet speed +100";
+        default: return "Unknown effect";
+    }
+}
