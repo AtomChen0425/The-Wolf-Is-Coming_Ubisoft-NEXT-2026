@@ -58,6 +58,9 @@
     <ClCompile Include="..\..\src\Game\Core\GameConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Game\Core\SheepSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.h">
@@ -135,6 +138,7 @@
     <ClInclude Include="..\..\src\Game\Core\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Game\Core\SheepSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\CMakeLists.txt" />

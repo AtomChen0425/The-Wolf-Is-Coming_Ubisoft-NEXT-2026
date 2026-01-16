@@ -147,6 +147,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, PlayerTag{true, 0, 0, 0});
     registry.addComponent(entity, PlayerStats{});  // Add player stats for upgrades
+    registry.addComponent(entity, PhysicsTag{}); //
 }
 
 // Create a default simple template

@@ -35,6 +35,7 @@ struct PlayerTag {
     float rotationPitch;
     float shootCooldown = 100.0f;
 };
+struct PhysicsTag { bool isOnGround; };
 struct EnemyTag {};
 
 // 2D Rigid body component
@@ -190,4 +191,20 @@ struct PlayerStats {
 struct ChunkTag {
     int chunkX;  // Chunk X coordinate
     int chunkZ;  // Chunk Z coordinate
+};
+
+struct SheepTag {};
+
+// Boids 行为参数 (可用于不同种类的羊)
+struct SheepComponent {
+    float separationWeight = 5.0f; // 分离权重 (防重叠) - 调大一点避免穿模
+    float alignmentWeight = 1.0f; // 对齐权重 (顺流)
+    float cohesionWeight = 1.0f; // 凝聚权重 (抱团)
+    float targetWeight = 1.2f; // 跟随权重 (找牧羊人)
+    float fearWeight = 8.0f; // 恐惧权重 (躲避狼) - 优先级最高
+
+    float viewRadius = 60.0f;      // 邻居感知半径
+    float enemyDetectRange = 150.0f; // 敌人检测半径
+    float maxSpeed = 150.0f;        // 最大速度
+    float maxForce = 150.0f;       // 转向灵活性
 };

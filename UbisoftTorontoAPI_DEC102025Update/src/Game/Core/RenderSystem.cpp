@@ -173,6 +173,25 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
     }
 }
 
+void RenderAnimal3D(EntityManager& registry, Camera3D& camera) {
+    View<Transform3D, PhysicsTag> view(registry);
+
+    for (EntityID id : view) {
+        auto& t = view.get<Transform3D>(id);
+        //RenderPlayerCube(t, camera);
+        gRenderHelper->RenderCube_inNDC(t, camera);
+        // Display player position info
+       /* App::Print(50, 50,
+            ("Player Pos - X:" + std::to_string((int)t.pos.x) +
+                " Y:" + std::to_string((int)t.pos.y) +
+                " Z:" + std::to_string((int)t.pos.z)).c_str(),
+            1.0f, 1.0f, 1.0f);*/
+
+        // Display controls info
+        //App::Print(50, 80, "Controls: WASD to move, SPACE to jump, Arrow keys to rotate", 1.0f, 1.0f, 0.0f);
+    }
+}
+
 void RenderBullets3D(EntityManager& registry, Camera3D& camera) {
     View<Transform3D, Bullet> bulletView(registry);
     
@@ -206,6 +225,7 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     RenderBullets3D(registry, camera);
     RenderPlayer3D(registry, camera);
 	RenderParticles(registry, camera);
+    RenderAnimal3D(registry, camera);
     
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
