@@ -1,5 +1,6 @@
 #pragma once
 #include "GameLevelData.h"
+#include "../../System/ECS/ECS.h"
 
 // LevelSystem: Manages round progression and level-related game logic
 namespace LevelSystem {
@@ -9,8 +10,8 @@ namespace LevelSystem {
     
     // Check if game should end (all sheep dead)
     // Returns true if game over condition is met
-    bool CheckGameOver(class EntityManager& registry);
+    bool CheckGameOver(EntityManager& registry);
     
     // Get count of alive sheep
-    int GetSheepCount(class EntityManager& registry);
+    int GetSheepCount(EntityManager& registry);
 }
