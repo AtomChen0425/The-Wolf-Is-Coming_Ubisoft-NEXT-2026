@@ -421,6 +421,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Game\Core\EnemyAISystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\GameConfig.h" />
     <ClInclude Include="..\..\src\Game\Core\ParticleSystem.h" />
     <ClInclude Include="..\..\src\System\Scene\GameScenes.h" />
     <ClInclude Include="..\..\src\System\Scene\SceneManager.h" />
@@ -433,6 +434,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\PhysicsSystem.h" />
     <ClInclude Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\RenderSystem.h" />
     <ClCompile Include="..\..\src\Game\Core\EnemyAISystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\GameConfig.cpp" />
     <ClCompile Include="..\..\src\Game\Core\ParticleSystem.cpp" />
     <ClCompile Include="..\..\src\System\Math\Mat4.cpp" />
     <ClCompile Include="..\..\src\System\Scene\GameScenes.cpp" />
@@ -463,7 +465,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Physic\Collision.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Render\RenderHelper.cpp" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\ZERO_CHECK.vcxproj">
       <Project>{CF4129DD-1E5A-3790-9576-C6B27BE9644E}</Project>
@@ -475,6 +476,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{7163B44E-4990-3909-84CC-57B4C0666C88}</Project>
       <Name>ContestAPI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\game_config.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

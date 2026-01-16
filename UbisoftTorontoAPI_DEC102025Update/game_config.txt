@@ -24,7 +24,7 @@ wallHeight=100
 normalFloorChance=0.6
 obstacleChance=0.15
 scorePointChance=0.15
-gapChance=0.10
+gapChance=0.1
 gapFloorChance=0.3
 
 # Block Heights
@@ -38,7 +38,7 @@ bulletSpeed=600
 # Player Spawn
 playerSpawnX=0
 playerSpawnY=0
-playerSpawnZ=0
+playerSpawnZ=50
 
 # Rendering
 fov=600

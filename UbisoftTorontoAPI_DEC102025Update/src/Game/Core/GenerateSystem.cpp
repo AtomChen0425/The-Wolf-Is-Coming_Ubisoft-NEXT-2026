@@ -123,7 +123,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
         registry.destroyEntity(id);
     }
 }
-void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
+void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& config) {
     Entity entity = registry.createEntity();
     // Create player as a small cube, starting at center of road on the ground
     // Floor blocks are at Y=-10 with height=10, so top is at Y=-5

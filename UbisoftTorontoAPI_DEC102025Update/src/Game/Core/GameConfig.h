@@ -42,7 +42,7 @@ struct GameConfig {
     // Player spawn
     float playerSpawnX = 0.0f;
     float playerSpawnY = 0.0f;
-    float playerSpawnZ = 0.0f;
+    float playerSpawnZ = 50.0f;
     
     // Rendering
     float fov = 600.0f;
