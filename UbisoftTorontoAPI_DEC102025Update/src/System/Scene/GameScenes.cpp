@@ -376,7 +376,6 @@ void UpgradeScene::ApplyUpgrade(UpgradeType type) {
     
     for (EntityID id : view) {
         auto& stats = view.get<PlayerStats>(id);
-        auto& config = engineSystem->GetGameConfig();
         
         switch (type) {
             case UpgradeType::HealthBoost:
