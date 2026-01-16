@@ -227,7 +227,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     }
                     
                     registry.addComponent(block, Transform3D{
-                        Vec3{blockX, -10.0f, blockZ},
+                        Vec3{blockX, -floorHeight / 2.0f, blockZ},
                         blockSize, floorHeight, blockSize,
                         r, g, b
                     });
@@ -268,7 +268,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     }
                     
                     registry.addComponent(floorBlock, Transform3D{
-                        Vec3{blockX, -10.0f, blockZ},
+                        Vec3{blockX, -floorHeight/2, blockZ},
                         blockSize, floorHeight, blockSize,
                         r_floor, g_floor, b_floor
                     });
@@ -280,16 +280,15 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     
                     // Second: Create the solid block on top of the floor
                     // Floor top is at Y=-5, block height is 40, so center at Y=-5+20=15
-                    const float solidBlockHeight = 40.0f;
                     registry.addComponent(block, Transform3D{
-                        Vec3{blockX, 20.0f, blockZ},  // Sitting on floor
-                        blockSize, solidBlockHeight, blockSize,
+                        Vec3{blockX, tallBlockHeight/2- floorHeight / 2, blockZ},  // Sitting on floor
+                        blockSize, tallBlockHeight, blockSize,
                         config.tallBlockColorR, config.tallBlockColorG, config.tallBlockColorB  // Blue from config
                     });
                     registry.addComponent(block, MapBlockTag{});
                     registry.addComponent(block, SolidBlockTag{});  // Mark as solid block
                     registry.addComponent(block, Collider3D{
-                        blockSize, solidBlockHeight, blockSize,
+                        blockSize, tallBlockHeight, blockSize,
                         true, false  // Can stand on top, not a wall
                     });
 					registry.addComponent(block, Health{ 50,50 });
@@ -307,7 +306,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                         r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
                     }
                     registry.addComponent(floorBlock, Transform3D{
-                        Vec3{blockX, -10.0f, blockZ},
+                        Vec3{blockX, -floorHeight / 2, blockZ},
                         blockSize, floorHeight, blockSize,
                         r, g, b
                     });

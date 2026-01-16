@@ -125,10 +125,10 @@ void EngineSystem::Update(const float deltaTimeMs) {
         //EnemyAISystem::Update(*registry, deltaTimeMs);
         
         // Check and resolve collisions (after movement is applied)
-        CollisionSystem::Update(*registry);
-        MovementSystem::Update(*registry, deltaTimeMs);
         PhysicsSystem::Update(*registry, deltaTimeMs);
+        MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
+        CollisionSystem::Update(*registry);
         // Check for game over conditions (player fell off the world)
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {

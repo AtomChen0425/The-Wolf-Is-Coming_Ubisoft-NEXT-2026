@@ -28,8 +28,8 @@ gapChance=0.1
 gapFloorChance=0.3
 
 # Block Heights
-floorHeight=10
-tallBlockHeight=60
+floorHeight=30
+tallBlockHeight=50
 scorePointHeight=30
 
 # Bullet Physics
