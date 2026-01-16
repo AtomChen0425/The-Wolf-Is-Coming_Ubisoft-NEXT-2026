@@ -132,13 +132,10 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
 
         Vec4 worldMove4 = RotateByY(playerTag.rotationYaw, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
         pos += Vec3(worldMove4.x, worldMove4.y, worldMove4.z);
-        // Record player's current Z position for map generation
-            
-        playerCurrentZ = pos.z;
     }
     
-    // 6. Update map generation system based on player position
-    GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ, config);\
+    // Note: Map generation is now handled by ChunkGenerationSystem in ECSSystem
+    // which provides infinite 4-directional exploration
 }
 
 void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
