@@ -11,7 +11,6 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
     float playerCurrentZ = 0.0f;
     
     // Get constants from config
-    const float gravity = config.gravity;
     const float jumpVelocity = config.jumpVelocity;
     float forwardSpeed = config.forwardSpeed;
     const float strafeSpeed = config.strafeSpeed;
@@ -105,8 +104,6 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
             if (std::abs(vel.z) < 0.01f) vel.z = 0.0f;
         }
 
-        //// 2. Apply gravity
-        //vel.y += gravity * dtSec;
 
         // 3. Handle jump input (only when on ground - collision system sets this flag)
         if (App::IsKeyPressed(App::KEY_SPACE) && playerTag.isOnGround) {
