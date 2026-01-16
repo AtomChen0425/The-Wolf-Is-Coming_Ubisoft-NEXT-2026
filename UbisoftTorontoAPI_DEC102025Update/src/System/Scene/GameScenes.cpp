@@ -238,7 +238,14 @@ void SettingsScene::Render() {
 
 // UpgradeScene Implementation
 UpgradeScene::UpgradeScene(EngineSystem* engine)
-    : engineSystem(engine), selectedUpgrade(0), upgradeSelected(false) {
+    : engineSystem(engine), selectedUpgrade(0), upgradeSelected(false),
+      titleText(nullptr), instructionText(nullptr) {
+    for (int i = 0; i < 3; i++) {
+        upgradeNames[i] = nullptr;
+        upgradeDescs[i] = nullptr;
+        leftBrackets[i] = nullptr;
+        rightBrackets[i] = nullptr;
+    }
 }
 
 void UpgradeScene::OnEnter() {
@@ -247,30 +254,36 @@ void UpgradeScene::OnEnter() {
     upgradeSelected = false;
     LevelSystem::GenerateRandomUpgrades(upgradeOptions);
     
-    // Build UI once on enter
+    // Build UI once on enter and keep pointers
     // Title
-    uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
+    titleText = uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
     
     // Render each option horizontally (3 boxes side by side)
-    float spacing = 200.0f; // Space between options
-    float startX = -spacing; // Center the 3 options
+    float spacing = 200.0f;
+    float startX = -spacing;
     
     for (int i = 0; i < 3; i++) {
         float xPos = startX + i * spacing;
-        float yPos = -20.0f; // Center vertically
+        float yPos = -20.0f;
         
-        // Upgrade name (larger, more prominent)
+        // Selection brackets (initially hidden for non-selected items)
+        float bracketAlpha = (i == selectedUpgrade) ? 1.0f : 0.0f;
+        leftBrackets[i] = uiManager.AddText("[", xPos - 100, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
+        rightBrackets[i] = uiManager.AddText("]", xPos + 80, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
+        
+        // Upgrade name
+        float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
         std::string optionText = LevelSystem::GetUpgradeName(upgradeOptions[i]);
-        uiManager.AddText(optionText, xPos - 60, yPos - 40, 0.5f, 0.5f, 0.0f, UIAlignment::MiddleCenter);
+        upgradeNames[i] = uiManager.AddText(optionText, xPos - 60, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
         
-        // Description (smaller, below name)
+        // Description
         std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
-        uiManager.AddText(descText, xPos - 80, yPos + 10, 0.35f, 0.35f, 0.35f, UIAlignment::MiddleCenter);
+        upgradeDescs[i] = uiManager.AddText(descText, xPos - 80, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
     }
     
     // Instructions
-    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    instructionText = uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
 }
 
 void UpgradeScene::OnExit() {
@@ -292,6 +305,8 @@ void UpgradeScene::Update(float deltaTimeMs) {
     bool rightPressed = App::GetController().GetLeftThumbStickX() > 0.5f || App::IsKeyPressed(App::KEY_RIGHT);
     bool enterPressed = App::IsKeyPressed(App::KEY_ENTER) || App::IsKeyPressed(App::KEY_SPACE);
     
+    int previousSelection = selectedUpgrade;
+    
     // Navigate left
     if (leftPressed && !leftWasPressed) {
         selectedUpgrade--;
@@ -304,14 +319,47 @@ void UpgradeScene::Update(float deltaTimeMs) {
         if (selectedUpgrade > 2) selectedUpgrade = 0;
     }
     
+    // Update UI if selection changed
+    if (previousSelection != selectedUpgrade) {
+        // Update previous selection (dim it)
+        if (upgradeNames[previousSelection]) {
+            upgradeNames[previousSelection]->SetColor(0.5f, 0.5f, 0.0f);
+        }
+        if (upgradeDescs[previousSelection]) {
+            upgradeDescs[previousSelection]->SetColor(0.35f, 0.35f, 0.35f);
+        }
+        if (leftBrackets[previousSelection]) {
+            leftBrackets[previousSelection]->SetColor(0.0f, 0.0f, 0.0f);
+        }
+        if (rightBrackets[previousSelection]) {
+            rightBrackets[previousSelection]->SetColor(0.0f, 0.0f, 0.0f);
+        }
+        
+        // Update new selection (brighten it)
+        if (upgradeNames[selectedUpgrade]) {
+            upgradeNames[selectedUpgrade]->SetColor(1.0f, 1.0f, 0.0f);
+        }
+        if (upgradeDescs[selectedUpgrade]) {
+            upgradeDescs[selectedUpgrade]->SetColor(0.7f, 0.7f, 0.7f);
+        }
+        if (leftBrackets[selectedUpgrade]) {
+            leftBrackets[selectedUpgrade]->SetColor(1.0f, 1.0f, 0.0f);
+        }
+        if (rightBrackets[selectedUpgrade]) {
+            rightBrackets[selectedUpgrade]->SetColor(1.0f, 1.0f, 0.0f);
+        }
+    }
+    
     // Confirm selection
     if (enterPressed && !enterWasPressed) {
         // Apply upgrade using LevelSystem
         LevelSystem::ApplyUpgrade(engineSystem->GetRegistry(), engineSystem->GetGameConfig(), upgradeOptions[selectedUpgrade]);
         // Advance to next round
         engineSystem->GetLevelData().NextRound();
-        // Mark as selected to prevent re-application
+        // Mark as selected to prevent re-application and stop rendering
         upgradeSelected = true;
+        // Clear UI immediately before switching
+        uiManager.Clear();
         // Return to playing scene
         engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
     }
@@ -322,42 +370,11 @@ void UpgradeScene::Update(float deltaTimeMs) {
 }
 
 void UpgradeScene::Render() {
-    // Don't clear and re-render - the UI is built once in OnEnter
-    // Just update the selection highlight
-    uiManager.Clear();
-    
-    // Title
-    uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
-    
-    // Render each option with current selection
-    float spacing = 200.0f;
-    float startX = -spacing;
-    
-    for (int i = 0; i < 3; i++) {
-        float xPos = startX + i * spacing;
-        float yPos = -20.0f;
-        
-        // Highlight selected option
-        float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
-        
-        // Draw selection indicator (box-like with brackets)
-        if (i == selectedUpgrade) {
-            uiManager.AddText("[", xPos - 100, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-            uiManager.AddText("]", xPos + 80, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-        }
-        
-        // Upgrade name
-        std::string optionText = LevelSystem::GetUpgradeName(upgradeOptions[i]);
-        uiManager.AddText(optionText, xPos - 60, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
-        
-        // Description
-        std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
-        uiManager.AddText(descText, xPos - 80, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
+    // Don't render if upgrade was already selected (scene is transitioning)
+    if (upgradeSelected) {
+        return;
     }
     
-    // Instructions
-    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
-    
+    // Just render the UI - don't rebuild it
     uiManager.Render();
 }
