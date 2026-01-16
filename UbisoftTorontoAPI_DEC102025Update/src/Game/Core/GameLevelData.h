@@ -2,6 +2,7 @@
 #include "GameConfig.h"
 
 // GameLevelData: Tracks game statistics and round progression
+// Default values match those in GameConfig for consistency
 struct GameLevelData {
     // Time tracking
     float totalGameTimeMs = 0.0f;           // Total time played since game start
@@ -17,15 +18,15 @@ struct GameLevelData {
     float wolfSpawnReductionPerRound;       // How much to reduce spawn interval each round (set from config)
     float minWolfSpawnIntervalMs;           // Minimum wolf spawn interval (set from config)
     
-    // Default constructor with hardcoded defaults
+    // Default constructor - must call Initialize() before use
     GameLevelData() 
-        : roundDurationMs(60000.0f),
-          baseWolfSpawnIntervalMs(5000.0f),
-          currentWolfSpawnIntervalMs(5000.0f),
-          wolfSpawnReductionPerRound(200.0f),
-          minWolfSpawnIntervalMs(1000.0f) {}
+        : roundDurationMs(0.0f),
+          baseWolfSpawnIntervalMs(0.0f),
+          currentWolfSpawnIntervalMs(0.0f),
+          wolfSpawnReductionPerRound(0.0f),
+          minWolfSpawnIntervalMs(0.0f) {}
     
-    // Initialize from config (call this after loading config)
+    // Initialize from config (must be called after construction)
     void Initialize(const GameConfig& config) {
         roundDurationMs = config.roundDurationMs;
         baseWolfSpawnIntervalMs = config.baseWolfSpawnIntervalMs;

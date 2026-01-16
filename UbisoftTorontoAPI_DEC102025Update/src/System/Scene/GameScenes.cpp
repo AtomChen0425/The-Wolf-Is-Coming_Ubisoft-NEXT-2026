@@ -380,12 +380,6 @@ void UpgradeScene::ApplyUpgrade(UpgradeType type) {
         switch (type) {
             case UpgradeType::HealthBoost:
                 stats.healthBonus += config.healthUpgradeAmount;
-                // Also heal player
-                /*if (view.has<Health>(id)) {
-                    auto& health = view.get<Health>(id);
-                    health.maxHealth += (int)config.healthUpgradeAmount;
-                    health.currentHealth += (int)config.healthUpgradeAmount;
-                }*/
                 break;
                 
             case UpgradeType::SpeedBoost:
