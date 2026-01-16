@@ -384,7 +384,95 @@ void GenerateSystem::CreateTestEnemyWithAI(EntityManager& registry, float x, flo
         registry.addComponent(enemy, shootComponent);
     }
 }
+void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameConfig& config) {
+    const float blockSize = config.blockSize;
+    const int chunkSize = config.chunkSize;
+    const float floorHeight = config.floorHeight;
+    const float chunkWorldSize = blockSize * chunkSize;
 
+    // Calculate world position for this chunk
+    float chunkWorldX = chunkX * chunkWorldSize;
+    float chunkWorldZ = chunkZ * chunkWorldSize;
+
+    // Generate only floor blocks for this chunk - simplified version
+    for (int localZ = 0; localZ < chunkSize; localZ++) {
+        for (int localX = 0; localX < chunkSize; localX++) {
+            float blockX = chunkWorldX + localX * blockSize;
+            float blockZ = chunkWorldZ + localZ * blockSize;
+
+            // Create floor block
+            Entity floor = registry.createEntity();
+
+            // Alternate colors for visual depth (checkerboard pattern)
+            float r, g, b;
+            if ((localX + localZ) % 2 == 0) {
+                r = config.floorColor1R;
+                g = config.floorColor1G;
+                b = config.floorColor1B;
+            }
+            else {
+                r = config.floorColor2R;
+                g = config.floorColor2G;
+                b = config.floorColor2B;
+            }
+
+            registry.addComponent(floor, Transform3D{
+                Vec3{blockX, -floorHeight / 2.0f, blockZ},
+                blockSize, floorHeight, blockSize,
+                r, g, b
+                });
+            registry.addComponent(floor, ChunkTag{ chunkX, chunkZ });
+            registry.addComponent(floor, Collider3D{
+                blockSize, floorHeight, blockSize,
+                true, false  // isFloor, not wall
+                });
+        }
+    }
+}
+
+void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+    const float blockSize = config.blockSize;
+    const int chunkSize = config.chunkSize;
+    const int renderRadius = config.chunkRenderRadius;
+    const float chunkWorldSize = blockSize * chunkSize;
+    const float despawnDistance = chunkWorldSize * (renderRadius + 2);  // Add buffer
+
+    // Calculate player chunk
+    int playerChunkX = (int)floor(playerX / chunkWorldSize);
+    int playerChunkZ = (int)floor(playerZ / chunkWorldSize);
+
+    // Find chunks to unload
+    std::vector<std::pair<int, int>> chunksToUnload;
+    for (const auto& chunkKey : loadedChunks) {
+        int dx = chunkKey.first - playerChunkX;
+        int dz = chunkKey.second - playerChunkZ;
+
+        // If chunk is too far, mark for unloading
+        if (abs(dx) > renderRadius + 1 || abs(dz) > renderRadius + 1) {
+            chunksToUnload.push_back(chunkKey);
+        }
+    }
+
+    // Despawn entities in chunks being unloaded
+    for (const auto& chunkKey : chunksToUnload) {
+        View<ChunkTag> view(registry);
+        std::vector<EntityID> toDestroy;
+
+        for (EntityID id : view) {
+            auto& chunkTag = view.get<ChunkTag>(id);
+            if (chunkTag.chunkX == chunkKey.first && chunkTag.chunkZ == chunkKey.second) {
+                toDestroy.push_back(id);
+            }
+        }
+
+        for (EntityID id : toDestroy) {
+            registry.destroyEntity(id);
+        }
+
+        // Remove from loaded chunks
+        loadedChunks.erase(chunkKey);
+    }
+}
 // Chunk-based generation system for infinite 4-direction map
 void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
     const float blockSize = config.blockSize;
@@ -415,91 +503,4 @@ void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float player
     DespawnDistantChunks(registry, playerX, playerZ, loadedChunks, config);
 }
 
-void GenerateSystem::GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameConfig& config) {
-    const float blockSize = config.blockSize;
-    const int chunkSize = config.chunkSize;
-    const float floorHeight = config.floorHeight;
-    const float chunkWorldSize = blockSize * chunkSize;
-    
-    // Calculate world position for this chunk
-    float chunkWorldX = chunkX * chunkWorldSize;
-    float chunkWorldZ = chunkZ * chunkWorldSize;
-    
-    // Generate only floor blocks for this chunk - simplified version
-    for (int localZ = 0; localZ < chunkSize; localZ++) {
-        for (int localX = 0; localX < chunkSize; localX++) {
-            float blockX = chunkWorldX + localX * blockSize;
-            float blockZ = chunkWorldZ + localZ * blockSize;
-            
-            // Create floor block
-            Entity floor = registry.createEntity();
-            
-            // Alternate colors for visual depth (checkerboard pattern)
-            float r, g, b;
-            if ((localX + localZ) % 2 == 0) {
-                r = config.floorColor1R; 
-                g = config.floorColor1G; 
-                b = config.floorColor1B;
-            } else {
-                r = config.floorColor2R; 
-                g = config.floorColor2G; 
-                b = config.floorColor2B;
-            }
-            
-            registry.addComponent(floor, Transform3D{
-                Vec3{blockX, -floorHeight / 2.0f, blockZ},
-                blockSize, floorHeight, blockSize,
-                r, g, b
-            });
-            registry.addComponent(floor, ChunkTag{chunkX, chunkZ});
-            registry.addComponent(floor, Collider3D{
-                blockSize, floorHeight, blockSize,
-                true, false  // isFloor, not wall
-            });
-        }
-    }
-}
 
-void GenerateSystem::DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
-    const float blockSize = config.blockSize;
-    const int chunkSize = config.chunkSize;
-    const int renderRadius = config.chunkRenderRadius;
-    const float chunkWorldSize = blockSize * chunkSize;
-    const float despawnDistance = chunkWorldSize * (renderRadius + 2);  // Add buffer
-    
-    // Calculate player chunk
-    int playerChunkX = (int)floor(playerX / chunkWorldSize);
-    int playerChunkZ = (int)floor(playerZ / chunkWorldSize);
-    
-    // Find chunks to unload
-    std::vector<std::pair<int, int>> chunksToUnload;
-    for (const auto& chunkKey : loadedChunks) {
-        int dx = chunkKey.first - playerChunkX;
-        int dz = chunkKey.second - playerChunkZ;
-        
-        // If chunk is too far, mark for unloading
-        if (abs(dx) > renderRadius + 1 || abs(dz) > renderRadius + 1) {
-            chunksToUnload.push_back(chunkKey);
-        }
-    }
-    
-    // Despawn entities in chunks being unloaded
-    for (const auto& chunkKey : chunksToUnload) {
-        View<ChunkTag> view(registry);
-        std::vector<EntityID> toDestroy;
-        
-        for (EntityID id : view) {
-            auto& chunkTag = view.get<ChunkTag>(id);
-            if (chunkTag.chunkX == chunkKey.first && chunkTag.chunkZ == chunkKey.second) {
-                toDestroy.push_back(id);
-            }
-        }
-        
-        for (EntityID id : toDestroy) {
-            registry.destroyEntity(id);
-        }
-        
-        // Remove from loaded chunks
-        loadedChunks.erase(chunkKey);
-    }
-}

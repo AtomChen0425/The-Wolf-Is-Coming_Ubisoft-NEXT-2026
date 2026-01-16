@@ -5,7 +5,7 @@
 #include <memory>
 #include <set>
 #include <utility>
-#include <unordered_set>
+//#include <unordered_set>
 
 struct Camera25D {
     float x; // World X coordinate
@@ -89,7 +89,7 @@ private:
     std::unique_ptr<EntityManager> registry;
     Camera3D camera;
     float nextSpawnZ = 0.0f;
-    std::unordered_set<std::pair<int,int>> loadedChunks;  // Track loaded map chunks
+    std::set<std::pair<int,int>> loadedChunks;  // Track loaded map chunks
     GameState gameState = GameState::StartScreen;
     SceneManager sceneManager;
     GameSettings settings;

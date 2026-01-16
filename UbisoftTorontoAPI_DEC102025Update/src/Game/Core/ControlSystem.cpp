@@ -138,7 +138,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
     }
     
     // 6. Update map generation system based on player position
-    GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ, config);
+    GenerateSystem::MapGenerationSystem(registry, playerCurrentZ, nextSpawnZ, config);\
 }
 
 void FireControl(EntityManager& registry, float dt, const GameConfig& config) {

@@ -2,6 +2,7 @@
 #include "../../System/ECS/ECS.h"
 #include "../../System/Component/Component.h"
 #include "GameConfig.h"
+#include <set>
 
 namespace GenerateSystem
 {
@@ -12,8 +13,6 @@ namespace GenerateSystem
 	
 	// Chunk-based map generation for infinite 4-direction map
 	void ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config);
-	void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameConfig& config);
-	void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config);
 	
 	// Template-based map generation
 	void GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ, const GameConfig& config);
