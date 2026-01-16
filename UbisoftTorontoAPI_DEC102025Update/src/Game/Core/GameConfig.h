@@ -49,6 +49,40 @@ struct GameConfig {
     float nearZ = 1.0f;
     float farZ = 3000.0f;
     
+    // Colors (RGB values, 0.0 to 1.0)
+    // Player color
+    float playerColorR = 1.0f;
+    float playerColorG = 0.0f;
+    float playerColorB = 0.0f;
+    
+    // Bullet color
+    float bulletColorR = 0.5f;
+    float bulletColorG = 0.0f;
+    float bulletColorB = 0.5f;
+    
+    // Floor colors (alternating)
+    float floorColor1R = 0.2f;
+    float floorColor1G = 0.6f;
+    float floorColor1B = 0.2f;
+    float floorColor2R = 0.3f;
+    float floorColor2G = 0.8f;
+    float floorColor2B = 0.3f;
+    
+    // Wall color
+    float wallColorR = 0.6f;
+    float wallColorG = 0.3f;
+    float wallColorB = 0.1f;
+    
+    // Tall block color
+    float tallBlockColorR = 0.1f;
+    float tallBlockColorG = 0.3f;
+    float tallBlockColorB = 0.9f;
+    
+    // Score point color
+    float scorePointColorR = 1.0f;
+    float scorePointColorG = 1.0f;
+    float scorePointColorB = 0.0f;
+    
     // Load config from file (returns true if successful)
     bool LoadFromFile(const std::string& filename);
     

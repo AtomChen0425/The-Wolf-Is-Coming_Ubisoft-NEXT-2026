@@ -49,6 +49,34 @@ void GameConfig::LoadDefaults() {
     fov = 600.0f;
     nearZ = 1.0f;
     farZ = 3000.0f;
+    
+    // Colors
+    playerColorR = 1.0f;
+    playerColorG = 0.0f;
+    playerColorB = 0.0f;
+    
+    bulletColorR = 0.5f;
+    bulletColorG = 0.0f;
+    bulletColorB = 0.5f;
+    
+    floorColor1R = 0.2f;
+    floorColor1G = 0.6f;
+    floorColor1B = 0.2f;
+    floorColor2R = 0.3f;
+    floorColor2G = 0.8f;
+    floorColor2B = 0.3f;
+    
+    wallColorR = 0.6f;
+    wallColorG = 0.3f;
+    wallColorB = 0.1f;
+    
+    tallBlockColorR = 0.1f;
+    tallBlockColorG = 0.3f;
+    tallBlockColorB = 0.9f;
+    
+    scorePointColorR = 1.0f;
+    scorePointColorG = 1.0f;
+    scorePointColorB = 0.0f;
 }
 
 bool GameConfig::LoadFromFile(const std::string& filename) {
@@ -113,6 +141,28 @@ bool GameConfig::LoadFromFile(const std::string& filename) {
             else if (key == "fov") fov = std::stof(value);
             else if (key == "nearZ") nearZ = std::stof(value);
             else if (key == "farZ") farZ = std::stof(value);
+            // Color parameters
+            else if (key == "playerColorR") playerColorR = std::stof(value);
+            else if (key == "playerColorG") playerColorG = std::stof(value);
+            else if (key == "playerColorB") playerColorB = std::stof(value);
+            else if (key == "bulletColorR") bulletColorR = std::stof(value);
+            else if (key == "bulletColorG") bulletColorG = std::stof(value);
+            else if (key == "bulletColorB") bulletColorB = std::stof(value);
+            else if (key == "floorColor1R") floorColor1R = std::stof(value);
+            else if (key == "floorColor1G") floorColor1G = std::stof(value);
+            else if (key == "floorColor1B") floorColor1B = std::stof(value);
+            else if (key == "floorColor2R") floorColor2R = std::stof(value);
+            else if (key == "floorColor2G") floorColor2G = std::stof(value);
+            else if (key == "floorColor2B") floorColor2B = std::stof(value);
+            else if (key == "wallColorR") wallColorR = std::stof(value);
+            else if (key == "wallColorG") wallColorG = std::stof(value);
+            else if (key == "wallColorB") wallColorB = std::stof(value);
+            else if (key == "tallBlockColorR") tallBlockColorR = std::stof(value);
+            else if (key == "tallBlockColorG") tallBlockColorG = std::stof(value);
+            else if (key == "tallBlockColorB") tallBlockColorB = std::stof(value);
+            else if (key == "scorePointColorR") scorePointColorR = std::stof(value);
+            else if (key == "scorePointColorG") scorePointColorG = std::stof(value);
+            else if (key == "scorePointColorB") scorePointColorB = std::stof(value);
         } catch (const std::exception& e) {
             std::cout << "Error parsing config value for key: " << key << std::endl;
         }
@@ -169,6 +219,34 @@ bool GameConfig::SaveToFile(const std::string& filename) const {
     file << "fov=" << fov << "\n";
     file << "nearZ=" << nearZ << "\n";
     file << "farZ=" << farZ << "\n";
+    file << "\n# Colors (RGB values, 0.0 to 1.0)\n";
+    file << "# Player Color\n";
+    file << "playerColorR=" << playerColorR << "\n";
+    file << "playerColorG=" << playerColorG << "\n";
+    file << "playerColorB=" << playerColorB << "\n";
+    file << "\n# Bullet Color\n";
+    file << "bulletColorR=" << bulletColorR << "\n";
+    file << "bulletColorG=" << bulletColorG << "\n";
+    file << "bulletColorB=" << bulletColorB << "\n";
+    file << "\n# Floor Colors (Alternating)\n";
+    file << "floorColor1R=" << floorColor1R << "\n";
+    file << "floorColor1G=" << floorColor1G << "\n";
+    file << "floorColor1B=" << floorColor1B << "\n";
+    file << "floorColor2R=" << floorColor2R << "\n";
+    file << "floorColor2G=" << floorColor2G << "\n";
+    file << "floorColor2B=" << floorColor2B << "\n";
+    file << "\n# Wall Color\n";
+    file << "wallColorR=" << wallColorR << "\n";
+    file << "wallColorG=" << wallColorG << "\n";
+    file << "wallColorB=" << wallColorB << "\n";
+    file << "\n# Tall Block Color\n";
+    file << "tallBlockColorR=" << tallBlockColorR << "\n";
+    file << "tallBlockColorG=" << tallBlockColorG << "\n";
+    file << "tallBlockColorB=" << tallBlockColorB << "\n";
+    file << "\n# Score Point Color\n";
+    file << "scorePointColorR=" << scorePointColorR << "\n";
+    file << "scorePointColorG=" << scorePointColorG << "\n";
+    file << "scorePointColorB=" << scorePointColorB << "\n";
     
     file.close();
     std::cout << "Config saved to: " << filename << std::endl;

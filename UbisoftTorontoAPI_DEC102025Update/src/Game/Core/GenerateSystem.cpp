@@ -74,7 +74,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
         registry.addComponent(leftWall, Transform3D{
             Vec3{-wallX, config.wallHeight / 2.0f, nextSpawnZ},
             20.0f, config.wallHeight, blockSize,
-            0.6f, 0.3f, 0.1f  // Brown
+            config.wallColorR, config.wallColorG, config.wallColorB  // Brown from config
         });
         registry.addComponent(leftWall, MapBlockTag{});
         registry.addComponent(leftWall, Collider3D{
@@ -87,7 +87,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
         registry.addComponent(rightWall, Transform3D{
             Vec3{wallX, config.wallHeight / 2.0f, nextSpawnZ},
             20.0f, config.wallHeight, blockSize,
-            0.6f, 0.3f, 0.1f  // Brown
+            config.wallColorR, config.wallColorG, config.wallColorB  // Brown from config
         });
         registry.addComponent(rightWall, MapBlockTag{});
         registry.addComponent(rightWall, Collider3D{
@@ -137,9 +137,9 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
         20.0f,   // width
         30.0f,   // height
         20.0f,   // depth
-        1.0f,    // r: red
-        0.0f,    // g
-        0.0f,    // b
+        config.playerColorR,    // r: from config
+        config.playerColorG,    // g: from config
+        config.playerColorB,    // b: from config
     });
     registry.addComponent(entity, Velocity3D{});
     registry.addComponent(entity, PlayerTag{true, 0, 0, 0});
@@ -221,9 +221,9 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     // Alternate colors for visual depth
                     float r, g, b;
                     if (int(blockZ / blockSize) % 2 == 0) {
-                        r = 0.2f; g = 0.6f; b = 0.2f; // Dark green
+                        r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B; // Dark green
                     } else {
-                        r = 0.3f; g = 0.8f; b = 0.3f; // Light green
+                        r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B; // Light green
                     }
                     
                     registry.addComponent(block, Transform3D{
@@ -244,7 +244,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     registry.addComponent(block, Transform3D{
                         Vec3{blockX, config.wallHeight / 2.0f, blockZ},
                         blockSize, config.wallHeight, blockSize,
-                        0.6f, 0.3f, 0.1f  // Brown color
+                        config.wallColorR, config.wallColorG, config.wallColorB  // Brown color from config
                     });
                     registry.addComponent(block, MapBlockTag{});
                     registry.addComponent(block, Collider3D{
@@ -262,9 +262,9 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     Entity floorBlock = registry.createEntity();
                     float r_floor, g_floor, b_floor;
                     if (int(blockZ / blockSize) % 2 == 0) {
-                        r_floor = 0.2f; g_floor = 0.6f; b_floor = 0.2f; // Dark green
+                        r_floor = config.floorColor1R; g_floor = config.floorColor1G; b_floor = config.floorColor1B; // Dark green
                     } else {
-                        r_floor = 0.3f; g_floor = 0.8f; b_floor = 0.3f; // Light green
+                        r_floor = config.floorColor2R; g_floor = config.floorColor2G; b_floor = config.floorColor2B; // Light green
                     }
                     
                     registry.addComponent(floorBlock, Transform3D{
@@ -284,7 +284,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     registry.addComponent(block, Transform3D{
                         Vec3{blockX, 20.0f, blockZ},  // Sitting on floor
                         blockSize, solidBlockHeight, blockSize,
-                        0.1f, 0.3f, 0.9f  // Blue
+                        config.tallBlockColorR, config.tallBlockColorG, config.tallBlockColorB  // Blue from config
                     });
                     registry.addComponent(block, MapBlockTag{});
                     registry.addComponent(block, SolidBlockTag{});  // Mark as solid block
@@ -302,9 +302,9 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     Entity floorBlock = registry.createEntity();
                     float r, g, b;
                     if (int(blockZ / blockSize) % 2 == 0) {
-                        r = 0.2f; g = 0.6f; b = 0.2f;
+                        r = config.floorColor1R; g = config.floorColor1G; b = config.floorColor1B;
                     } else {
-                        r = 0.3f; g = 0.8f; b = 0.3f;
+                        r = config.floorColor2R; g = config.floorColor2G; b = config.floorColor2B;
                     }
                     registry.addComponent(floorBlock, Transform3D{
                         Vec3{blockX, -10.0f, blockZ},
@@ -321,7 +321,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
                     registry.addComponent(block, Transform3D{
                         Vec3{blockX, 10.0f, blockZ},
                         30.0f, scorePointHeight, 30.0f,
-                        1.0f, 1.0f, 0.0f  // Yellow
+                        config.scorePointColorR, config.scorePointColorG, config.scorePointColorB  // Yellow from config
                     });
                     registry.addComponent(block, MapBlockTag{});
                     registry.addComponent(block, ScorePointTag{10, false});
