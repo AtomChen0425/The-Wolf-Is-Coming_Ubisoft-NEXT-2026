@@ -138,24 +138,24 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
     }
 }
 void CheckPhysics3DCollisions(EntityManager& registry) {
-    View<PhysicsTag,SheepTag> playerView(registry);
+    View<PhysicsTag, SheepTag, Transform3D, Velocity3D> entityView(registry);
 
-    for (EntityID playerId : playerView) {
-        auto& physicsTag = playerView.get<PhysicsTag>(playerId);
-        auto& playerTransform = playerView.get<Transform3D>(playerId);
-        auto& vel = playerView.get<Velocity3D>(playerId).vel;
-        Vec3& pos = playerTransform.pos;
+    for (EntityID entityId : entityView) {
+        auto& physicsTag = entityView.get<PhysicsTag>(entityId);
+        auto& entityTransform = entityView.get<Transform3D>(entityId);
+        auto& vel = entityView.get<Velocity3D>(entityId).vel;
+        Vec3& pos = entityTransform.pos;
 
         // Reset ground flag
         physicsTag.isOnGround = false;
 
-        // Player bounding box
-        Vec3 playerMin(pos.x - playerTransform.width / 2,
-            pos.y - playerTransform.height / 2,
-            pos.z - playerTransform.depth / 2);
-        Vec3 playerMax(pos.x + playerTransform.width / 2,
-            pos.y + playerTransform.height / 2,
-            pos.z + playerTransform.depth / 2);
+        // Entity bounding box
+        Vec3 entityMin(pos.x - entityTransform.width / 2,
+            pos.y - entityTransform.height / 2,
+            pos.z - entityTransform.depth / 2);
+        Vec3 entityMax(pos.x + entityTransform.width / 2,
+            pos.y + entityTransform.height / 2,
+            pos.z + entityTransform.depth / 2);
 
         // Check all colliders
         View<Collider3D, Transform3D> colliderView(registry);
@@ -174,14 +174,14 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
                 transform.pos.z + transform.depth / 2);
 
             // Check collision using AABB
-            if (gCollision->AABB3D(playerMin, playerMax, colliderMin, colliderMax)) {
+            if (gCollision->AABB3D(entityMin, entityMax, colliderMin, colliderMax)) {
                 // Calculate penetration on each axis
-                float penetrationX = (playerMin.x < colliderMin.x) ?
-                    (colliderMin.x - playerMax.x) : (colliderMax.x - playerMin.x);
-                float penetrationY = (playerMin.y < colliderMin.y) ?
-                    (colliderMin.y - playerMax.y) : (colliderMax.y - playerMin.y);
-                float penetrationZ = (playerMin.z < colliderMin.z) ?
-                    (colliderMin.z - playerMax.z) : (colliderMax.z - playerMin.z);
+                float penetrationX = (entityMin.x < colliderMin.x) ?
+                    (colliderMin.x - entityMax.x) : (colliderMax.x - entityMin.x);
+                float penetrationY = (entityMin.y < colliderMin.y) ?
+                    (colliderMin.y - entityMax.y) : (colliderMax.y - entityMin.y);
+                float penetrationZ = (entityMin.z < colliderMin.z) ?
+                    (colliderMin.z - entityMax.z) : (colliderMax.z - entityMin.z);
 
                 float absX = std::abs(penetrationX);
                 float absY = std::abs(penetrationY);
@@ -217,20 +217,20 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
                 }
 
                 // Update bounding box after position change
-                playerMin = Vec3(pos.x - playerTransform.width / 2,
-                    pos.y - playerTransform.height / 2,
-                    pos.z - playerTransform.depth / 2);
-                playerMax = Vec3(pos.x + playerTransform.width / 2,
-                    pos.y + playerTransform.height / 2,
-                    pos.z + playerTransform.depth / 2);
+                entityMin = Vec3(pos.x - entityTransform.width / 2,
+                    pos.y - entityTransform.height / 2,
+                    pos.z - entityTransform.depth / 2);
+                entityMax = Vec3(pos.x + entityTransform.width / 2,
+                    pos.y + entityTransform.height / 2,
+                    pos.z + entityTransform.depth / 2);
             }
         }
 
         // Apply floor collision if detected
         if (highestFloor > -999.0f) {
-            float playerBottom = pos.y - playerTransform.height / 2;
-            if (playerBottom <= highestFloor + 2.0f) {
-                pos.y = highestFloor + playerTransform.height / 2;
+            float entityBottom = pos.y - entityTransform.height / 2;
+            if (entityBottom <= highestFloor + 2.0f) {
+                pos.y = highestFloor + entityTransform.height / 2;
                 vel.y = 0.0f;
                 physicsTag.isOnGround = true;
             }
