@@ -236,22 +236,22 @@ void UpgradeScene::OnExit() {
 
 void UpgradeScene::Update(float deltaTimeMs) {
     // Handle input for upgrade selection
-    static bool upWasPressed = false;
-    static bool downWasPressed = false;
+    static bool leftWasPressed = false;
+    static bool rightWasPressed = false;
     static bool enterWasPressed = false;
     
-    bool upPressed = App::GetController().GetLeftThumbStickY() > 0.5f || App::IsKeyPressed(VK_UP);
-    bool downPressed = App::GetController().GetLeftThumbStickY() < -0.5f || App::IsKeyPressed(VK_DOWN);
+    bool leftPressed = App::GetController().GetLeftThumbStickX() < -0.5f || App::IsKeyPressed(VK_LEFT);
+    bool rightPressed = App::GetController().GetLeftThumbStickX() > 0.5f || App::IsKeyPressed(VK_RIGHT);
     bool enterPressed = App::IsKeyPressed(VK_RETURN) || App::IsKeyPressed(VK_SPACE);
     
-    // Navigate up
-    if (upPressed && !upWasPressed) {
+    // Navigate left
+    if (leftPressed && !leftWasPressed) {
         selectedUpgrade--;
         if (selectedUpgrade < 0) selectedUpgrade = 2;
     }
     
-    // Navigate down
-    if (downPressed && !downWasPressed) {
+    // Navigate right
+    if (rightPressed && !rightWasPressed) {
         selectedUpgrade++;
         if (selectedUpgrade > 2) selectedUpgrade = 0;
     }
@@ -263,34 +263,47 @@ void UpgradeScene::Update(float deltaTimeMs) {
         engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
     }
     
-    upWasPressed = upPressed;
-    downWasPressed = downPressed;
+    leftWasPressed = leftPressed;
+    rightWasPressed = rightPressed;
     enterWasPressed = enterPressed;
 }
 
 void UpgradeScene::Render() {
-    // Render the 3 upgrade options
+    // Render the 3 upgrade options horizontally
     uiManager.Clear();
     
     // Title
     uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
     
-    // Render each option
+    // Render each option horizontally (3 boxes side by side)
+    float spacing = 200.0f; // Space between options
+    float startX = -spacing; // Center the 3 options
+    
     for (int i = 0; i < 3; i++) {
-        float yPos = -50.0f + i * 60.0f;
-        float color = (i == selectedUpgrade) ? 1.0f : 0.6f;
-        std::string prefix = (i == selectedUpgrade) ? "> " : "  ";
+        float xPos = startX + i * spacing;
+        float yPos = -20.0f; // Center vertically
         
-        std::string optionText = prefix + GetUpgradeName(upgradeOptions[i]);
-        uiManager.AddText(optionText, -120, yPos, color, color, 0.0f, UIAlignment::MiddleCenter);
+        // Highlight selected option
+        float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
         
-        std::string descText = "  " + GetUpgradeDescription(upgradeOptions[i]);
-        uiManager.AddText(descText, -150, yPos + 25, 0.7f * color, 0.7f * color, 0.7f * color, UIAlignment::MiddleCenter);
+        // Draw selection indicator (box-like with brackets)
+        if (i == selectedUpgrade) {
+            uiManager.AddText("[", xPos - 100, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
+            uiManager.AddText("]", xPos + 80, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
+        }
+        
+        // Upgrade name (larger, more prominent)
+        std::string optionText = GetUpgradeName(upgradeOptions[i]);
+        uiManager.AddText(optionText, xPos - 60, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
+        
+        // Description (smaller, below name)
+        std::string descText = GetUpgradeDescription(upgradeOptions[i]);
+        uiManager.AddText(descText, xPos - 80, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
     }
     
     // Instructions
-    uiManager.AddText("Use UP/DOWN to select, ENTER to confirm", -160, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
     
     uiManager.Render();
 }
