@@ -11,14 +11,15 @@ This implementation adds a comprehensive level/round progression system to the g
 A data structure that tracks all level-related game statistics:
 - **Total game time**: Cumulative time since game start
 - **Current round time**: Time elapsed in the current round
-- **Round duration**: Set to 60 seconds (1 minute) per round
+- **Round duration**: Set to 60 seconds (1 minute) per round (configurable)
 - **Current round number**: Starts at 1, increments after each round
 - **Wolf spawn intervals**: 
-  - Base interval: 5000ms (5 seconds)
-  - Decreases by 200ms each round
-  - Minimum interval: 1000ms (1 second)
+  - Base interval: 5000ms (5 seconds) (configurable)
+  - Decreases by 200ms each round (configurable)
+  - Minimum interval: 1000ms (1 second) (configurable)
 
 Key methods:
+- `Initialize(config)`: Must be called after construction to load values from GameConfig
 - `Reset()`: Resets all data for a new game
 - `NextRound()`: Advances to the next round and adjusts spawn interval
 - `IsRoundComplete()`: Checks if 60 seconds have elapsed
@@ -43,15 +44,26 @@ A namespace containing functions for managing level progression:
 
 ## Modified Files
 
-### 3. ECSSystem.h
+### 3. GameConfig.h
+**Changes:**
+- Added level/round system configuration parameters:
+  - `roundDurationMs`: Duration of each round (default 60000ms)
+  - `baseWolfSpawnIntervalMs`: Initial spawn interval (default 5000ms)
+  - `wolfSpawnReductionPerRound`: Interval reduction (default 200ms)
+  - `minWolfSpawnIntervalMs`: Minimum interval (default 1000ms)
+  - `sheepAddedPerUpgrade`: Sheep added with "Add Sheep" upgrade (default 10)
+  - `sheepSpawnOffsetZ`: Z offset for spawning new sheep (default 100.0f)
+
+### 4. ECSSystem.h
 **Changes:**
 - Added `#include "../Game/Core/GameLevelData.h"`
 - Added `GameLevelData levelData;` member variable
 - Added `GetLevelData()` accessor method
 
-### 4. ECSSystem.cpp
+### 5. ECSSystem.cpp
 **Changes:**
 - Added `#include "../Game/Core/LevelSystem.h"`
+- In constructor: Added `levelData.Initialize(config)` after loading config
 - In `InitializeGame()`: Added `levelData.Reset()` to reset level data on new game
 - In `Update()` during Playing state:
   - Added `LevelSystem::Update()` call to track round time
@@ -59,7 +71,7 @@ A namespace containing functions for managing level progression:
   - Modified wolf spawning to use `levelData.currentWolfSpawnIntervalMs` (dynamic difficulty)
   - Added round completion check that switches to UpgradeScene
 
-### 5. GameScenes.h
+### 6. GameScenes.h
 **Changes:**
 - Added new UI text pointers to `PlayingScene`:
   - `roundText`: Displays current round number
@@ -67,7 +79,7 @@ A namespace containing functions for managing level progression:
   - `sheepText`: Displays current sheep count
 - Added `AddSheep` to `UpgradeScene::UpgradeType` enum
 
-### 6. GameScenes.cpp
+### 7. GameScenes.cpp
 **Changes:**
 - Added `#include "../../Game/Core/LevelSystem.h"`
 - Added `#include "../../Game/Core/SheepSystem.h"`
@@ -83,10 +95,10 @@ A namespace containing functions for managing level progression:
 - `Update()`: After selecting an upgrade, calls `levelData.NextRound()` before returning to playing
 - `GenerateRandomUpgrades()`: Added `AddSheep` to the pool of available upgrades
 - `ApplyUpgrade()`: 
-  - Added handler for `AddSheep` type that spawns 10 new sheep near the player
-  - Uses `SheepSystem::InitSheep()` with player's position
+  - Added handler for `AddSheep` type that spawns configurable number of sheep near the player
+  - Uses `SheepSystem::InitSheep()` with player's position and config values
 - `GetUpgradeName()`: Returns "Add Sheep" for the new upgrade type
-- `GetUpgradeDescription()`: Returns "Add 10 more sheep" description
+- `GetUpgradeDescription()`: Returns dynamic description based on config value
 
 ## Game Flow
 
@@ -105,9 +117,9 @@ A namespace containing functions for managing level progression:
 
 ### Difficulty Scaling
 Each round increases difficulty by:
-- Reducing wolf spawn interval by 200ms
-- Minimum spawn interval caps at 1000ms (1 second)
-- Example progression:
+- Reducing wolf spawn interval by configurable amount (default 200ms)
+- Minimum spawn interval caps at configurable value (default 1000ms)
+- Example progression with defaults:
   - Round 1: 5000ms (5 seconds)
   - Round 2: 4800ms (4.8 seconds)
   - Round 3: 4600ms (4.6 seconds)
@@ -131,13 +143,26 @@ Sheep: [current sheep count]
 
 ## Technical Details
 - All time values stored in milliseconds for precision
-- Round duration: 60000ms (60 seconds)
-- Wolf spawn reduction per round: 200ms
-- Sheep added per "Add Sheep" upgrade: 10
-- Initial sheep count: 50 (from existing code)
+- All configuration values loaded from GameConfig
+- GameLevelData initialized from config after loading
+- Consistent use of GetRegistry() for entity manager access
+
+## Configuration
+All parameters can be customized via `game_config.txt`:
+```
+roundDurationMs = 60000.0           # Round duration (60 seconds)
+baseWolfSpawnIntervalMs = 5000.0    # Initial wolf spawn interval (5 seconds)
+wolfSpawnReductionPerRound = 200.0  # Spawn interval reduction per round
+minWolfSpawnIntervalMs = 1000.0     # Minimum wolf spawn interval (1 second)
+sheepAddedPerUpgrade = 10           # Sheep added with "Add Sheep" upgrade
+sheepSpawnOffsetZ = 100.0           # Z offset for spawning new sheep
+```
 
 ## Future Enhancements (Not Implemented)
 Potential improvements could include:
+- Cache sheep count instead of querying every frame (optimization)
+- Cache remaining time calculation (optimization)
+- Use config parameter in constructor instead of Initialize() method (design improvement)
 - Configurable round duration
 - Different difficulty curves
 - Score multipliers per round
