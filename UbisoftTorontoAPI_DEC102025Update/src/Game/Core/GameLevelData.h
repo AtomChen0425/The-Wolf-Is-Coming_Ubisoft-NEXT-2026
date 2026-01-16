@@ -1,20 +1,38 @@
 #pragma once
+#include "GameConfig.h"
 
 // GameLevelData: Tracks game statistics and round progression
 struct GameLevelData {
     // Time tracking
     float totalGameTimeMs = 0.0f;           // Total time played since game start
     float currentRoundTimeMs = 0.0f;        // Time in current round
-    float roundDurationMs = 60000.0f;       // Duration of each round (60 seconds = 1 minute)
+    float roundDurationMs;                  // Duration of each round (set from config)
     
     // Round tracking
     int currentRound = 1;                   // Current round number (starts at 1)
     
     // Wolf spawn parameters
-    float baseWolfSpawnIntervalMs = 5000.0f;    // Initial wolf spawn interval (5 seconds)
-    float currentWolfSpawnIntervalMs = 5000.0f; // Current wolf spawn interval
-    float wolfSpawnReductionPerRound = 200.0f;  // How much to reduce spawn interval each round
-    float minWolfSpawnIntervalMs = 1000.0f;     // Minimum wolf spawn interval (1 second)
+    float baseWolfSpawnIntervalMs;          // Initial wolf spawn interval (set from config)
+    float currentWolfSpawnIntervalMs;       // Current wolf spawn interval
+    float wolfSpawnReductionPerRound;       // How much to reduce spawn interval each round (set from config)
+    float minWolfSpawnIntervalMs;           // Minimum wolf spawn interval (set from config)
+    
+    // Default constructor with hardcoded defaults
+    GameLevelData() 
+        : roundDurationMs(60000.0f),
+          baseWolfSpawnIntervalMs(5000.0f),
+          currentWolfSpawnIntervalMs(5000.0f),
+          wolfSpawnReductionPerRound(200.0f),
+          minWolfSpawnIntervalMs(1000.0f) {}
+    
+    // Initialize from config (call this after loading config)
+    void Initialize(const GameConfig& config) {
+        roundDurationMs = config.roundDurationMs;
+        baseWolfSpawnIntervalMs = config.baseWolfSpawnIntervalMs;
+        currentWolfSpawnIntervalMs = config.baseWolfSpawnIntervalMs;
+        wolfSpawnReductionPerRound = config.wolfSpawnReductionPerRound;
+        minWolfSpawnIntervalMs = config.minWolfSpawnIntervalMs;
+    }
     
     // Reset to initial state
     void Reset() {

@@ -26,6 +26,9 @@ EngineSystem::EngineSystem()
         config.SaveToFile("game_config.txt");
     }
     
+    // Initialize level data with config values
+    levelData.Initialize(config);
+    
     InitializeScenes();
 }
 

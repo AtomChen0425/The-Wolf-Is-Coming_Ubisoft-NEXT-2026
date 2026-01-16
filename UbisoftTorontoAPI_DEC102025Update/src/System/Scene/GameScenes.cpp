@@ -353,24 +353,26 @@ void UpgradeScene::GenerateRandomUpgrades() {
 }
 
 void UpgradeScene::ApplyUpgrade(UpgradeType type) {
+    auto& config = engineSystem->GetGameConfig();
+    
     // Handle AddSheep separately (doesn't need player stats)
     if (type == UpgradeType::AddSheep) {
-        // Add 10 new sheep near the player
-        View<PlayerTag, Transform3D> playerView(*engineSystem->GetEntityManager());
+        // Add sheep near the player
+        View<PlayerTag, Transform3D> playerView(engineSystem->GetRegistry());
         for (EntityID id : playerView) {
             auto& playerTransform = playerView.get<Transform3D>(id);
             // Spawn new sheep near the player's position
             SheepSystem::InitSheep(engineSystem->GetRegistry(), 
                                    playerTransform.pos.x, 
-                                   playerTransform.pos.z + 100.0f, 
-                                   10);
+                                   playerTransform.pos.z + config.sheepSpawnOffsetZ, 
+                                   config.sheepAddedPerUpgrade);
             break;  // Only need to do this once
         }
         return;
     }
     
     // Find player and apply upgrade
-    View<PlayerTag, PlayerStats> view(*engineSystem->GetEntityManager());
+    View<PlayerTag, PlayerStats> view(engineSystem->GetRegistry());
     
     for (EntityID id : view) {
         auto& stats = view.get<PlayerStats>(id);
@@ -423,13 +425,15 @@ std::string UpgradeScene::GetUpgradeName(UpgradeType type) {
 }
 
 std::string UpgradeScene::GetUpgradeDescription(UpgradeType type) {
+    auto& config = engineSystem->GetGameConfig();
+    
     switch (type) {
         case UpgradeType::HealthBoost: return "Increase max health +20";
         case UpgradeType::SpeedBoost: return "Movement speed +50";
         case UpgradeType::JumpBoost: return "Jump velocity +100";
         case UpgradeType::GravityReduction: return "Lighter jumps (gravity -100)";
         case UpgradeType::BulletSpeed: return "Bullet speed +100";
-        case UpgradeType::AddSheep: return "Add 10 more sheep";
+        case UpgradeType::AddSheep: return "Add " + std::to_string(config.sheepAddedPerUpgrade) + " more sheep";
         default: return "Unknown effect";
     }
 }
