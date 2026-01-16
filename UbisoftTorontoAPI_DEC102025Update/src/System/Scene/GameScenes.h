@@ -97,20 +97,7 @@ private:
     EngineSystem* engineSystem;
     UIManager uiManager;
     int selectedUpgrade;  // Currently selected upgrade (0-2)
+    bool upgradeSelected;  // Track if upgrade was already selected
     
-    // Upgrade types available
-    enum class UpgradeType {
-        HealthBoost,
-        SpeedBoost,
-        JumpBoost,
-        GravityReduction,
-        BulletSpeed,
-        AddSheep  // New upgrade type to add more sheep
-    };
-    
-    UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
-    void GenerateRandomUpgrades();
-    void ApplyUpgrade(UpgradeType type);
-    std::string GetUpgradeName(UpgradeType type);
-    std::string GetUpgradeDescription(UpgradeType type);
+    LevelSystem::UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
 };

@@ -4,7 +4,6 @@
 #include "../Component/Component.h"
 #include "../ECS/ECS.h"
 #include "../../Game/Core/LevelSystem.h"
-#include "../../Game/Core/SheepSystem.h"
 
 // StartScene Implementation
 StartScene::StartScene(EngineSystem* engine) 
@@ -239,17 +238,39 @@ void SettingsScene::Render() {
 
 // UpgradeScene Implementation
 UpgradeScene::UpgradeScene(EngineSystem* engine)
-    : engineSystem(engine), selectedUpgrade(0) {
+    : engineSystem(engine), selectedUpgrade(0), upgradeSelected(false) {
 }
 
 void UpgradeScene::OnEnter() {
     uiManager.Clear();
     selectedUpgrade = 0;
-    GenerateRandomUpgrades();
+    upgradeSelected = false;
+    LevelSystem::GenerateRandomUpgrades(upgradeOptions);
     
+    // Build UI once on enter
     // Title
     uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
+    
+    // Render each option horizontally (3 boxes side by side)
+    float spacing = 200.0f; // Space between options
+    float startX = -spacing; // Center the 3 options
+    
+    for (int i = 0; i < 3; i++) {
+        float xPos = startX + i * spacing;
+        float yPos = -20.0f; // Center vertically
+        
+        // Upgrade name (larger, more prominent)
+        std::string optionText = LevelSystem::GetUpgradeName(upgradeOptions[i]);
+        uiManager.AddText(optionText, xPos - 60, yPos - 40, 0.5f, 0.5f, 0.0f, UIAlignment::MiddleCenter);
+        
+        // Description (smaller, below name)
+        std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
+        uiManager.AddText(descText, xPos - 80, yPos + 10, 0.35f, 0.35f, 0.35f, UIAlignment::MiddleCenter);
+    }
+    
+    // Instructions
+    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
 }
 
 void UpgradeScene::OnExit() {
@@ -257,6 +278,11 @@ void UpgradeScene::OnExit() {
 }
 
 void UpgradeScene::Update(float deltaTimeMs) {
+    // Don't allow input if upgrade was already selected
+    if (upgradeSelected) {
+        return;
+    }
+    
     // Handle input for upgrade selection
     static bool leftWasPressed = false;
     static bool rightWasPressed = false;
@@ -280,9 +306,12 @@ void UpgradeScene::Update(float deltaTimeMs) {
     
     // Confirm selection
     if (enterPressed && !enterWasPressed) {
-        ApplyUpgrade(upgradeOptions[selectedUpgrade]);
+        // Apply upgrade using LevelSystem
+        LevelSystem::ApplyUpgrade(engineSystem->GetRegistry(), engineSystem->GetGameConfig(), upgradeOptions[selectedUpgrade]);
         // Advance to next round
         engineSystem->GetLevelData().NextRound();
+        // Mark as selected to prevent re-application
+        upgradeSelected = true;
         // Return to playing scene
         engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
     }
@@ -293,20 +322,21 @@ void UpgradeScene::Update(float deltaTimeMs) {
 }
 
 void UpgradeScene::Render() {
-    // Render the 3 upgrade options horizontally
+    // Don't clear and re-render - the UI is built once in OnEnter
+    // Just update the selection highlight
     uiManager.Clear();
     
     // Title
     uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
     
-    // Render each option horizontally (3 boxes side by side)
-    float spacing = 200.0f; // Space between options
-    float startX = -spacing; // Center the 3 options
+    // Render each option with current selection
+    float spacing = 200.0f;
+    float startX = -spacing;
     
     for (int i = 0; i < 3; i++) {
         float xPos = startX + i * spacing;
-        float yPos = -20.0f; // Center vertically
+        float yPos = -20.0f;
         
         // Highlight selected option
         float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
@@ -317,12 +347,12 @@ void UpgradeScene::Render() {
             uiManager.AddText("]", xPos + 80, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
         }
         
-        // Upgrade name (larger, more prominent)
-        std::string optionText = GetUpgradeName(upgradeOptions[i]);
+        // Upgrade name
+        std::string optionText = LevelSystem::GetUpgradeName(upgradeOptions[i]);
         uiManager.AddText(optionText, xPos - 60, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
         
-        // Description (smaller, below name)
-        std::string descText = GetUpgradeDescription(upgradeOptions[i]);
+        // Description
+        std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
         uiManager.AddText(descText, xPos - 80, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
     }
     
@@ -330,103 +360,4 @@ void UpgradeScene::Render() {
     uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
     
     uiManager.Render();
-}
-
-void UpgradeScene::GenerateRandomUpgrades() {
-    // Generate 3 random unique upgrades
-    std::vector<UpgradeType> allUpgrades = {
-        UpgradeType::HealthBoost,
-        UpgradeType::SpeedBoost,
-        UpgradeType::JumpBoost,
-        UpgradeType::GravityReduction,
-        UpgradeType::BulletSpeed,
-        UpgradeType::AddSheep  // Add the new sheep upgrade option
-    };
-    
-    // Simple shuffle for 3 picks
-    for (int i = 0; i < 3; i++) {
-        int randomIndex = i + (int)(Rand01() * (allUpgrades.size() - i));
-        upgradeOptions[i] = allUpgrades[randomIndex];
-        // Swap to avoid duplicates
-        std::swap(allUpgrades[i], allUpgrades[randomIndex]);
-    }
-}
-
-void UpgradeScene::ApplyUpgrade(UpgradeType type) {
-    auto& config = engineSystem->GetGameConfig();
-    
-    // Handle AddSheep separately (doesn't need player stats)
-    if (type == UpgradeType::AddSheep) {
-        // Add sheep near the player
-        View<PlayerTag, Transform3D> playerView(engineSystem->GetRegistry());
-        for (EntityID id : playerView) {
-            auto& playerTransform = playerView.get<Transform3D>(id);
-            // Spawn new sheep near the player's position
-            SheepSystem::InitSheep(engineSystem->GetRegistry(), 
-                                   playerTransform.pos.x, 
-                                   playerTransform.pos.z + config.sheepSpawnOffsetZ, 
-                                   config.sheepAddedPerUpgrade);
-            break;  // Only need to do this once
-        }
-        return;
-    }
-    
-    // Find player and apply upgrade
-    View<PlayerTag, PlayerStats> view(engineSystem->GetRegistry());
-    
-    for (EntityID id : view) {
-        auto& stats = view.get<PlayerStats>(id);
-        
-        switch (type) {
-            case UpgradeType::HealthBoost:
-                stats.healthBonus += config.healthUpgradeAmount;
-                break;
-                
-            case UpgradeType::SpeedBoost:
-                stats.speedBonus += config.speedUpgradeAmount;
-                break;
-                
-            case UpgradeType::JumpBoost:
-                stats.jumpBonus += config.jumpUpgradeAmount;
-                break;
-                
-            case UpgradeType::GravityReduction:
-                stats.gravityBonus += config.gravityUpgradeAmount;
-                break;
-                
-            case UpgradeType::BulletSpeed:
-                stats.bulletSpeedBonus += config.bulletSpeedUpgradeAmount;
-                break;
-                
-            case UpgradeType::AddSheep:
-                // Already handled above
-                break;
-        }
-    }
-}
-
-std::string UpgradeScene::GetUpgradeName(UpgradeType type) {
-    switch (type) {
-        case UpgradeType::HealthBoost: return "Health Boost";
-        case UpgradeType::SpeedBoost: return "Speed Boost";
-        case UpgradeType::JumpBoost: return "Jump Boost";
-        case UpgradeType::GravityReduction: return "Gravity Reduction";
-        case UpgradeType::BulletSpeed: return "Bullet Speed";
-        case UpgradeType::AddSheep: return "Add Sheep";
-        default: return "Unknown";
-    }
-}
-
-std::string UpgradeScene::GetUpgradeDescription(UpgradeType type) {
-    auto& config = engineSystem->GetGameConfig();
-    
-    switch (type) {
-        case UpgradeType::HealthBoost: return "Increase max health +20";
-        case UpgradeType::SpeedBoost: return "Movement speed +50";
-        case UpgradeType::JumpBoost: return "Jump velocity +100";
-        case UpgradeType::GravityReduction: return "Lighter jumps (gravity -100)";
-        case UpgradeType::BulletSpeed: return "Bullet speed +100";
-        case UpgradeType::AddSheep: return "Add " + std::to_string(config.sheepAddedPerUpgrade) + " more sheep";
-        default: return "Unknown effect";
-    }
 }
