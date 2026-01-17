@@ -4,6 +4,8 @@
 #include "../../ContestAPI/app.h"
 #include <set>
 #include <utility>
+#include <cmath>
+#include <cstdlib>
 
 void GenerateSystem::CreatePlayer(EntityManager& registry)
 {
