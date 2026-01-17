@@ -446,8 +446,8 @@ void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ,
     const float despawnDistance = chunkWorldSize * (renderRadius + 2);  // Add buffer
 
     // Calculate player chunk
-    int playerChunkX = (int)floor(playerX / chunkWorldSize);
-    int playerChunkZ = (int)floor(playerZ / chunkWorldSize);
+    int playerChunkX = (int)std::floor(playerX / chunkWorldSize);
+    int playerChunkZ = (int)std::floor(playerZ / chunkWorldSize);
 
     // Find chunks to unload
     std::vector<std::pair<int, int>> chunksToUnload;
@@ -456,14 +456,21 @@ void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ,
         int dz = chunkKey.second - playerChunkZ;
 
         // If chunk is too far, mark for unloading
-        if (abs(dx) > renderRadius + 1 || abs(dz) > renderRadius + 1) {
+        if (std::abs(dx) > renderRadius + 1 || std::abs(dz) > renderRadius + 1) {
             chunksToUnload.push_back(chunkKey);
         }
     }
 
+    // Early exit if no chunks to unload
+    if (chunksToUnload.empty()) {
+        return;
+    }
+
+    // Create view once for all chunks to despawn
+    View<ChunkTag> view(registry);
+    
     // Despawn entities in chunks being unloaded
     for (const auto& chunkKey : chunksToUnload) {
-        View<ChunkTag> view(registry);
         std::vector<EntityID> toDestroy;
 
         for (EntityID id : view) {
@@ -489,8 +496,8 @@ void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float player
     const float chunkWorldSize = blockSize * chunkSize;
     
     // Calculate which chunk the player is in
-    int playerChunkX = (int)floor(playerX / chunkWorldSize);
-    int playerChunkZ = (int)floor(playerZ / chunkWorldSize);
+    int playerChunkX = (int)std::floor(playerX / chunkWorldSize);
+    int playerChunkZ = (int)std::floor(playerZ / chunkWorldSize);
     
     // Generate chunks around the player
     for (int dx = -renderRadius; dx <= renderRadius; dx++) {
