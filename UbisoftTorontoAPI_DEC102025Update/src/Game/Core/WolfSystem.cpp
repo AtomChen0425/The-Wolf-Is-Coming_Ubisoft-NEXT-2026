@@ -99,7 +99,7 @@ namespace WolfSystem {
         registry.addComponent(wolf, PhysicsTag{ true });
         registry.addComponent(wolf, EnemyTag{});
         registry.addComponent(wolf, Health{ maxHealth, maxHealth });
-        
+		registry.addComponent(wolf, AnimalTag{});
         // Add weapon for Sniper type
         if (type == WolfType::Sniper) {
             WeaponInventory inventory;

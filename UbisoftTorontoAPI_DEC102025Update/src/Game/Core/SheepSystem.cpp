@@ -120,13 +120,14 @@ namespace SheepSystem {
 
             registry.addComponent(sheep, Transform3D{
                 Vec3{startX + offsetX, 20.0f, startZ + offsetZ},
-                15.0f, 15.0f, 15.0f, // �ߴ�
-                0.9f, 0.9f, 0.9f     // ��ɫ������
+                15.0f, 15.0f, 15.0f, // 
+                0.9f, 0.9f, 0.9f     // 
                 });
             registry.addComponent(sheep, Velocity3D{ Vec3{0,0,0} });
             registry.addComponent(sheep, SheepTag{});
-            registry.addComponent(sheep, SheepComponent{}); // ʹ��Ĭ�� Boids ����
+            registry.addComponent(sheep, SheepComponent{}); // 
             registry.addComponent(sheep, PhysicsTag{ true}); //
+            registry.addComponent(sheep, AnimalTag{});
             WeaponInventory inventory;
 			registry.addComponent(sheep, inventory);
         }
@@ -136,7 +137,6 @@ namespace SheepSystem {
         float dt = dtMs / 10.0f;
         if (dt <= 0) return;
 
-        // 1. ��ȡ���λ�� (��Ϊ��ͷ��/Ŀ��)
         Vec3 targetPos;
         bool hasPlayer = false;
         View<PlayerTag, Transform3D> playerView(registry);

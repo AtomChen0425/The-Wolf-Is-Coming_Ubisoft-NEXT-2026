@@ -154,6 +154,33 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     registry.addComponent(entity, PhysicsTag{}); //
     registry.addComponent(entity, inventory);
     registry.addComponent(entity, Health{100, 100}); //
+    CSimpleSprite* pSprite = App::CreateSprite("data/TestData/Test.bmp", 8, 4);
+
+    // 
+    const float speed = 1.0f / 15.0f;
+    pSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
+    pSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
+    pSprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
+    pSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
+    pSprite->SetScale(1.0f);
+
+    // 
+
+	Weapon startingWeapon;
+	startingWeapon.type = WeaponType::Pistol;
+	startingWeapon.name = "Basic Pistol";
+	startingWeapon.damage = 20.0f;
+    startingWeapon.fireRate = 50.0f;  // Fast fire rate
+    startingWeapon.currentCooldown = 0.0f;
+    startingWeapon.projectileSpeed = config.bulletSpeed;
+    startingWeapon.projectileSize = 5.0f;
+    startingWeapon.projectileLife = 1000.0f;
+    startingWeapon.explosionRadius = 0.0f;
+    startingWeapon.knockback = 300.0f;
+    startingWeapon.r = 1.0f;
+    startingWeapon.g = 0.5f;
+    startingWeapon.b = 0.0f;
+    registry.addComponent(entity, SpriteComponent{ pSprite, 0 });
 }
 
 // Create a default simple template
@@ -443,51 +470,113 @@ void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ,
     const int chunkSize = config.chunkSize;
     const int renderRadius = config.chunkRenderRadius;
     const float chunkWorldSize = blockSize * chunkSize;
-    const float despawnDistance = chunkWorldSize * (renderRadius + 2);  // Add buffer
 
-    // Calculate player chunk
+    // 1. 计算玩家当前所在的区块坐标
     int playerChunkX = (int)std::floor(playerX / chunkWorldSize);
     int playerChunkZ = (int)std::floor(playerZ / chunkWorldSize);
 
-    // Find chunks to unload
+    // 2. 筛选出需要卸载的区块 (收集阶段)
     std::vector<std::pair<int, int>> chunksToUnload;
     for (const auto& chunkKey : loadedChunks) {
         int dx = chunkKey.first - playerChunkX;
         int dz = chunkKey.second - playerChunkZ;
 
-        // If chunk is too far, mark for unloading
+        // 如果区块超出渲染半径，标记为卸载
         if (std::abs(dx) > renderRadius + 1 || std::abs(dz) > renderRadius + 1) {
             chunksToUnload.push_back(chunkKey);
         }
     }
 
-    // Early exit if no chunks to unload
+    // 如果没有需要卸载的区块，直接退出
     if (chunksToUnload.empty()) {
         return;
     }
 
-    // Create view once for all chunks to despawn
+    // -----------------------------------------------------------
+    // 3. 核心优化部分：使用 Set 进行 O(1) 查找
+    // -----------------------------------------------------------
+
+    // 将 vector 转为 set，大幅提升查找速度
+    std::set<std::pair<int, int>> chunksToUnloadSet(chunksToUnload.begin(), chunksToUnload.end());
+
     View<ChunkTag> view(registry);
-    
-    // Despawn entities in chunks being unloaded
+    std::vector<Entity> toDestroy;
+
+    // 只遍历一次所有实体 (Single Pass)
+    for (EntityID id : view) {
+        auto& chunkTag = view.get<ChunkTag>(id);
+
+        // 使用 make_pair 确保类型匹配，检查该实体是否属于待删除的区块
+        if (chunksToUnloadSet.count(std::make_pair(chunkTag.chunkX, chunkTag.chunkZ))) {
+            // 如果你的 ECS 系统要求传入 Entity 结构体 (包含版本号):
+            toDestroy.push_back({ id, registry.getEntityVersion(id) });
+
+            // 如果你的 ECS 系统只需要 EntityID，请改用: 
+            // toDestroy.push_back(id); (并将 vector 类型改为 std::vector<EntityID>)
+        }
+    }
+
+    // 4. 统一执行销毁
+    for (const auto& e : toDestroy) {
+        registry.destroyEntity(e);
+    }
+
+    // 5. 更新 loadedChunks 记录 (从已加载列表中移除)
     for (const auto& chunkKey : chunksToUnload) {
-        std::vector<Entity> toDestroy;
-
-        for (EntityID id : view) {
-            auto& chunkTag = view.get<ChunkTag>(id);
-            if (chunkTag.chunkX == chunkKey.first && chunkTag.chunkZ == chunkKey.second) {
-                toDestroy.push_back({ id, registry.getEntityVersion(id) });
-            }
-        }
-
-        for (const Entity& e : toDestroy) {
-            registry.destroyEntity(e);
-        }
-
-        // Remove from loaded chunks
         loadedChunks.erase(chunkKey);
     }
 }
+
+//void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+//    const float blockSize = config.blockSize;
+//    const int chunkSize = config.chunkSize;
+//    const int renderRadius = config.chunkRenderRadius;
+//    const float chunkWorldSize = blockSize * chunkSize;
+//    const float despawnDistance = chunkWorldSize * (renderRadius + 2);  // Add buffer
+//
+//    // Calculate player chunk
+//    int playerChunkX = (int)std::floor(playerX / chunkWorldSize);
+//    int playerChunkZ = (int)std::floor(playerZ / chunkWorldSize);
+//
+//    // Find chunks to unload
+//    std::vector<std::pair<int, int>> chunksToUnload;
+//    for (const auto& chunkKey : loadedChunks) {
+//        int dx = chunkKey.first - playerChunkX;
+//        int dz = chunkKey.second - playerChunkZ;
+//
+//        // If chunk is too far, mark for unloading
+//        if (std::abs(dx) > renderRadius + 1 || std::abs(dz) > renderRadius + 1) {
+//            chunksToUnload.push_back(chunkKey);
+//        }
+//    }
+//
+//    // Early exit if no chunks to unload
+//    if (chunksToUnload.empty()) {
+//        return;
+//    }
+//
+//    // Create view once for all chunks to despawn
+//    View<ChunkTag> view(registry);
+//    
+//    // Despawn entities in chunks being unloaded
+//    for (const auto& chunkKey : chunksToUnload) {
+//        std::vector<Entity> toDestroy;
+//
+//        for (EntityID id : view) {
+//            auto& chunkTag = view.get<ChunkTag>(id);
+//            if (chunkTag.chunkX == chunkKey.first && chunkTag.chunkZ == chunkKey.second) {
+//                toDestroy.push_back({ id, registry.getEntityVersion(id) });
+//            }
+//        }
+//
+//        for (const Entity& e : toDestroy) {
+//            registry.destroyEntity(e);
+//        }
+//
+//        // Remove from loaded chunks
+//        loadedChunks.erase(chunkKey);
+//    }
+//}
 // Chunk-based generation system for infinite 4-direction map
 void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
     const float blockSize = config.blockSize;

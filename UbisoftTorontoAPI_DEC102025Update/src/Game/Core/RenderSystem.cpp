@@ -29,8 +29,40 @@ void UpdateSpriteAnimation(EntityManager& registry, const float dt) {
     View<SpriteComponent> view(registry);
     for (EntityID id : view) {
         auto& spr = view.get<SpriteComponent>(id);
+		auto& spriteVel = view.get<Velocity3D>(id);
         if (spr.sprite) {
             spr.sprite->Update(dt);
+            if (spriteVel.vel.z > 0.1f) {
+                if (spr.currentAnimID != ANIM_FORWARDS) {
+                    spr.sprite->SetAnimation(ANIM_FORWARDS, true);
+                    spr.currentAnimID = ANIM_FORWARDS;
+                }
+            }
+            else if (spriteVel.vel.z < -0.1f) {
+                if (spr.currentAnimID != ANIM_BACKWARDS) {
+                    spr.sprite->SetAnimation(ANIM_BACKWARDS, true);
+                    spr.currentAnimID = ANIM_BACKWARDS;
+                }
+            }
+            else if (spriteVel.vel.x > 0.1f) {
+                if (spr.currentAnimID != ANIM_RIGHT) {
+                    spr.sprite->SetAnimation(ANIM_RIGHT, true);
+                    spr.currentAnimID = ANIM_RIGHT;
+                }
+            }
+            else if (spriteVel.vel.x < -0.1f) {
+                if (spr.currentAnimID != ANIM_LEFT) {
+                    spr.sprite->SetAnimation(ANIM_LEFT, true);
+                    spr.currentAnimID = ANIM_LEFT;
+                }
+			}
+            else {
+                // Idle animation or stop
+                if (spr.currentAnimID != -1) {
+                    spr.sprite->SetAnimation(-1, true); // Assuming -1 stops animation
+                    spr.currentAnimID = -1;
+                }
+			}
         }
     }
 }
@@ -167,7 +199,7 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
 }
 
 void RenderAnimal3D(EntityManager& registry, Camera3D& camera) {
-    View<Transform3D, PhysicsTag> view(registry);
+    View<Transform3D, AnimalTag> view(registry);
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
@@ -197,10 +229,45 @@ void RenderBullets3D(EntityManager& registry, Camera3D& camera) {
 
 void RenderParticles(EntityManager& registry, Camera3D& camera) {
     View<Transform3D, ParticleTag> view(registry);
-    // Ҳ������ RenderRoad3D �������������Ϊ����������ͨ�����Բ��������߼򵥵���
+   
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
         gRenderHelper->RenderCube_inNDC(t, camera);
+    }
+}
+
+// Render all characters (player, wolves, sheep) with proper depth sorting
+// This ensures correct occlusion - entities closer to camera appear in front
+void RenderCharacters3D(EntityManager& registry, Camera3D& camera) {
+    // Collect all characters into a single list with their transforms
+    std::vector<std::pair<EntityID, Transform3D*>> allCharacters;
+
+    // Add player
+    View<Transform3D, PlayerTag> playerView(registry);
+    for (EntityID id : playerView) {
+        allCharacters.push_back({ id, &playerView.get<Transform3D>(id) });
+    }
+
+    // Add animals (wolves and sheep)
+    View<Transform3D, AnimalTag> animalView(registry);
+    for (EntityID id : animalView) {
+        allCharacters.push_back({ id, &animalView.get<Transform3D>(id) });
+    }
+
+    // Sort by depth in camera space (far to near for proper occlusion)
+    std::sort(allCharacters.begin(), allCharacters.end(), [&](const auto& a, const auto& b) {
+        float distA = MaxDepthInCameraSpace(*a.second, camera);
+        float distB = MaxDepthInCameraSpace(*b.second, camera);
+        return distA > distB;  // Render far entities first (painter's algorithm)
+        });
+
+    // Render all characters in sorted order
+    for (const auto& [id, transform] : allCharacters) {
+        if (playerView.has<SpriteComponent>(id)) {
+            RenderSystem::RenderPlayerSprite(registry, camera);
+        } else {
+            gRenderHelper->RenderCube_inNDC(*transform, camera);
+        }
     }
 }
 void RenderSystem::Render(EntityManager& registry) {
@@ -220,15 +287,16 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     
     // Render player
     // To switch to sprite rendering, comment out RenderPlayer3D and uncomment RenderPlayerSprite
-    RenderPlayer3D(registry, camera);
-    // RenderPlayerSprite(registry, camera);
-    
+    //RenderPlayer3D(registry, camera);
+	//RenderCharacters3D(registry, camera);
+    RenderPlayerSprite(registry, camera);
+    RenderAnimal3D(registry, camera);
     // Render particles
 	RenderParticles(registry, camera);
     
     // Render animals (wolves and sheep)
     // To switch to sprite rendering, comment out RenderAnimal3D and uncomment the sprite functions below
-    RenderAnimal3D(registry, camera);
+    
     // RenderWolvesSprite(registry, camera);
     // RenderSheepSprite(registry, camera);
     

@@ -321,6 +321,8 @@ public:
         uint64_t bit = 1ULL << EntityManager::getComponentTypeID<T>();
         return (manager.getEntityMask(id) & bit) != 0;
     }
+
+    
 };
 
 // 辅助：给 EntityManager 加一个创建 View 的接口

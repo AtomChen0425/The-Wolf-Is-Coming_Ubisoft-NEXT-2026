@@ -160,7 +160,13 @@ void EngineSystem::Update(const float deltaTimeMs) {
             gameState = GameState::Upgrading;
             return;  // Don't continue game logic this frame
         }
-        
+        // Generate chunks based on player position
+        View<PlayerTag, Transform3D> playerView(*registry);
+        for (EntityID id : playerView) {
+            auto& playerTransform = playerView.get<Transform3D>(id);
+            GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
+
+        }
         // Update player control (handles input and movement, and camera control)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
 		// Update sheep behavior
@@ -206,13 +212,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         ParticleSystem::Update(*registry, deltaTimeMs);
         CollisionSystem::Update(*registry);
         PhysicsSystem::Update(*registry, deltaTimeMs);
-        // Generate chunks based on player position
-        View<PlayerTag, Transform3D> playerView(*registry);
-        for (EntityID id : playerView) {
-            auto& playerTransform = playerView.get<Transform3D>(id);
-            GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
-            
-        }
+		RenderSystem::Update(*registry, deltaTimeMs);
         
         // Check for upgrade point collection
         //View<UpgradePointTag, Transform3D> upgradeView(*registry);

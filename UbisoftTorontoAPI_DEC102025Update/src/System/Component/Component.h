@@ -37,6 +37,7 @@ struct PlayerTag {
 };
 struct PhysicsTag { bool isOnGround; };
 struct EnemyTag {};
+struct AnimalTag {};
 
 // 2D Rigid body component
 struct RigidBody {
@@ -238,6 +239,7 @@ struct WolfComponent {
 };
 
 enum class WeaponType {
+    Pistol,
     MachineGun, 
     Cannon      
 };
