@@ -422,6 +422,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClInclude Include="..\..\src\Game\Core\GameLevelData.h" />
     <ClInclude Include="..\..\src\Game\Core\LevelSystem.h" />
+    <ClInclude Include="..\..\src\Game\Core\Scene\GameScenes.h" />
+    <ClInclude Include="..\..\src\Game\Core\Scene\SceneManager.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CollisionSystem.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\ControlSystem.h" />
@@ -435,6 +437,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\SheepSystem.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\WolfSystem.h" />
     <ClCompile Include="..\..\src\Game\Core\LevelSystem.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\Scene\GameScenes.cpp" />
+    <ClCompile Include="..\..\src\Game\Core\Scene\SceneManager.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CollisionSystem.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\ControlSystem.cpp" />
@@ -458,16 +462,12 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Vec4.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Physic\Collision.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Render\RenderHelper.h" />
-    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\GameScenes.h" />
-    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\SceneManager.h" />
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.h" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\ECSSystem.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Mat4.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Vec2.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Physic\Collision.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Render\RenderHelper.cpp" />
-    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\GameScenes.cpp" />
-    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\SceneManager.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.cpp" />
   </ItemGroup>
   <ItemGroup>

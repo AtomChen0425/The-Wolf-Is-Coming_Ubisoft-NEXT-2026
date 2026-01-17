@@ -1,9 +1,9 @@
 #include "GameScenes.h"
-#include "../ECSSystem.h"
-#include "../../ContestAPI/app.h"
-#include "../Component/Component.h"
-#include "../ECS/ECS.h"
-#include "../../Game/Core/LevelSystem.h"
+#include "../System/ECSSystem.h"
+#include "../ContestAPI/app.h"
+#include "../System/Component/Component.h"
+#include "../System/ECS/ECS.h"
+#include "../Game/Core/LevelSystem.h"
 
 // StartScene Implementation
 StartScene::StartScene(EngineSystem* engine) 

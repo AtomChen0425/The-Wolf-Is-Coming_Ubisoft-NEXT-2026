@@ -1,6 +1,6 @@
 #pragma once
 #include "ECS/ECS.h"
-#include "Scene/SceneManager.h"
+#include "../Game/Core/Scene/SceneManager.h"
 #include "../Game/Core/GameConfig.h"
 #include "../Game/Core/GameLevelData.h"
 #include <memory>

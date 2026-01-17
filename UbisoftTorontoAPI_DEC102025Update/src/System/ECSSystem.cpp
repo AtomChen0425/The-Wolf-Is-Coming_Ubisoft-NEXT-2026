@@ -15,7 +15,7 @@
 #include "../Game/Core/LevelSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
-#include "Scene/GameScenes.h"
+#include "../Game/Core/Scene/GameScenes.h"
 
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)

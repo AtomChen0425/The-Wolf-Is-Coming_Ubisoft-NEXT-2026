@@ -1,6 +1,6 @@
 #pragma once
-#include "SceneManager.h"
-#include "../UI/UISystem.h"
+#include "../Game/Core/Scene/SceneManager.h"
+#include "../System/UI/UISystem.h"
 #include <memory>
 
 // Forward declarations
