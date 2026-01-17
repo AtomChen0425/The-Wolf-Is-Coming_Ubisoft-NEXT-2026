@@ -509,7 +509,12 @@ void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float player
     DespawnDistantChunks(registry, playerX, playerZ, loadedChunks, config);
 }
 void GenerateSystem::GenerateWolf(EntityManager& registry) {
-    // Implementation for generating a wolf
+    // Generate basic wolf type for backward compatibility
+    GenerateWolfOfType(registry, WolfType::Basic);
+}
+
+void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type) {
+    // Find player position to spawn wolf around them
     View<PlayerTag, Transform3D> playerView(registry);
     Vec3 playerPos;
     bool foundPlayer = false;
@@ -524,6 +529,7 @@ void GenerateSystem::GenerateWolf(EntityManager& registry) {
     constexpr float kRadius = 3000.0f;
     constexpr float kPi = 3.14159265358979323846f;
 
+    // Random position around player in a circle
     float theta = RandRange(0.0f, 2.0f * kPi);
     float r = sqrtf(Rand01()) * kRadius;
 
@@ -532,21 +538,10 @@ void GenerateSystem::GenerateWolf(EntityManager& registry) {
 
     Vec3 spawnPos{
         playerPos.x + dx,
-        20.0f,          // keep same Y; adjust if you have a fixed ground height
+        20.0f,
         playerPos.z + dz
     };
 
-    // 3) Create wolf entity
-    Entity wolf = registry.createEntity();
-    registry.addComponent(wolf, Transform3D{
-                spawnPos,
-                20.0f, 20.0f, 20.0f,  // Size (slightly bigger than sheep)
-                0.4f, 0.2f, 0.1f      // Color (dark brown/gray)
-        });
-    registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
-    registry.addComponent(wolf, WolfTag{});
-    registry.addComponent(wolf, WolfComponent{}); // Use default parameters
-    registry.addComponent(wolf, PhysicsTag{ true }); // Enable physics for ground collision
-    registry.addComponent(wolf, EnemyTag{});
-    registry.addComponent(wolf, Health{ 100, 100 }); // So they can be targeted like sheep
+    // Use WolfSystem to create wolf of specific type
+    WolfSystem::InitWolfOfType(registry, spawnPos.x, spawnPos.z, type);
 }

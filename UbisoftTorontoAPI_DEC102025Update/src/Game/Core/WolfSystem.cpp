@@ -23,25 +23,112 @@ inline void WolfLimit(Vec3& v, float max) {
 
 namespace WolfSystem {
 
+    void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type) {
+        Entity wolf = registry.createEntity();
+        
+        // Base stats that will be modified by type
+        float size = 20.0f;
+        float r = 0.4f, g = 0.2f, b = 0.1f;  // Color
+        int maxHealth = 100;
+        float chaseForce = 200.0f;
+        float maxSpeed = 300.0f;
+        float detectionRange = 400.0f;
+        bool canJump = false;
+        
+        // Configure stats based on wolf type
+        switch (type) {
+            case WolfType::Basic:
+                // Standard stats (already set above)
+                break;
+                
+            case WolfType::Sniper:
+                // Has gun, slower movement
+                maxSpeed = 150.0f;
+                chaseForce = 100.0f;
+                r = 0.5f; g = 0.3f; b = 0.5f;  // Purple tint
+                size = 18.0f;
+                break;
+                
+            case WolfType::Tank:
+                // High health, very slow
+                maxHealth = 300;
+                maxSpeed = 100.0f;
+                chaseForce = 150.0f;
+                r = 0.6f; g = 0.1f; b = 0.1f;  // Dark red
+                size = 30.0f;
+                break;
+                
+            case WolfType::Fast:
+                // Fast movement
+                maxSpeed = 500.0f;
+                chaseForce = 300.0f;
+                maxHealth = 60;
+                r = 0.2f; g = 0.6f; b = 0.2f;  // Green tint
+                size = 15.0f;
+                break;
+                
+            case WolfType::Hunter:
+                // Fast with jumping
+                maxSpeed = 450.0f;
+                chaseForce = 280.0f;
+                maxHealth = 80;
+                canJump = true;
+                r = 0.3f; g = 0.4f; b = 0.6f;  // Blue tint
+                size = 18.0f;
+                break;
+        }
+        
+        // Add components
+        registry.addComponent(wolf, Transform3D{
+            Vec3{x, 20.0f, z},
+            size, size, size,
+            r, g, b
+        });
+        registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
+        registry.addComponent(wolf, WolfTag{});
+        
+        WolfComponent wolfComp;
+        wolfComp.type = type;
+        wolfComp.chaseForce = chaseForce;
+        wolfComp.maxSpeed = maxSpeed;
+        wolfComp.detectionRange = detectionRange;
+        wolfComp.canJump = canJump;
+        wolfComp.jumpCooldown = 0.0f;
+        registry.addComponent(wolf, wolfComp);
+        
+        registry.addComponent(wolf, PhysicsTag{ true });
+        registry.addComponent(wolf, EnemyTag{});
+        registry.addComponent(wolf, Health{ maxHealth, maxHealth });
+        
+        // Add weapon for Sniper type
+        if (type == WolfType::Sniper) {
+            WeaponInventory inventory;
+            Weapon gun;
+            gun.type = WeaponType::MachineGun;
+            gun.name = "Wolf Gun";
+            gun.damage = 8.0f;
+            gun.fireRate = 0.5f;
+            gun.currentCooldown = 0.0f;
+            gun.projectileSpeed = 400.0f;
+            gun.projectileSize = 5.0f;
+            gun.projectileLife = 2000.0f;
+            gun.explosionRadius = 0.0f;
+            gun.r = 1.0f;
+            gun.g = 0.0f;
+            gun.b = 0.0f;
+            inventory.weapons.push_back(gun);
+            registry.addComponent(wolf, inventory);
+        }
+    }
+
     void InitWolves(EntityManager& registry, float startX, float startZ, int count) {
         for (int i = 0; i < count; i++) {
-            Entity wolf = registry.createEntity();
-
             // Random starting position within a range
             float offsetX = (rand() % 300 - 150.0f);
             float offsetZ = (rand() % 300 - 150.0f);
-
-            registry.addComponent(wolf, Transform3D{
-                Vec3{startX + offsetX, 20.0f, startZ + offsetZ},
-                20.0f, 20.0f, 20.0f,  // Size (slightly bigger than sheep)
-                0.4f, 0.2f, 0.1f      // Color (dark brown/gray)
-                });
-            registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
-            registry.addComponent(wolf, WolfTag{});
-            registry.addComponent(wolf, WolfComponent{}); // Use default parameters
-            registry.addComponent(wolf, PhysicsTag{ true }); // Enable physics for ground collision
-			registry.addComponent(wolf, EnemyTag{});
-			registry.addComponent(wolf, Health{ 100, 100 }); // So they can be targeted like sheep
+            
+            // Create basic type wolves
+            InitWolfOfType(registry, startX + offsetX, startZ + offsetZ, WolfType::Basic);
         }
     }
 

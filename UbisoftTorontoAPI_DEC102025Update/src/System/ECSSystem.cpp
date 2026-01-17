@@ -55,6 +55,10 @@ void EngineSystem::InitializeGame() {
     // Initialize the game world without starting gameplay
     registry = std::make_unique<EntityManager>();
     gSpawnTimerMs = 0.0f;
+    sniperWolfSpawnTimer = 0.0f;
+    tankWolfSpawnTimer = 0.0f;
+    fastWolfSpawnTimer = 0.0f;
+    hunterWolfSpawnTimer = 0.0f;
     gScore = 0;
     nextSpawnZ = 0.0f;
     loadedChunks.clear();  // Clear loaded chunks
@@ -94,6 +98,13 @@ void EngineSystem::ResetGame() {
 void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
     gSpawnTimerMs += deltaTimeMs;
+    
+    // Update wolf type spawn timers
+    sniperWolfSpawnTimer += deltaTimeMs;
+    tankWolfSpawnTimer += deltaTimeMs;
+    fastWolfSpawnTimer += deltaTimeMs;
+    hunterWolfSpawnTimer += deltaTimeMs;
+    
     sceneManager.Update(deltaTimeMs);
     // Handle input based on game state
     if (gameState == GameState::StartScreen) {
@@ -155,13 +166,38 @@ void EngineSystem::Update(const float deltaTimeMs) {
 		// Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
         SheepSystem::SheepShoot(*registry, deltaTimeMs);
-        // Check and resolve collisions (after movement is applied)
-        // Update wolf behavior (wolves chase nearest player or sheep)
-        // Use dynamic spawn interval from level data
+        
+        // Spawn different wolf types at different intervals
+        // Basic wolves (use existing spawn interval from level data)
         if (gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
             GenerateSystem::GenerateWolf(*registry);
             gSpawnTimerMs = 0.0f;
 		}
+        
+        // Sniper wolves (slower spawn rate)
+        if (sniperWolfSpawnTimer >= config.sniperWolfSpawnIntervalMs) {
+            GenerateSystem::GenerateWolfOfType(*registry, WolfType::Sniper);
+            sniperWolfSpawnTimer = 0.0f;
+        }
+        
+        // Tank wolves (slowest spawn rate)
+        if (tankWolfSpawnTimer >= config.tankWolfSpawnIntervalMs) {
+            GenerateSystem::GenerateWolfOfType(*registry, WolfType::Tank);
+            tankWolfSpawnTimer = 0.0f;
+        }
+        
+        // Fast wolves (faster spawn rate)
+        if (fastWolfSpawnTimer >= config.fastWolfSpawnIntervalMs) {
+            GenerateSystem::GenerateWolfOfType(*registry, WolfType::Fast);
+            fastWolfSpawnTimer = 0.0f;
+        }
+        
+        // Hunter wolves (moderate spawn rate)
+        if (hunterWolfSpawnTimer >= config.hunterWolfSpawnIntervalMs) {
+            GenerateSystem::GenerateWolfOfType(*registry, WolfType::Hunter);
+            hunterWolfSpawnTimer = 0.0f;
+        }
+        
         WolfSystem::Update(*registry, deltaTimeMs);
 
         

@@ -72,6 +72,12 @@ public:
 	float gSpawnIntervalMs = 2000.0f;
     int   gScore = 0;
     
+    // Spawn timers for different wolf types
+    float sniperWolfSpawnTimer = 0.0f;
+    float tankWolfSpawnTimer = 0.0f;
+    float fastWolfSpawnTimer = 0.0f;
+    float hunterWolfSpawnTimer = 0.0f;
+    
     void Update(const float deltaTimeMs);
     void Render();
     void Shutdown();

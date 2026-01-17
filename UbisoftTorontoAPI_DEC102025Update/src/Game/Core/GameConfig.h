@@ -108,6 +108,12 @@ struct GameConfig {
     int sheepAddedPerUpgrade = 10;              // Number of sheep added with "Add Sheep" upgrade
     float sheepSpawnOffsetZ = 100.0f;           // Z offset for spawning new sheep
     
+    // Wolf type spawn intervals (different wolves spawn at different rates)
+    float sniperWolfSpawnIntervalMs = 8000.0f;   // Sniper wolves spawn every 8 seconds
+    float tankWolfSpawnIntervalMs = 12000.0f;    // Tank wolves spawn every 12 seconds
+    float fastWolfSpawnIntervalMs = 5000.0f;     // Fast wolves spawn every 5 seconds
+    float hunterWolfSpawnIntervalMs = 10000.0f;  // Hunter wolves spawn every 10 seconds
+    
     // Load config from file (returns true if successful)
     bool LoadFromFile(const std::string& filename);
     

@@ -21,5 +21,8 @@ namespace GenerateSystem
 	
 	// Create a test enemy with AI components (for demonstration purposes)
 	void CreateTestEnemyWithAI(EntityManager& registry, float x, float y, float z, bool enableMovement, bool enableShooting);
-	void GenerateWolf(EntityManager& registry);
+	
+	// Wolf generation functions
+	void GenerateWolf(EntityManager& registry);  // Generate basic wolf (backward compatibility)
+	void GenerateWolfOfType(EntityManager& registry, WolfType type);  // Generate specific wolf type
 };
