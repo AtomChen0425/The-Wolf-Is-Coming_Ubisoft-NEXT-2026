@@ -272,25 +272,46 @@ void RenderSystem::RenderWolvesSprite(EntityManager& registry, Camera3D& camera)
         
         if (!spr.sprite) continue;
         
-        // Calculate screen position based on 3D transform and camera
-        float screenX = t.pos.x - camera.x;
-        float screenZ = t.pos.z - camera.z;
+        // Use NDC projection like RenderCube_inNDC does
+        // Camera-relative position
+        const float rx = t.pos.x - camera.x;
+        const float ry = t.pos.y - camera.y;
+        const float rz = t.pos.z - camera.z;
         
-        // Apply camera perspective transformation
-        float cosYaw = std::cos(camera.yawAngle);
-        float sinYaw = std::sin(camera.yawAngle);
+        // Apply yaw rotation
+        const float cosYaw = std::cos(camera.yawAngle);
+        const float sinYaw = std::sin(camera.yawAngle);
+        const float rotatedX = rx * cosYaw + rz * sinYaw;
+        const float rotatedZ = -rx * sinYaw + rz * cosYaw;
         
-        // Rotate around camera yaw
-        float rotatedX = screenX * cosYaw + screenZ * sinYaw;
-        float rotatedZ = -screenX * sinYaw + screenZ * cosYaw;
+        // Apply pitch rotation
+        const float cosPitch = std::cos(camera.pitchAngle);
+        const float sinPitch = std::sin(camera.pitchAngle);
+        const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+        const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
         
-        // Project to screen (simple orthographic for now)
-        float finalScreenX = camera.width / 2.0f + rotatedX;
-        float finalScreenY = camera.height / 2.0f - rotatedZ - t.pos.y + camera.y;
+        // Skip if behind camera
+        const float nearZ = 1.0f;
+        if (pitchedZ <= nearZ) continue;
         
-        // Render sprite shadow on ground
-        float shadowY = camera.height / 2.0f - rotatedZ;
-        gRenderHelper->DrawShadow(finalScreenX, shadowY, t.width * 0.5f);
+        // Project to screen using NDC approach (same as RenderCube_inNDC)
+        const float fov = 600.0f;
+        const float centerX = 1024.0f / 2.0f;  // Fixed screen center
+        const float centerY = 768.0f / 2.0f;
+        
+        const float finalScreenX = rotatedX * (fov / pitchedZ) + centerX;
+        const float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
+        
+        // Shadow on ground (y = 0 in world space)
+        const float groundY = 0.0f - camera.y;
+        const float groundPitchedY = groundY * cosPitch - rotatedZ * sinPitch;
+        const float groundPitchedZ = groundY * sinPitch + rotatedZ * cosPitch;
+        
+        if (groundPitchedZ > nearZ) {
+            const float shadowScreenY = groundPitchedY * (fov / groundPitchedZ) + centerY;
+            const float shadowScreenX = finalScreenX; // Same X as sprite
+            gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.5f);
+        }
         
         // Set sprite position and draw
         spr.sprite->SetPosition(finalScreenX, finalScreenY);
@@ -307,25 +328,46 @@ void RenderSystem::RenderPlayerSprite(EntityManager& registry, Camera3D& camera)
         
         if (!spr.sprite) continue;
         
-        // Calculate screen position based on 3D transform and camera
-        float screenX = t.pos.x - camera.x;
-        float screenZ = t.pos.z - camera.z;
+        // Use NDC projection like RenderCube_inNDC does
+        // Camera-relative position
+        const float rx = t.pos.x - camera.x;
+        const float ry = t.pos.y - camera.y;
+        const float rz = t.pos.z - camera.z;
         
-        // Apply camera perspective transformation
-        float cosYaw = std::cos(camera.yawAngle);
-        float sinYaw = std::sin(camera.yawAngle);
+        // Apply yaw rotation
+        const float cosYaw = std::cos(camera.yawAngle);
+        const float sinYaw = std::sin(camera.yawAngle);
+        const float rotatedX = rx * cosYaw + rz * sinYaw;
+        const float rotatedZ = -rx * sinYaw + rz * cosYaw;
         
-        // Rotate around camera yaw
-        float rotatedX = screenX * cosYaw + screenZ * sinYaw;
-        float rotatedZ = -screenX * sinYaw + screenZ * cosYaw;
+        // Apply pitch rotation
+        const float cosPitch = std::cos(camera.pitchAngle);
+        const float sinPitch = std::sin(camera.pitchAngle);
+        const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+        const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
         
-        // Project to screen (simple orthographic for now)
-        float finalScreenX = camera.width / 2.0f + rotatedX;
-        float finalScreenY = camera.height / 2.0f - rotatedZ - t.pos.y + camera.y;
+        // Skip if behind camera
+        const float nearZ = 1.0f;
+        if (pitchedZ <= nearZ) continue;
         
-        // Render sprite shadow on ground
-        float shadowY = camera.height / 2.0f - rotatedZ;
-        gRenderHelper->DrawShadow(finalScreenX, shadowY, t.width * 0.5f);
+        // Project to screen using NDC approach (same as RenderCube_inNDC)
+        const float fov = 600.0f;
+        const float centerX = 1024.0f / 2.0f;  // Fixed screen center
+        const float centerY = 768.0f / 2.0f;
+        
+        const float finalScreenX = rotatedX * (fov / pitchedZ) + centerX;
+        const float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
+        
+        // Shadow on ground (y = 0 in world space)
+        const float groundY = 0.0f - camera.y;
+        const float groundPitchedY = groundY * cosPitch - rotatedZ * sinPitch;
+        const float groundPitchedZ = groundY * sinPitch + rotatedZ * cosPitch;
+        
+        if (groundPitchedZ > nearZ) {
+            const float shadowScreenY = groundPitchedY * (fov / groundPitchedZ) + centerY;
+            const float shadowScreenX = finalScreenX; // Same X as sprite
+            gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.5f);
+        }
         
         // Set sprite position and draw
         spr.sprite->SetPosition(finalScreenX, finalScreenY);
@@ -362,25 +404,46 @@ void RenderSystem::RenderSheepSprite(EntityManager& registry, Camera3D& camera) 
         
         if (!spr.sprite) continue;
         
-        // Calculate screen position based on 3D transform and camera
-        float screenX = t.pos.x - camera.x;
-        float screenZ = t.pos.z - camera.z;
+        // Use NDC projection like RenderCube_inNDC does
+        // Camera-relative position
+        const float rx = t.pos.x - camera.x;
+        const float ry = t.pos.y - camera.y;
+        const float rz = t.pos.z - camera.z;
         
-        // Apply camera perspective transformation
-        float cosYaw = std::cos(camera.yawAngle);
-        float sinYaw = std::sin(camera.yawAngle);
+        // Apply yaw rotation
+        const float cosYaw = std::cos(camera.yawAngle);
+        const float sinYaw = std::sin(camera.yawAngle);
+        const float rotatedX = rx * cosYaw + rz * sinYaw;
+        const float rotatedZ = -rx * sinYaw + rz * cosYaw;
         
-        // Rotate around camera yaw
-        float rotatedX = screenX * cosYaw + screenZ * sinYaw;
-        float rotatedZ = -screenX * sinYaw + screenZ * cosYaw;
+        // Apply pitch rotation
+        const float cosPitch = std::cos(camera.pitchAngle);
+        const float sinPitch = std::sin(camera.pitchAngle);
+        const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+        const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
         
-        // Project to screen (simple orthographic for now)
-        float finalScreenX = camera.width / 2.0f + rotatedX;
-        float finalScreenY = camera.height / 2.0f - rotatedZ - t.pos.y + camera.y;
+        // Skip if behind camera
+        const float nearZ = 1.0f;
+        if (pitchedZ <= nearZ) continue;
         
-        // Render sprite shadow on ground
-        float shadowY = camera.height / 2.0f - rotatedZ;
-        gRenderHelper->DrawShadow(finalScreenX, shadowY, t.width * 0.5f);
+        // Project to screen using NDC approach (same as RenderCube_inNDC)
+        const float fov = 600.0f;
+        const float centerX = 1024.0f / 2.0f;  // Fixed screen center
+        const float centerY = 768.0f / 2.0f;
+        
+        const float finalScreenX = rotatedX * (fov / pitchedZ) + centerX;
+        const float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
+        
+        // Shadow on ground (y = 0 in world space)
+        const float groundY = 0.0f - camera.y;
+        const float groundPitchedY = groundY * cosPitch - rotatedZ * sinPitch;
+        const float groundPitchedZ = groundY * sinPitch + rotatedZ * cosPitch;
+        
+        if (groundPitchedZ > nearZ) {
+            const float shadowScreenY = groundPitchedY * (fov / groundPitchedZ) + centerY;
+            const float shadowScreenX = finalScreenX; // Same X as sprite
+            gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.5f);
+        }
         
         // Set sprite position and draw
         spr.sprite->SetPosition(finalScreenX, finalScreenY);
