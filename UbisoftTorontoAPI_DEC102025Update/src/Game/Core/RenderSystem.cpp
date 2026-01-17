@@ -323,14 +323,33 @@ void RenderSystem::RenderCrosshair(EntityManager& registry, Camera3D& camera) {
 		auto& t = playerView.get<Transform3D>(id);
 		auto& player = playerView.get<PlayerTag>(id);
 		
-		// Calculate a point in front of the player in world space
-		// Distance in front of player (adjust this value to control how far ahead the crosshair aims)
-		const float aimDistance = 200.0f;
+		// Calculate dynamic aim distance based on camera pitch and player height
+		// When looking down (negative pitch), aim closer to the ground
+		// When looking up (positive pitch), aim farther away
+		// Also consider player's height above ground
+		const float baseDist = 200.0f;
+		const float pitchFactor = std::tan(camera.pitchAngle);  // Positive when looking up, negative when looking down
+		const float heightAboveGround = t.pos.y;
+		
+		// Calculate horizontal distance based on pitch angle and height
+		// If looking down at ground from height, we want shorter horizontal distance
+		// If looking up or level, use longer distance
+		float aimDistance = baseDist;
+		if (pitchFactor < -0.01f) {
+			// Looking down - calculate distance to ground intersection
+			// distance = height / tan(angle_from_horizontal)
+			float distToGround = std::abs(heightAboveGround / pitchFactor);
+			aimDistance = std::min(distToGround, baseDist * 2.0f);  // Cap at 2x base distance
+		} else if (pitchFactor > 0.01f) {
+			// Looking up - increase distance
+			aimDistance = baseDist * (1.0f + pitchFactor * 2.0f);  // Scale up with pitch
+			aimDistance = std::min(aimDistance, 1000.0f);  // Cap at reasonable max
+		}
 		
 		// Calculate world position in front of player using player's yaw rotation
 		const float playerYaw = player.rotationYaw;
 		const float worldX = t.pos.x + aimDistance * std::sin(playerYaw);
-		const float worldY = t.pos.y;  // Keep at player's height
+		const float worldY = t.pos.y + aimDistance * pitchFactor;  // Height changes with pitch
 		const float worldZ = t.pos.z + aimDistance * std::cos(playerYaw);
 		
 		// Project this 3D world point to screen using NDC projection (same as RenderCube_inNDC)
