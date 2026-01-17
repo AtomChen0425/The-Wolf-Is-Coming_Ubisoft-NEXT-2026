@@ -316,6 +316,11 @@ public:
         // 或者为了极致性能，View 初始化时就保存 componentPools 的指针，这里直接数组访问
         return *manager.getComponent<T>(Entity{ id, manager.getEntityVersion(id) });
     }
+    template<typename T>
+    bool has(EntityID id){
+        uint64_t bit = 1ULL << EntityManager::getComponentTypeID<T>();
+        return (manager.getEntityMask(id) & bit) != 0;
+    }
 };
 
 // 辅助：给 EntityManager 加一个创建 View 的接口

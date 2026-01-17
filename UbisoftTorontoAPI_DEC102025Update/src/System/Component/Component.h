@@ -154,6 +154,9 @@ struct Bullet {
     float lifetime;           // How long the bullet lives (milliseconds)
     float damage;             // Damage dealt on hit
     bool isPlayerBullet;      // true if fired by player, false if fired by enemy
+
+	float explosionRadius;   //if > 0, bullet causes area damage
+    float size;
 };
 
 struct ParticleTag {};
@@ -219,7 +222,28 @@ struct WolfComponent {
     float minChaseDistance = 10.0f; // Stop chasing when this close to target
 };
 
-struct  GameSetting
-{
-    float spawTimer =500.0f;
+enum class WeaponType {
+    MachineGun, 
+    Cannon      
+};
+
+struct Weapon {
+    WeaponType type;
+    std::string name;       
+
+
+    float damage;          
+    float fireRate;         
+    float currentCooldown;  
+
+    float projectileSpeed;  
+    float projectileSize;  
+    float projectileLife;   
+    float explosionRadius;  
+
+    float r, g, b;         
+};
+
+struct WeaponInventory {
+    std::vector<Weapon> weapons;
 };

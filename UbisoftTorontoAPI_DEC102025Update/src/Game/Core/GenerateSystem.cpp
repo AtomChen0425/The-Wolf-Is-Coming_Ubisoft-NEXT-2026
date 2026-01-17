@@ -132,6 +132,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     // Create player as a small cube, starting at center of road on the ground
     // Floor blocks are at Y=-10 with height=10, so top is at Y=-5
     // Player with height=30 should be at Y=-5+15=10 to stand on the ground
+    WeaponInventory inventory;
     registry.addComponent(entity, Transform3D{ 
         Vec3{
             config.playerSpawnX,    // x: from config
@@ -149,6 +150,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     registry.addComponent(entity, PlayerTag{true, 0, 0, 0});
     registry.addComponent(entity, PlayerStats{});  // Add player stats for upgrades
     registry.addComponent(entity, PhysicsTag{}); //
+    registry.addComponent(entity, inventory);
 }
 
 // Create a default simple template

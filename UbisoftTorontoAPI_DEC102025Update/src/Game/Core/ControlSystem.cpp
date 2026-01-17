@@ -152,19 +152,41 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
             bulletSpeed += stats.bulletSpeedBonus;
         }*/
 
-        if ((App::IsKeyPressed(App::KEY_J) || App::IsMousePressed(0)) && playerTag.shootCooldown <= 0.0f) {
-            // Fire a bullet
-            Vec3 bulletDirection = Vec3{std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
-                                        std::sin(playerTag.rotationPitch), 
-                                        std::cos(playerTag.rotationPitch) * std::cos(playerTag.rotationYaw)};
-            Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+        if ((App::IsKeyPressed(App::KEY_J) || App::IsMousePressed(0)) ) {
+            if (view.has<WeaponInventory>(id)&& view.get<WeaponInventory>(id).weapons.size() > 0) {
+                auto& inventory = view.get<WeaponInventory>(id);
+                for (Weapon& weapon : inventory.weapons) {
+                    weapon.currentCooldown -= dt;
+                  
+                    // Fire a bullet
+                    Vec3 bulletDirection = Vec3{ std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
+                                                std::sin(playerTag.rotationPitch),
+                                                std::cos(playerTag.rotationPitch) * std::cos(playerTag.rotationYaw) };
+                    Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+                    // Create bullet entity
+                    Entity bullet = registry.createEntity();
+                    registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize });
+                    registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
+                    registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
+                    weapon.currentCooldown = weapon.fireRate;
+                    }
+            }
+            else {
+                if (playerTag.shootCooldown <= 0.0f) {
+                    // Fire a bullet
+                    Vec3 bulletDirection = Vec3{ std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
+                                                std::sin(playerTag.rotationPitch),
+                                                std::cos(playerTag.rotationPitch) * std::cos(playerTag.rotationYaw) };
+                    Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
 
-            // Create bullet entity
-            Entity bullet = registry.createEntity();
-			registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,20,true});
-            registry.addComponent(bullet, Transform3D{ bulletPosition, 5.0f, 5.0f, 5.0f, config.bulletColorR, config.bulletColorG, config.bulletColorB });
-            registry.addComponent(bullet, Velocity3D{ bulletDirection * bulletSpeed });
-            playerTag.shootCooldown = 100.0f;
+                    // Create bullet entity
+                    Entity bullet = registry.createEntity();
+                    registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,20,true });
+                    registry.addComponent(bullet, Transform3D{ bulletPosition, 5.0f, 5.0f, 5.0f, config.bulletColorR, config.bulletColorG, config.bulletColorB });
+                    registry.addComponent(bullet, Velocity3D{ bulletDirection * bulletSpeed });
+                    playerTag.shootCooldown = 100.0f;
+                }
+            }
         }
     }
 }
