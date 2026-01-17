@@ -300,9 +300,42 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     // RenderWolvesSprite(registry, camera);
     // RenderSheepSprite(registry, camera);
     
+    // Render crosshair on top of everything
+    RenderCrosshair();
+    
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
 	UpdateSpriteAnimation(registry, dt);
+}
+
+// ============================================================================
+// Crosshair rendering
+// ============================================================================
+void RenderSystem::RenderCrosshair() {
+	// Screen center coordinates (1024x768 resolution)
+	const float centerX = 512.0f;
+	const float centerY = 384.0f;
+	
+	// Crosshair size and gap
+	const float lineLength = 15.0f;  // Length of each line from center
+	const float gap = 5.0f;          // Gap from center point
+	
+	// Crosshair color (bright green for visibility)
+	const float r = 0.0f;
+	const float g = 1.0f;
+	const float b = 0.0f;
+	
+	// Draw horizontal line (left and right)
+	App::DrawLine(centerX - lineLength - gap, centerY, centerX - gap, centerY, r, g, b);
+	App::DrawLine(centerX + gap, centerY, centerX + lineLength + gap, centerY, r, g, b);
+	
+	// Draw vertical line (top and bottom)
+	App::DrawLine(centerX, centerY - lineLength - gap, centerX, centerY - gap, r, g, b);
+	App::DrawLine(centerX, centerY + gap, centerX, centerY + lineLength + gap, r, g, b);
+	
+	// Optional: Draw center dot for precision
+	App::DrawLine(centerX - 1, centerY, centerX + 1, centerY, r, g, b);
+	App::DrawLine(centerX, centerY - 1, centerX, centerY + 1, r, g, b);
 }
 
 // ============================================================================
