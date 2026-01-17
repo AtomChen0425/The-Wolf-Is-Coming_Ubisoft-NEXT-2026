@@ -1,6 +1,7 @@
 #include "SheepSystem.h"
 #include "../../System/Component/Component.h"
 #include "../../System/Math/Math.h" 
+#include "../ContestAPI/app.h"
 #include <cmath>
 #include <vector>
 #include <unordered_map>
@@ -40,8 +41,8 @@ struct SpatialGrid {
     }
 };
 
-// --- ������ѧ���� ---
-inline float Mag(const Vec3& v) { return std::sqrt(v.x * v.x + v.z * v.z); } // ֻ���� XZ ƽ��ģ��
+// 
+inline float Mag(const Vec3& v) { return std::sqrt(v.x * v.x + v.z * v.z); } // 
 inline Vec3 Norm(const Vec3& v) {
     float m = Mag(v);
     if (m > 0.0001f) return { v.x / m, 0, v.z / m };
@@ -58,6 +59,54 @@ inline void Limit(Vec3& v, float max) {
 
 
 namespace SheepSystem {
+    void SheepShoot1(EntityManager& registry, float dt) {
+        // Find all enemy positions
+        std::vector<Vec3> targetPositions;
+        View<EnemyTag, Transform3D> enemyView(registry);
+        for (auto id : enemyView) {
+            targetPositions.push_back(enemyView.get<Transform3D>(id).pos);
+        }
+        if (targetPositions.empty()) {
+            return;
+        }
+        View<SheepTag, WeaponInventory, Transform3D> sheepView(registry);
+        for (auto id : sheepView) {
+            auto& inventory = sheepView.get<WeaponInventory>(id);
+            auto& sheepPos = sheepView.get<Transform3D>(id).pos;
+
+            float nearestDistSq = std::numeric_limits<float>::max();
+            Vec3 nearestTarget;
+            bool foundTarget = false;
+
+            for (size_t i = 0; i < targetPositions.size(); i++) {
+                float dx = targetPositions[i].x - sheepPos.x;
+                float dz = targetPositions[i].z - sheepPos.z;
+                float distSq = dx * dx + dz * dz;
+
+                if (distSq < nearestDistSq) {
+                    nearestDistSq = distSq;
+                    nearestTarget = targetPositions[i];
+                    foundTarget = true;
+                }
+            }
+            float dx = nearestTarget.x - sheepPos.x;
+            float dz = nearestTarget.z - sheepPos.z;
+            for (Weapon& weapon : inventory.weapons) {
+                weapon.currentCooldown -= dt;
+
+                if (weapon.currentCooldown > 0.0f) continue;
+                // Fire a bullet
+                Vec3 bulletDirection = Normalize3D(Vec3{ dx, 0, dz });
+                Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+                // Create bullet entity
+                Entity bullet = registry.createEntity();
+                registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });
+                registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
+                registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
+                weapon.currentCooldown = weapon.fireRate;
+            }
+        }
+    }
     void SheepShoot(EntityManager& registry, float dt) {
         std::vector<Vec3> targetPositions;
         View<EnemyTag, Transform3D> enemyView(registry);
@@ -152,6 +201,20 @@ namespace SheepSystem {
             registry.addComponent(sheep, AnimalTag{});
             WeaponInventory inventory;
 			registry.addComponent(sheep, inventory);
+
+            CSimpleSprite* pSprite2 = App::CreateSprite("data/TestData/Sheep1.png", 2, 1);
+
+            // 
+            const float speed = 1.0f / 15.0f;
+            pSprite2->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1});
+            pSprite2->CreateAnimation(ANIM_LEFT, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_RIGHT, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_FORWARDS, speed, { 0,1 });
+            pSprite2->SetScale(0.3f);
+            // 
+
+
+            registry.addComponent(sheep, SpriteComponent{ pSprite2, 0 });
         }
     }
 

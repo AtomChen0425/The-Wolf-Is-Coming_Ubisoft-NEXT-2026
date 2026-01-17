@@ -160,6 +160,7 @@ struct Bullet {
     float size;
     float knockback;
 };
+struct EnemyBulletTag {};
 
 struct ParticleTag {};
 

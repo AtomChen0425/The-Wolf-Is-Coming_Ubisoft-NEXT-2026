@@ -1,6 +1,7 @@
 #pragma once
 #include "../../System/ECS/ECS.h"
 #include "../../System/ECSSystem.h"
+#include "../../System/Component/Component.h"
 
 namespace RenderSystem {
 	void Render(EntityManager& registry);
@@ -15,5 +16,5 @@ namespace RenderSystem {
 	// These can be used to replace cube rendering for wolves, player, and sheep
 	void RenderWolvesSprite(EntityManager& registry, Camera3D& camera);
 	void RenderPlayerSprite(EntityManager& registry, Camera3D& camera);
-	void RenderSheepSprite(EntityManager& registry, Camera3D& camera);
+	void RenderSheepSprite(Transform3D& transform, SpriteComponent& sprite, Camera3D& camera);
 };

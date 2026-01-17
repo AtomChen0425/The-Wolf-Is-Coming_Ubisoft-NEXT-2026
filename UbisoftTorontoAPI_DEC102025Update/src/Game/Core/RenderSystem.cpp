@@ -238,36 +238,40 @@ void RenderParticles(EntityManager& registry, Camera3D& camera) {
 
 // Render all characters (player, wolves, sheep) with proper depth sorting
 // This ensures correct occlusion - entities closer to camera appear in front
-void RenderCharacters3D(EntityManager& registry, Camera3D& camera) {
+void RenderSprite3D(EntityManager& registry, Camera3D& camera) {
     // Collect all characters into a single list with their transforms
-    std::vector<std::pair<EntityID, Transform3D*>> allCharacters;
+    std::vector<std::tuple<EntityID, Transform3D*, SpriteComponent* >> allCharacters;
 
-    // Add player
-    View<Transform3D, PlayerTag> playerView(registry);
-    for (EntityID id : playerView) {
-        allCharacters.push_back({ id, &playerView.get<Transform3D>(id) });
+	View<Transform3D,SpriteComponent> SpriteView(registry);
+
+    for (EntityID id : SpriteView) {
+        allCharacters.push_back({ id, &SpriteView.get<Transform3D>(id) , &SpriteView.get<SpriteComponent>(id) });
     }
 
-    // Add animals (wolves and sheep)
-    View<Transform3D, AnimalTag> animalView(registry);
-    for (EntityID id : animalView) {
-        allCharacters.push_back({ id, &animalView.get<Transform3D>(id) });
-    }
+    //// Add animals (wolves and sheep)
+    //View<Transform3D, AnimalTag> animalView(registry);
+    //for (EntityID id : animalView) {
+    //    allCharacters.push_back({ id, &animalView.get<Transform3D>(id) });
+    //}
 
     // Sort by depth in camera space (far to near for proper occlusion)
     std::sort(allCharacters.begin(), allCharacters.end(), [&](const auto& a, const auto& b) {
-        float distA = MaxDepthInCameraSpace(*a.second, camera);
-        float distB = MaxDepthInCameraSpace(*b.second, camera);
+        float distA = MaxDepthInCameraSpace(*std::get<1>(a), camera);
+        float distB = MaxDepthInCameraSpace(*std::get<1>(b), camera);
         return distA > distB;  // Render far entities first (painter's algorithm)
         });
 
     // Render all characters in sorted order
-    for (const auto& [id, transform] : allCharacters) {
-        if (playerView.has<SpriteComponent>(id)) {
-            RenderSystem::RenderPlayerSprite(registry, camera);
-        } else {
+    for (const auto& [id, transform, sprite] : allCharacters) {
+        //if (SpriteView.has<SpriteComponent>(id)) {
+    /*    auto& t = SpriteView.get<Transform3D>(id);
+        auto& spr = SpriteView.get<SpriteComponent>(id);*/
+        RenderSystem::RenderSheepSprite(*transform, *sprite, camera);
+            //RenderSystem::RenderPlayerSprite(registry, camera);
+       /* } 
+        else {
             gRenderHelper->RenderCube_inNDC(*transform, camera);
-        }
+        }*/
     }
 }
 void RenderSystem::Render(EntityManager& registry) {
@@ -284,13 +288,15 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     
     // Render bullets (always cubes)
     RenderBullets3D(registry, camera);
+
+	//Render Blocks3D(registry, camera);
+    RenderPlayer3D(registry, camera);
+    RenderAnimal3D(registry, camera);
     
-    // Render player
-    // To switch to sprite rendering, comment out RenderPlayer3D and uncomment RenderPlayerSprite
-    //RenderPlayer3D(registry, camera);
-	RenderCharacters3D(registry, camera);
-    //RenderPlayerSprite(registry, camera);
-    //RenderAnimal3D(registry, camera);
+    // To switch to sprite rendering,
+    
+	//RenderSprite3D(registry, camera);
+    
     // Render particles
 	RenderParticles(registry, camera);
     
@@ -552,78 +558,86 @@ void RenderSystem::RenderPlayerSprite(EntityManager& registry, Camera3D& camera)
     }
 }
 
-void RenderSystem::RenderSheepSprite(EntityManager& registry, Camera3D& camera) {
-    View<Transform3D, SheepTag, SpriteComponent> view(registry);
+void RenderSystem::RenderSheepSprite(Transform3D& t, SpriteComponent& spr, Camera3D& camera) {
+    //View<Transform3D, SheepTag, SpriteComponent> view(registry);
+    //
+    //// Collect all sheep and sort by depth (z-coordinate in world space)
+    //std::vector<EntityID> sortedSheep;
+    //for (EntityID id : view) {
+    //    sortedSheep.push_back(id);
+    //}
     
-    // Collect all sheep and sort by depth (z-coordinate in world space)
-    std::vector<EntityID> sortedSheep;
-    for (EntityID id : view) {
-        sortedSheep.push_back(id);
-    }
-    
-    // Sort by z-depth for proper layering (painter's algorithm)
-    // Objects with higher z (further back) render first
-    std::sort(sortedSheep.begin(), sortedSheep.end(), [&](EntityID a, EntityID b) {
-        auto& ta = view.get<Transform3D>(a);
-        auto& tb = view.get<Transform3D>(b);
-        
-        // Calculate depth from camera for each sheep
-        float depthA = ta.pos.z - camera.z;
-        float depthB = tb.pos.z - camera.z;
-        
-        return depthA > depthB; // Render far to near
-    });
-    
+    //// Sort by z-depth for proper layering (painter's algorithm)
+    //// Objects with higher z (further back) render first
+    //std::sort(sortedSheep.begin(), sortedSheep.end(), [&](EntityID a, EntityID b) {
+    //    auto& ta = view.get<Transform3D>(a);
+    //    auto& tb = view.get<Transform3D>(b);
+    //    
+    //    // Calculate depth from camera for each sheep
+    //    float depthA = ta.pos.z - camera.z;
+    //    float depthB = tb.pos.z - camera.z;
+    //    
+    //    return depthA > depthB; // Render far to near
+    //});
+    //
     // Render sheep in sorted order
-    for (EntityID id : sortedSheep) {
-        auto& t = view.get<Transform3D>(id);
-        auto& spr = view.get<SpriteComponent>(id);
+    //for (EntityID id : sortedSheep) {
+        /*auto& t = view.get<Transform3D>(id);
+        auto& spr = view.get<SpriteComponent>(id);*/
         
-        if (!spr.sprite) continue;
+        //if (!spr.sprite) continue;
         
         // Use NDC projection like RenderCube_inNDC does
         // Camera-relative position
-        const float rx = t.pos.x - camera.x;
-        const float ry = t.pos.y - camera.y;
-        const float rz = t.pos.z - camera.z;
+    const float rx = t.pos.x - camera.x;
+    const float ry = t.pos.y - camera.y;
+    const float rz = t.pos.z - camera.z;
         
-        // Apply yaw rotation
-        const float cosYaw = std::cos(camera.yawAngle);
-        const float sinYaw = std::sin(camera.yawAngle);
-        const float rotatedX = rx * cosYaw + rz * sinYaw;
-        const float rotatedZ = -rx * sinYaw + rz * cosYaw;
+    // Apply yaw rotation
+    const float cosYaw = std::cos(camera.yawAngle);
+    const float sinYaw = std::sin(camera.yawAngle);
+    const float rotatedX = rx * cosYaw + rz * sinYaw;
+    const float rotatedZ = -rx * sinYaw + rz * cosYaw;
         
-        // Apply pitch rotation
-        const float cosPitch = std::cos(camera.pitchAngle);
-        const float sinPitch = std::sin(camera.pitchAngle);
-        const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
-        const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
+    // Apply pitch rotation
+    const float cosPitch = std::cos(camera.pitchAngle);
+    const float sinPitch = std::sin(camera.pitchAngle);
+    const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+    const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
         
-        // Skip if behind camera
-        const float nearZ = 1.0f;
-        if (pitchedZ <= nearZ) continue;
+    // Skip if behind camera
+    const float nearZ = 1.0f;
+    if (pitchedZ <= nearZ) return;
         
-        // Project to screen using NDC approach (same as RenderCube_inNDC)
-        const float fov = 600.0f;
-        const float centerX = 1024.0f / 2.0f;  // Fixed screen center
-        const float centerY = 768.0f / 2.0f;
+    // Project to screen using NDC approach (same as RenderCube_inNDC)
+    const float fov = 600.0f;
+    const float centerX = 1024.0f / 2.0f;  // Fixed screen center
+    const float centerY = 768.0f / 2.0f;
         
-        const float finalScreenX = rotatedX * (fov / pitchedZ) + centerX;
-        const float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
+    const float finalScreenX = rotatedX * (fov / pitchedZ) + centerX;
+    const float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
         
-        // Shadow on ground (y = 0 in world space)
-        const float groundY = 0.0f - camera.y;
-        const float groundPitchedY = groundY * cosPitch - rotatedZ * sinPitch;
-        const float groundPitchedZ = groundY * sinPitch + rotatedZ * cosPitch;
-        
-        if (groundPitchedZ > nearZ) {
-            const float shadowScreenY = groundPitchedY * (fov / groundPitchedZ) + centerY;
-            const float shadowScreenX = finalScreenX; // Same X as sprite
-            gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.5f);
-        }
-        
-        // Set sprite position and draw
-        spr.sprite->SetPosition(finalScreenX, finalScreenY);
-        spr.sprite->Draw();
+    float spriteNativeWidth = spr.sprite->GetWidth(); // 获取贴图的原始像素宽度
+
+    float perspectiveFactor = fov / pitchedZ;
+    if (spriteNativeWidth > 0.0f) {
+        // 公式：(世界尺寸 / 贴图原始尺寸) * 透视因子
+        float scale = (t.width / spriteNativeWidth) * perspectiveFactor *3;
+        spr.sprite->SetScale(scale);
     }
+    // Shadow on ground (y = 0 in world space)
+    const float groundY = 0.0f - camera.y;
+    const float groundPitchedY = groundY * cosPitch - rotatedZ * sinPitch;
+    const float groundPitchedZ = groundY * sinPitch + rotatedZ * cosPitch;
+        
+    if (groundPitchedZ > nearZ) {
+        const float shadowScreenY = groundPitchedY * (fov / groundPitchedZ) + centerY;
+        const float shadowScreenX = finalScreenX; // Same X as sprite
+        gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.5f);
+    }
+        
+    // Set sprite position and draw
+    spr.sprite->SetPosition(finalScreenX, finalScreenY);
+    spr.sprite->Draw();
+    
 }

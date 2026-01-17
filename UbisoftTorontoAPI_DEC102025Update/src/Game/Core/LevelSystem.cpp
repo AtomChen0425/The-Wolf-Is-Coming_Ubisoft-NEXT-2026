@@ -16,7 +16,7 @@ namespace LevelSystem {
         // Spawn different wolf types at different intervals
         // Basic wolves (use existing spawn interval from level data)
         if (generationTimers.gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
-            GenerateSystem::GenerateWolf(registry);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic);
             generationTimers.gSpawnTimerMs = 0.0f;
         }
 

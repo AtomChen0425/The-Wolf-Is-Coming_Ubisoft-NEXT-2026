@@ -1,6 +1,7 @@
 #include "WolfSystem.h"
 #include "../../System/Component/Component.h"
 #include "../../System/Math/Math.h"
+#include "../ContestAPI/app.h"
 #include <cmath>
 #include <vector>
 #include <limits>
@@ -20,7 +21,57 @@ inline void WolfLimit(Vec3& v, float max) {
         v.z = (v.z / m) * max;
     }
 }
+void WolfShoot(EntityManager& registry, float dt, Vec3& targetPosition) {
+    View<WolfTag, WeaponInventory, Transform3D> wolfView(registry);
+    for (auto id : wolfView) {
+        auto& inventory = wolfView.get<WeaponInventory>(id);
+        auto& wolfPos = wolfView.get<Transform3D>(id).pos;
 
+        Vec3 nearestTarget;
+        bool foundTarget = false;
+
+        float dx = targetPosition.x - wolfPos.x;
+        float dz = targetPosition.z - wolfPos.z;
+        float dy = targetPosition.y - wolfPos.y;
+        Vec3 bulletDirection = Normalize3D(Vec3{ dx, dy, dz });
+
+        size_t weaponCount = inventory.weapons.size();
+
+        const float totalArc = 1.5f * 3.14159265f;
+        const float radius = 10.0f; // 圆的半径
+
+        float currentYaw = std::atan2(bulletDirection.x, bulletDirection.z);
+        //float currentYaw = playerTag.rotationYaw;
+        float startAngle = currentYaw - (totalArc / 2.0f);
+
+        float angleStep = (weaponCount > 1) ? (totalArc / (weaponCount - 1)) : 0.0f;
+
+        for (int i = 0; i < weaponCount; ++i) {
+            Weapon& weapon = inventory.weapons[i];
+            weapon.currentCooldown -= dt;
+
+            if (weapon.currentCooldown > 0.0f) continue;
+            float theta = (weaponCount > 1) ? (startAngle + i * angleStep) : currentYaw;
+
+            Vec3 circleOffset = Vec3{
+                std::sin(theta) * radius,
+                0.0f,
+                std::cos(theta) * radius
+            };
+
+            // 最终生成位置
+            Vec3 bulletPosition = wolfPos + circleOffset;
+            //Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+            // Create bullet entity
+            Entity bullet = registry.createEntity();
+            registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,false,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });
+            registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
+            registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
+            registry.addComponent(bullet, EnemyBulletTag{}); // Enemy bullet
+            weapon.currentCooldown = weapon.fireRate;
+        }
+    }
+}
 namespace WolfSystem {
 
     void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type) {
@@ -31,14 +82,22 @@ namespace WolfSystem {
         float r = 0.4f, g = 0.2f, b = 0.1f;  // Color
         int maxHealth = 100;
         float chaseForce = 200.0f;
-        float maxSpeed = 300.0f;
+        float maxSpeed = 100.0f;
         float detectionRange = 400.0f;
         bool canJump = false;
-        
+        CSimpleSprite* pSprite;
+        const float animationSpeed = 1.0f / 10.0f;
         // Configure stats based on wolf type
         switch (type) {
             case WolfType::Basic:
                 // Standard stats (already set above)
+                pSprite = App::CreateSprite("data/TestData/Wolf5.png", 2, 1);
+                
+                pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
+                pSprite->SetScale(0.3f);
                 break;
                 
             case WolfType::Sniper:
@@ -47,6 +106,12 @@ namespace WolfSystem {
                 chaseForce = 100.0f;
                 r = 0.5f; g = 0.3f; b = 0.5f;  // Purple tint
                 size = 18.0f;
+                pSprite = App::CreateSprite("data/TestData/Wolf4.png", 2, 1);
+                pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
+                pSprite->SetScale(0.3f);
                 break;
                 
             case WolfType::Tank:
@@ -56,6 +121,12 @@ namespace WolfSystem {
                 chaseForce = 150.0f;
                 r = 0.6f; g = 0.1f; b = 0.1f;  // Dark red
                 size = 30.0f;
+                pSprite = App::CreateSprite("data/TestData/WolfBig.png", 2, 1);
+                pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
+                pSprite->SetScale(0.3f);
                 break;
                 
             case WolfType::Fast:
@@ -65,6 +136,12 @@ namespace WolfSystem {
                 maxHealth = 60;
                 r = 0.2f; g = 0.6f; b = 0.2f;  // Green tint
                 size = 15.0f;
+                pSprite = App::CreateSprite("data/TestData/Wolf3.png", 2, 1);
+                pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
+                pSprite->SetScale(0.3f);
                 break;
                 
             case WolfType::Hunter:
@@ -75,9 +152,15 @@ namespace WolfSystem {
                 canJump = true;
                 r = 0.3f; g = 0.4f; b = 0.6f;  // Blue tint
                 size = 18.0f;
+                pSprite = App::CreateSprite("data/TestData/Wolf2.png", 2, 1);
+                pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
+                pSprite->SetScale(0.3f);
                 break;
         }
-        
+        registry.addComponent(wolf, SpriteComponent{ pSprite, 0 });
         // Add components
         registry.addComponent(wolf, Transform3D{
             Vec3{x, 20.0f, z},
@@ -107,12 +190,13 @@ namespace WolfSystem {
             gun.type = WeaponType::MachineGun;
             gun.name = "Wolf Gun";
             gun.damage = 8.0f;
-            gun.fireRate = 0.5f;
+            gun.fireRate = 700.0f;
             gun.currentCooldown = 0.0f;
-            gun.projectileSpeed = 400.0f;
-            gun.projectileSize = 5.0f;
-            gun.projectileLife = 2000.0f;
+            gun.projectileSpeed = 1000.0f;
+            gun.projectileSize = 10.0f;
+            gun.projectileLife = 8000.0f;
             gun.explosionRadius = 0.0f;
+			gun.knockback = 10.0f;
             gun.r = 1.0f;
             gun.g = 0.0f;
             gun.b = 0.0f;
@@ -144,9 +228,11 @@ namespace WolfSystem {
         View<PlayerTag, Transform3D> playerView(registry);
         for (auto id : playerView) {
             targetPositions.push_back(playerView.get<Transform3D>(id).pos);
+            WolfShoot(registry, dt, targetPositions[0]);
             isPlayerTarget.push_back(true);
+			break; // Only target the first player found
         }
-
+		
         // Add all sheep as potential targets
         View<SheepTag, Transform3D> sheepView(registry);
         for (auto id : sheepView) {

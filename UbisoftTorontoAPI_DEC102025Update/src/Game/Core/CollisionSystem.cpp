@@ -8,17 +8,13 @@
 Collision* gCollision;
 struct CollisionGrid {
     float cellSize;
-    // Key: 哈希值, Value: 碰撞体EntityID列表
     std::unordered_map<int, std::vector<EntityID>> grid;
 
     CollisionGrid(float size) : cellSize(size) {}
 
-    // 计算空间哈希 Key
-    // 为了处理负坐标，我们加一个大偏移量
     int GetKey(float x, float z) {
         int cx = static_cast<int>(std::floor((x + 100000.0f) / cellSize));
         int cz = static_cast<int>(std::floor((z + 100000.0f) / cellSize));
-        // 使用质数混合做哈希，减少冲突
         return cx * 73856093 ^ cz * 19349663;
     }
 
@@ -26,9 +22,7 @@ struct CollisionGrid {
         grid.clear();
     }
 
-    // 将碰撞体插入到它覆盖的所有格子中 (处理大物体跨格子的情况)
     void Insert(EntityID id, const Transform3D& t) {
-        // 计算物体 AABB 覆盖的格子范围
         float minX = t.pos.x - t.width / 2.0f;
         float maxX = t.pos.x + t.width / 2.0f;
         float minZ = t.pos.z - t.depth / 2.0f;
@@ -39,7 +33,6 @@ struct CollisionGrid {
         int startZ = static_cast<int>(std::floor((minZ + 100000.0f) / cellSize));
         int endZ = static_cast<int>(std::floor((maxZ + 100000.0f) / cellSize));
 
-        // 遍历覆盖的所有格子并插入
         for (int x = startX; x <= endX; x++) {
             for (int z = startZ; z <= endZ; z++) {
                 int key = x * 73856093 ^ z * 19349663;
@@ -48,14 +41,10 @@ struct CollisionGrid {
         }
     }
 
-    // 获取某个点所在格子的所有潜在碰撞体
-    // 注意：因为Insert时已经处理了覆盖，查询时只需查中心点所在的格子即可
-    // 但为了防止物体刚好在边缘穿模，查询周围 3x3 依然是最稳妥的
     void GetPotentialColliders(float x, float z, std::vector<EntityID>& outList) {
         int cx = static_cast<int>(std::floor((x + 100000.0f) / cellSize));
         int cz = static_cast<int>(std::floor((z + 100000.0f) / cellSize));
 
-        // 查询周围 3x3 范围 (对于高速物体或正好在边界的情况更安全)
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 int key = (cx + i) * 73856093 ^ (cz + j) * 19349663;
@@ -67,6 +56,105 @@ struct CollisionGrid {
         }
     }
 };
+
+void CheckBulletHitMap(EntityManager& registry) {
+    View<Bullet, Transform3D> bulletView(registry);
+    View<Collider3D, Transform3D, MapBlockTag> colliderView(registry);
+
+    // 1. 静态容器复用内存，避免每帧 new/delete
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+
+    // 定义网格大小，建议设为比最大的地图块稍大一些 (例如 100-200)
+    static CollisionGrid grid(200.0f);
+    grid.Clear(); // 每帧清空，处理动态加载/卸载的地图块
+
+    // 2. 【宽阶段】将所有地图碰撞体填入网格
+    // 这是 O(M)，但 M 是地图块数量，比 O(N*M) 快得多
+    for (EntityID id : colliderView) {
+        auto& t = colliderView.get<Transform3D>(id);
+        grid.Insert(id, t);
+    }
+
+    // 预分配一个候选列表，避免循环内反复分配
+    static std::vector<EntityID> potentialColliders;
+
+    for (EntityID bulletId : bulletView) {
+        auto& bullet = bulletView.get<Bullet>(bulletId);
+        auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+
+        // 预计算子弹 AABB (只计算一次)
+        Vec3 bulletHalf(bulletTransform.width / 2, bulletTransform.height / 2, bulletTransform.depth / 2);
+        Vec3 bulletMin = bulletPos - bulletHalf;
+        Vec3 bulletMax = bulletPos + bulletHalf;
+
+        // 3. 【宽阶段查询】只获取附近的地图块
+        potentialColliders.clear();
+        grid.GetPotentialColliders(bulletPos.x, bulletPos.z, potentialColliders);
+
+        // 如果周围没有方块，直接跳过
+        if (potentialColliders.empty()) continue;
+
+        // 4. 去重 (因为一个大方块可能横跨多个网格，会被添加多次)
+        std::sort(potentialColliders.begin(), potentialColliders.end());
+        auto last = std::unique(potentialColliders.begin(), potentialColliders.end());
+        potentialColliders.erase(last, potentialColliders.end());
+
+        // 5. 【窄阶段】只对候选方块进行 AABB 检测
+        for (EntityID colliderId : potentialColliders) {
+            // 安全检查：防止该 Entity 在同一帧被其他逻辑销毁了
+            //if (!registry.has<Transform3D>(colliderId)) continue;
+
+            auto& colliderTransform = colliderView.get<Transform3D>(colliderId);
+
+            Vec3 colliderHalf(colliderTransform.width / 2, colliderTransform.height / 2, colliderTransform.depth / 2);
+            Vec3 colliderMin = colliderTransform.pos - colliderHalf;
+            Vec3 colliderMax = colliderTransform.pos + colliderHalf;
+
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+
+                // --- 命中逻辑 ---
+                if (bullet.explosionRadius > 0.0f) {
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+
+                    // 注意：这里仍然遍历所有敌人 (O(Enemy))
+                    // 如果敌人很多，建议也为敌人建立一个 Grid，或者简单地只计算距离平方
+                    View<EnemyTag, Transform3D, Health> allEnemies(registry);
+                    float radiusSq = bullet.explosionRadius * bullet.explosionRadius; // 预计算平方
+
+                    for (EntityID otherId : allEnemies) {
+                        auto& otherT = allEnemies.get<Transform3D>(otherId);
+
+                        // 优化：使用距离平方 (DistanceSquared3D) 避免开方运算
+                        float distSq = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (distSq <= radiusSq) {
+                            auto& hp = allEnemies.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage;
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                // 使用带版本号的Entity结构以安全删除
+                                bulletToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
+                            }
+                        }
+                    }
+                }
+
+                // 标记删除子弹
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                break; // 子弹撞墙后销毁，不再检测其他墙壁
+            }
+        }
+    }
+
+    // 6. 统一删除
+    for (Entity& e : bulletToRemove) {
+        if (registry.isValid(e)) {
+            registry.destroyEntity(e);
+        }
+    }
+}
 // 2D collision for player-enemy
 void CheckPlayerEnemyCollision(EntityManager& registry) {
     View<PlayerTag, Position, Velocity, RigidBody, Health> playerView(registry);
@@ -602,7 +690,7 @@ void CheckWolfHeartsPlayer(EntityManager& registry) {
 
 }
 
-void CheckBulletHitMap(EntityManager& registry) {
+void CheckBulletHitMap1(EntityManager& registry) {
     View<Bullet, Transform3D> bulletView(registry);
     View<Collider3D, Transform3D,MapBlockTag> colliderView(registry);
     static std::vector<Entity> bulletToRemove;
@@ -654,12 +742,49 @@ void CheckBulletHitMap(EntityManager& registry) {
         registry.destroyEntity(e);
     }
 }
+
+void CheckEnemyBulletCollision(EntityManager& registry) {
+    View<Bullet, EnemyBulletTag, Transform3D> enemyBulletView(registry);
+    View<PlayerTag, Transform3D, Health> playerView(registry);
+    static std::vector<Entity> EnemyToRemove;
+    EnemyToRemove.clear();
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+    for (EntityID bulletId : enemyBulletView) {
+        auto& bulletTransform = enemyBulletView.get<Transform3D>(bulletId);
+		auto& bullet = enemyBulletView.get<Bullet>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+        Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
+            bulletPos.y - bulletTransform.height / 2,
+            bulletPos.z - bulletTransform.depth / 2);
+        Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
+            bulletPos.y + bulletTransform.height / 2,
+            bulletPos.z + bulletTransform.depth / 2);
+        for (EntityID playerId : playerView) {
+            auto& playerTransform = playerView.get<Transform3D>(playerId);
+            auto& playerHealth = playerView.get<Health>(playerId);
+            Vec3 colliderMin(playerTransform.pos.x - playerTransform.width / 2,
+                playerTransform.pos.y - playerTransform.height / 2,
+                playerTransform.pos.z - playerTransform.depth / 2);
+            Vec3 colliderMax(playerTransform.pos.x + playerTransform.width / 2,
+                playerTransform.pos.y + playerTransform.height / 2,
+                playerTransform.pos.z + playerTransform.depth / 2);
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+                playerHealth.currentHealth -= bullet.damage;
+                Vec3 dir = Normalize3D(playerTransform.pos - bulletTransform.pos);
+                auto& playerVel = playerView.get<Velocity3D>(playerId).vel;
+                playerVel = dir * bullet.knockback;
+            }
+        }
+    }
+}
 void CollisionSystem::Update(EntityManager& registry) {
-    CheckBulletHitMap(registry);
+    //CheckBulletHitMap(registry);
     CheckPlayer3DCollisions(registry);
 	//CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
+    CheckEnemyBulletCollision(registry);
 	CheckWolfEatSheep(registry);
     CheckWolfHeartsPlayer(registry);    
 }
