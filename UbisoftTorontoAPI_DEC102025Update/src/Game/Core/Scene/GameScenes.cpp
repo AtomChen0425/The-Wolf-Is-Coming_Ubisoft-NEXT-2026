@@ -54,11 +54,11 @@ void PlayingScene::OnEnter() {
     sheepText = uiManager.AddText("Sheep: 0", 10, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopLeft);
     
     // Entity count displays on the right side
-    totalEntityText = uiManager.AddText("Total Entities: 0", -200, 10, 0.8f, 0.8f, 0.8f, UIAlignment::TopRight);
-    bulletEntityText = uiManager.AddText("Bullets: 0", -200, 35, 0.7f, 0.7f, 1.0f, UIAlignment::TopRight);
-    wolfEntityText = uiManager.AddText("Wolves: 0", -200, 60, 1.0f, 0.5f, 0.5f, UIAlignment::TopRight);
-    sheepEntityText = uiManager.AddText("Sheep: 0", -200, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopRight);
-    chunkEntityText = uiManager.AddText("Chunks: 0", -200, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
+    totalEntityText = uiManager.AddText("Total Entities: 0", 150, 10, 0.8f, 0.8f, 0.8f, UIAlignment::TopRight);
+    bulletEntityText = uiManager.AddText("Bullets: 0", 100, 35, 0.7f, 0.7f, 1.0f, UIAlignment::TopRight);
+    wolfEntityText = uiManager.AddText("Wolves: 0", 100, 60, 1.0f, 0.5f, 0.5f, UIAlignment::TopRight);
+    sheepEntityText = uiManager.AddText("Sheep: 0", 100, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopRight);
+    chunkEntityText = uiManager.AddText("Chunks: 0", 100, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
 
     m_lastScore = -1;
 }
@@ -103,7 +103,7 @@ void PlayingScene::Update(float deltaTimeMs) {
     }
     
     // Count entities by type
-    int totalEntities = registry.GetEntityCount();
+    int totalEntities = registry.getAliveEntitiesCount();
     
     // Count bullets
     int bulletCount = 0;

@@ -108,8 +108,6 @@ class EntityManager {
     std::vector<EntityID> freeIndices; // 回收站 ID
     std::bitset<MAX_ENTITY> aliveEntities;
     std::vector<uint64_t> entityMasks; // 存储每个实体的组件位掩码
-
-    // 核心修复：索引是 ComponentTypeID，而不是 EntityID
     std::vector<std::unique_ptr<IComponentPool>> m_componentPools;
 private:
     static std::size_t getUniqueTypeID() {
@@ -224,6 +222,9 @@ public:
     EntityVersion getEntityVersion(EntityID id) const {
         // 实际工程中可以加一个 assert(id < entityVersions.size());
         return entityVersions[id];
+    }
+    std::size_t getAliveEntitiesCount() const {
+        return aliveEntities.count();
     }
 };
 

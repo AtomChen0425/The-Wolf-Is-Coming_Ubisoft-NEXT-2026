@@ -16,7 +16,7 @@ void UIElement::GetScreenPosition(float& outX, float& outY) const {
             outX = (APP_VIRTUAL_WIDTH / 2.0f) + x;
             break;
         case UIAlignment::BottomRight:
-            outX = APP_VIRTUAL_WIDTH - x;
+            outX = APP_VIRTUAL_WIDTH * 0.95 - x;
             break;
         case UIAlignment::MiddleLeft:
             outY = (APP_VIRTUAL_HEIGHT / 2.0f) + y;
@@ -26,7 +26,7 @@ void UIElement::GetScreenPosition(float& outX, float& outY) const {
             outY = (APP_VIRTUAL_HEIGHT / 2.0f) + y;
             break;
         case UIAlignment::MiddleRight:
-            outX = APP_VIRTUAL_WIDTH - x;
+            outX = APP_VIRTUAL_WIDTH * 0.95 - x;
             outY = (APP_VIRTUAL_HEIGHT / 2.0f) + y;
             break;
         case UIAlignment::TopLeft:
@@ -37,7 +37,7 @@ void UIElement::GetScreenPosition(float& outX, float& outY) const {
             outY = APP_VIRTUAL_HEIGHT * 0.95 - y;
             break;
         case UIAlignment::TopRight:
-            outX = APP_VIRTUAL_WIDTH - x;
+            outX = APP_VIRTUAL_WIDTH * 0.95 - x;
             outY = APP_VIRTUAL_HEIGHT * 0.95 - y;
             break;
     }
