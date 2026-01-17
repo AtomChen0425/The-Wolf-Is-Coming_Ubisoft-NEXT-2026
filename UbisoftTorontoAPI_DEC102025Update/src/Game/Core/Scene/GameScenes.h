@@ -44,6 +44,13 @@ private:
     UIText* roundText;
     UIText* timeText;
     UIText* sheepText;
+    
+    // Entity count displays
+    UIText* totalEntityText;
+    UIText* bulletEntityText;
+    UIText* wolfEntityText;
+    UIText* sheepEntityText;
+    UIText* chunkEntityText;
 };
 
 // Game Over Scene

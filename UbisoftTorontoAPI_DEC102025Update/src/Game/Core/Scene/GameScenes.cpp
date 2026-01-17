@@ -40,7 +40,9 @@ void StartScene::Render() {
 // PlayingScene Implementation
 PlayingScene::PlayingScene(EngineSystem* engine) 
     : engineSystem(engine), m_lastScore(-1), scoreText(nullptr), 
-      roundText(nullptr), timeText(nullptr), sheepText(nullptr) {
+      roundText(nullptr), timeText(nullptr), sheepText(nullptr),
+      totalEntityText(nullptr), bulletEntityText(nullptr), 
+      wolfEntityText(nullptr), sheepEntityText(nullptr), chunkEntityText(nullptr) {
 }
 
 void PlayingScene::OnEnter() {
@@ -50,6 +52,13 @@ void PlayingScene::OnEnter() {
     roundText = uiManager.AddText("Round: 1", 10, 35, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     timeText = uiManager.AddText("Time: 60s", 10, 60, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     sheepText = uiManager.AddText("Sheep: 0", 10, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopLeft);
+    
+    // Entity count displays on the right side
+    totalEntityText = uiManager.AddText("Total Entities: 0", -200, 10, 0.8f, 0.8f, 0.8f, UIAlignment::TopRight);
+    bulletEntityText = uiManager.AddText("Bullets: 0", -200, 35, 0.7f, 0.7f, 1.0f, UIAlignment::TopRight);
+    wolfEntityText = uiManager.AddText("Wolves: 0", -200, 60, 1.0f, 0.5f, 0.5f, UIAlignment::TopRight);
+    sheepEntityText = uiManager.AddText("Sheep: 0", -200, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopRight);
+    chunkEntityText = uiManager.AddText("Chunks: 0", -200, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
 
     m_lastScore = -1;
 }
@@ -91,6 +100,54 @@ void PlayingScene::Update(float deltaTimeMs) {
     if (sheepText) {
         int sheepCount = LevelSystem::GetSheepCount(registry);
         sheepText->SetText("Sheep: " + std::to_string(sheepCount));
+    }
+    
+    // Count entities by type
+    int totalEntities = registry.GetEntityCount();
+    
+    // Count bullets
+    int bulletCount = 0;
+    View<Bullet> bulletView(registry);
+    for (EntityID id : bulletView) {
+        bulletCount++;
+    }
+    
+    // Count wolves
+    int wolfCount = 0;
+    View<WolfTag> wolfView(registry);
+    for (EntityID id : wolfView) {
+        wolfCount++;
+    }
+    
+    // Count sheep entities
+    int sheepEntityCount = 0;
+    View<SheepTag> sheepView(registry);
+    for (EntityID id : sheepView) {
+        sheepEntityCount++;
+    }
+    
+    // Count map blocks/chunks
+    int chunkCount = 0;
+    View<MapBlockTag> chunkView(registry);
+    for (EntityID id : chunkView) {
+        chunkCount++;
+    }
+    
+    // Update entity count displays
+    if (totalEntityText) {
+        totalEntityText->SetText("Total Entities: " + std::to_string(totalEntities));
+    }
+    if (bulletEntityText) {
+        bulletEntityText->SetText("Bullets: " + std::to_string(bulletCount));
+    }
+    if (wolfEntityText) {
+        wolfEntityText->SetText("Wolves: " + std::to_string(wolfCount));
+    }
+    if (sheepEntityText) {
+        sheepEntityText->SetText("Sheep: " + std::to_string(sheepEntityCount));
+    }
+    if (chunkEntityText) {
+        chunkEntityText->SetText("Chunks: " + std::to_string(chunkCount));
     }
 }
 
