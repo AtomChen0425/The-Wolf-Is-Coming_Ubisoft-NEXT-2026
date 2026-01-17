@@ -363,7 +363,9 @@ void UpgradeScene::OnEnter() {
 void UpgradeScene::OnExit() {
     EntityManager& registry = engineSystem->GetRegistry();
     View<EnemyTag> enemyView(registry); // Preload EnemyTag view for performance
+    View<Bullet> bulletView(registry); // Preload Bullet view for performance
     static std::vector<Entity> EnemyToRemove;
+    static std::vector<Entity> BulletToRemove;
     for (EntityID id : enemyView) {
         EnemyToRemove.push_back({ id, registry.getEntityVersion(id) });
 
@@ -371,6 +373,15 @@ void UpgradeScene::OnExit() {
     for (const Entity& e : EnemyToRemove) {
         registry.destroyEntity(e);
     }
+
+    for (EntityID id : bulletView) {
+        BulletToRemove.push_back({ id, registry.getEntityVersion(id) });
+
+    }
+    for (const Entity& e : BulletToRemove) {
+        registry.destroyEntity(e);
+    }
+
     uiManager.Clear();
 }
 
