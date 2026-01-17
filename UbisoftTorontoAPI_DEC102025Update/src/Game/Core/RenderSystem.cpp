@@ -327,7 +327,7 @@ void RenderSystem::RenderCrosshair(EntityManager& registry, Camera3D& camera) {
 		// When looking down (negative pitch), aim closer to the ground
 		// When looking up (positive pitch), aim farther away
 		// Also consider player's height above ground
-		const float baseDist = 200.0f;
+		const float baseDist = 500.0f;
 		const float pitchFactor = std::tan(camera.pitchAngle);  // Positive when looking up, negative when looking down
 		const float heightAboveGround = t.pos.y;
 		
@@ -391,8 +391,8 @@ void RenderSystem::RenderCrosshair(EntityManager& registry, Camera3D& camera) {
 	const float gap = 5.0f;          // Gap from center point
 	
 	// Crosshair color (bright green for visibility)
-	const float r = 0.0f;
-	const float g = 1.0f;
+	const float r = 1.0f;
+	const float g = 0.0f;
 	const float b = 0.0f;
 	
 	// Draw horizontal line (left and right)
