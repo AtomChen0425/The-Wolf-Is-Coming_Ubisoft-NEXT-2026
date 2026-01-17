@@ -5,7 +5,7 @@
 
 void ParticleSystem::Update(EntityManager& registry, float dt) {
     View<Transform3D, ParticlePhysics, ParticleTag> view(registry);
-    std::vector<EntityID> toDestroy;
+    std::vector<Entity> toDestroy;
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
@@ -14,7 +14,7 @@ void ParticleSystem::Update(EntityManager& registry, float dt) {
         // ºı…Ÿ Ÿ√¸
         p.life -= dt;
         if (p.life <= 0) {
-            toDestroy.push_back(id);
+            toDestroy.push_back({ id, registry.getEntityVersion(id) });
             continue;
         }
 
@@ -33,8 +33,8 @@ void ParticleSystem::Update(EntityManager& registry, float dt) {
     }
 
 
-    for (EntityID id : toDestroy) {
-        registry.destroyEntity(id);
+    for (const Entity& e : toDestroy) {
+        registry.destroyEntity(e);
     }
 
     View<Transform3D, TrailEmitter> emitterView(registry);

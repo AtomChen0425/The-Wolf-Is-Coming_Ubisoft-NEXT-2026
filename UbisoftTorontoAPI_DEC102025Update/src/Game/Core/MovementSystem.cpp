@@ -80,7 +80,7 @@ void BulletMovementSystem(EntityManager& registry, const float deltaTimeMs) {
     View<Transform3D, Bullet> bulletView(registry);
     const float dtSec = deltaTimeMs / 1000.0f;
 
-    static std::vector<EntityID> bulletsToRemove;
+    static std::vector<Entity> bulletsToRemove;
     bulletsToRemove.clear();
 	for (EntityID id : bulletView) {
 		auto& bulletPos = bulletView.get<Transform3D>(id).pos;
@@ -89,15 +89,15 @@ void BulletMovementSystem(EntityManager& registry, const float deltaTimeMs) {
 
         // Remove bullet if lifetime expired
         if (bullet.lifetime <= 0.0f) {
-            bulletsToRemove.push_back(id);
+            bulletsToRemove.push_back({ id, registry.getEntityVersion(id) });
             continue;
         }
 		// Update bullet position based on its velocity
 		bulletPos += bullet.direction * (bullet.speed * dtSec);
 	
 	}
-    for (EntityID id : bulletsToRemove) {
-        registry.destroyEntity(id);
+    for (const Entity& e : bulletsToRemove) {
+        registry.destroyEntity(e);
     }
 }
 

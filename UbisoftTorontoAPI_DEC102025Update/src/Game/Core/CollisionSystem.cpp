@@ -94,7 +94,7 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
             const float knockbackImpulse = 10.0f;
 
             playerRigidBody.force = dir * knockbackImpulse;
-            registry.destroyEntity(enemyId);
+            registry.destroyEntity({ enemyId, registry.getEntityVersion(enemyId) });
             break;
         }
     }
@@ -464,9 +464,9 @@ void CheckPlayerGetPoints(EntityManager& registry) {
 	}
 }
 void CheckBulletDamage(EntityManager& registry) {
-    static std::vector<EntityID> EnemyToRemove;
+    static std::vector<Entity> EnemyToRemove;
     EnemyToRemove.clear();
-    static std::vector<EntityID> bulletToRemove;
+    static std::vector<Entity> bulletToRemove;
     bulletToRemove.clear();
     View<Bullet, Transform3D> bulletView(registry);
     View<Health, Transform3D,EnemyTag> enemyView(registry);
@@ -493,14 +493,14 @@ void CheckBulletDamage(EntityManager& registry) {
                 enemyTransform.pos.y + enemyTransform.height / 2,
                 enemyTransform.pos.z + enemyTransform.depth / 2);
             if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
-				bulletToRemove.push_back(bulletId);
+				bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
 				Vec3 enemyDirection = Normalize3D(enemyVel);
 				enemyVel =  enemyDirection * ( - bulletKnockback); // Apply knockback
                 enemyHealth.currentHealth -= bulletDamage;
 
                 if (enemyHealth.currentHealth <= 0) {
                     ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
-                    EnemyToRemove.push_back(enemyId);
+                    EnemyToRemove.push_back({ enemyId, registry.getEntityVersion(enemyId) });
                 }
                 if (bullet.explosionRadius > 0.0f) {
                     // 创建爆炸特效
@@ -517,7 +517,7 @@ void CheckBulletDamage(EntityManager& registry) {
                             hp.currentHealth -= bullet.damage;
                             if (hp.currentHealth <= 0) {
                                 ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
-                                EnemyToRemove.push_back(otherId);
+                                EnemyToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
                             }
                         }
 
@@ -527,18 +527,18 @@ void CheckBulletDamage(EntityManager& registry) {
             }
         }
     }
-    for (EntityID id : bulletToRemove) {
-        registry.destroyEntity(id);
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
 	}
-    for (EntityID id : EnemyToRemove) {
-        registry.destroyEntity(id);
+    for (Entity& e : EnemyToRemove) {
+        registry.destroyEntity(e);
 	}
 }
 
 void CheckWolfEatSheep(EntityManager& registry) {
     View<WolfTag, Transform3D> wolfView(registry);
     View<SheepTag, Transform3D> sheepView(registry);
-    static std::vector<EntityID> sheepToRemove;
+    static std::vector<Entity> sheepToRemove;
     sheepToRemove.clear();
     for (EntityID wolfId : wolfView) {
         auto& wolfTransform = wolfView.get<Transform3D>(wolfId);
@@ -558,20 +558,20 @@ void CheckWolfEatSheep(EntityManager& registry) {
                 sheepTransform.pos.y + sheepTransform.height / 2,
                 sheepTransform.pos.z + sheepTransform.depth / 2);
             if (gCollision->AABB3D(wolfMin, wolfMax, colliderMin, colliderMax)) {
-				sheepToRemove.push_back(sheepId);
+				sheepToRemove.push_back({ sheepId, registry.getEntityVersion(sheepId) });
             }
         }
     }
-    for (EntityID id : sheepToRemove) {
-        registry.destroyEntity(id);
+    for (const Entity& e : sheepToRemove) {
+        registry.destroyEntity(e);
 	}
 }
 
 void CheckWolfHeartsPlayer(EntityManager& registry) {
     View<WolfTag, Transform3D> wolfView(registry);
     View<PlayerTag, Transform3D,Health> playerView(registry);
-    static std::vector<EntityID> playersToRemove;
-    playersToRemove.clear();
+   /* static std::vector<Entity> playersToRemove;
+    playersToRemove.clear();*/
     for (EntityID wolfId : wolfView) {
         auto& wolfTransform = wolfView.get<Transform3D>(wolfId);
         Vec3 wolfPos = wolfTransform.pos;

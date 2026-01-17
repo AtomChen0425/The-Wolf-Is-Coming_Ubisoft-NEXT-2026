@@ -345,13 +345,13 @@ void UpgradeScene::OnEnter() {
 void UpgradeScene::OnExit() {
     EntityManager& registry = engineSystem->GetRegistry();
     View<EnemyTag> enemyView(registry); // Preload EnemyTag view for performance
-    static std::vector<EntityID> EnemyToRemove;
+    static std::vector<Entity> EnemyToRemove;
     for (EntityID id : enemyView) {
-        EnemyToRemove.push_back(id);
+        EnemyToRemove.push_back({ id, registry.getEntityVersion(id) });
 
     }
-    for (EntityID id : EnemyToRemove) {
-        registry.destroyEntity(id);
+    for (const Entity& e : EnemyToRemove) {
+        registry.destroyEntity(e);
     }
     uiManager.Clear();
 }

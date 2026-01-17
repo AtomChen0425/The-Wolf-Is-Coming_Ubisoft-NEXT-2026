@@ -126,7 +126,7 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
     const float dtSec = deltaTimeMs / 1000.0f;
     
     // Reuse vector across frames to avoid repeated allocations
-    static std::vector<EntityID> bulletsToRemove;
+    static std::vector<Entity> bulletsToRemove;
     bulletsToRemove.clear();
     
     for (EntityID id : bulletView) {
@@ -138,7 +138,7 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
         
         // Remove bullet if lifetime expired
         if (bullet.lifetime <= 0.0f) {
-            bulletsToRemove.push_back(id);
+            bulletsToRemove.push_back({ id, registry.getEntityVersion(id) });
             continue;
         }
         
@@ -154,13 +154,13 @@ void EnemyAISystem::UpdateBullets(EntityManager& registry, const float deltaTime
             transform.pos.z * transform.pos.z
         );
         if (distanceFromOrigin > MAX_BULLET_DISTANCE) {
-            bulletsToRemove.push_back(id);
+            bulletsToRemove.push_back({ id, registry.getEntityVersion(id) });
         }
     }
     
     // Remove expired bullets
-    for (EntityID id : bulletsToRemove) {
-        registry.destroyEntity(id);
+    for (const Entity& e : bulletsToRemove) {
+        registry.destroyEntity(e);
     }
 }
 

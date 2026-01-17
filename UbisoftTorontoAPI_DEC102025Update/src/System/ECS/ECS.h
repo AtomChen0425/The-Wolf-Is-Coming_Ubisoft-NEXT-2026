@@ -179,8 +179,7 @@ public:
         entityMasks[e.id] &= ~(1ULL << typeId);
     }
 
-    void destroyEntity(EntityID eID) {
-		Entity e{ eID, getEntityVersion(eID) };
+    void destroyEntity(Entity e) {
         if (!isValid(e)) return;
 
         uint64_t mask = entityMasks[e.id];

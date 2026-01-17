@@ -106,12 +106,12 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
 
     // --- 2. Despawn blocks behind player ---
     View<MapBlockTag, Transform3D> view(registry);
-    std::vector<EntityID> toDestroy;
+    std::vector<Entity> toDestroy;
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
         if (t.pos.z < playerZ - deleteDistance) {
-            toDestroy.push_back(id);
+            toDestroy.push_back({ id, registry.getEntityVersion(id) });
         }
     }
     
@@ -121,12 +121,12 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
         auto& scoreTag = scoreView.get<ScorePointTag>(id);
         auto& t = scoreView.get<Transform3D>(id);
         if (t.pos.z < playerZ - deleteDistance || scoreTag.collected) {
-            toDestroy.push_back(id);
+            toDestroy.push_back({ id, registry.getEntityVersion(id) });
         }
     }
-    
-    for (EntityID id : toDestroy) {
-        registry.destroyEntity(id);
+
+    for (const Entity& e : toDestroy) {
+        registry.destroyEntity(e);
     }
 }
 void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& config) {
@@ -471,17 +471,17 @@ void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ,
     
     // Despawn entities in chunks being unloaded
     for (const auto& chunkKey : chunksToUnload) {
-        std::vector<EntityID> toDestroy;
+        std::vector<Entity> toDestroy;
 
         for (EntityID id : view) {
             auto& chunkTag = view.get<ChunkTag>(id);
             if (chunkTag.chunkX == chunkKey.first && chunkTag.chunkZ == chunkKey.second) {
-                toDestroy.push_back(id);
+                toDestroy.push_back({ id, registry.getEntityVersion(id) });
             }
         }
 
-        for (EntityID id : toDestroy) {
-            registry.destroyEntity(id);
+        for (const Entity& e : toDestroy) {
+            registry.destroyEntity(e);
         }
 
         // Remove from loaded chunks
