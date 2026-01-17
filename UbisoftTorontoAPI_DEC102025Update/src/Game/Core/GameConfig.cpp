@@ -191,6 +191,13 @@ bool GameConfig::LoadFromFile(const std::string& filename) {
             else if (key == "jumpUpgradeAmount") jumpUpgradeAmount = std::stof(value);
             else if (key == "gravityUpgradeAmount") gravityUpgradeAmount = std::stof(value);
             else if (key == "bulletSpeedUpgradeAmount") bulletSpeedUpgradeAmount = std::stof(value);
+            //
+			else if (key == "roundDurationMs") roundDurationMs = std::stof(value);
+            else if (key == "baseWolfSpawnIntervalMs") baseWolfSpawnIntervalMs = std::stof(value);
+            else if (key == "wolfSpawnReductionPerRound") wolfSpawnReductionPerRound = std::stof(value);
+            else if (key == "minWolfSpawnIntervalMs") minWolfSpawnIntervalMs = std::stof(value);
+            else if (key == "sheepAddedPerUpgrade") sheepAddedPerUpgrade = std::stof(value);
+            else if (key == "sheepSpawnOffsetZ") sheepSpawnOffsetZ = std::stof(value);
         } catch (const std::exception& e) {
             std::cout << "Error parsing config value for key: " << key << std::endl;
         }
