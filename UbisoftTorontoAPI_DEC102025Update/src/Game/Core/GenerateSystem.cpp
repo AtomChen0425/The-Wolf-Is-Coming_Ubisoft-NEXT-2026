@@ -163,9 +163,9 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     startingWeapon.projectileLife = 1000.0f;
     startingWeapon.explosionRadius = 0.0f;
     startingWeapon.knockback = 300.0f;
-    startingWeapon.r = 1.0f;
-    startingWeapon.g = 0.5f;
-    startingWeapon.b = 0.0f;
+    startingWeapon.r = 0.5f;
+    startingWeapon.g = 0.0f;
+    startingWeapon.b = 0.5f;
 	inventory.weapons.push_back(startingWeapon);
     registry.addComponent(entity, inventory);
     registry.addComponent(entity, Health{100, 100}); //
