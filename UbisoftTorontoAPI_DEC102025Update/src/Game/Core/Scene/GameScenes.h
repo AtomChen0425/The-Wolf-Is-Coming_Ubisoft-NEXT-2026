@@ -1,6 +1,7 @@
 #pragma once
 #include "../Game/Core/Scene/SceneManager.h"
 #include "../System/UI/UISystem.h"
+#include "../Game/Core/LevelSystem.h"
 #include <memory>
 
 // Forward declarations

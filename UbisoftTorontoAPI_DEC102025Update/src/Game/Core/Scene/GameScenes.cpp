@@ -354,6 +354,7 @@ void UpgradeScene::Update(float deltaTimeMs) {
         uiManager.Clear();
         // Return to playing scene
         engineSystem->GetSceneManager().SwitchToScene("Playing");
+		engineSystem->SetGameState(GameState::Playing);
     }
     
     leftWasPressed = leftPressed;

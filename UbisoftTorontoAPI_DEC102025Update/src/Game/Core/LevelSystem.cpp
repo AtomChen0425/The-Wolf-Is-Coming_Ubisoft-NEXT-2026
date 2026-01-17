@@ -87,7 +87,7 @@ namespace LevelSystem {
                     weapon.type = WeaponType::MachineGun;
                     weapon.name = "Machine Gun";
                     weapon.damage = 10.0f;
-                    weapon.fireRate = 0.1f;  // Fast fire rate
+                    weapon.fireRate = 50.0f;  // Fast fire rate
                     weapon.currentCooldown = 0.0f;
                     weapon.projectileSpeed = 500.0f;
                     weapon.projectileSize = 5.0f;
@@ -100,7 +100,7 @@ namespace LevelSystem {
                     weapon.type = WeaponType::Cannon;
                     weapon.name = "Cannon";
                     weapon.damage = 50.0f;
-                    weapon.fireRate = 1.0f;  // Slow fire rate
+                    weapon.fireRate = 1000.0f;  // Slow fire rate
                     weapon.currentCooldown = 0.0f;
                     weapon.projectileSpeed = 300.0f;
                     weapon.projectileSize = 15.0f;
@@ -148,10 +148,16 @@ namespace LevelSystem {
                 weapon.g = 1.0f;
                 weapon.b = 1.0f;
             }
-            
-            // Add weapon to all sheep
+
+            // Add weapon to 10% of sheep
+            int sheepCount = 0;
             for (EntityID id : sheepView) {
                 auto& inventory = sheepView.get<WeaponInventory>(id);
+                
+                sheepCount++;
+                if (sheepCount > static_cast<int>(GetSheepCount(registry) * 0.1f)) {
+                    break;
+                }
                 inventory.weapons.push_back(weapon);
             }
             return;
@@ -221,8 +227,8 @@ namespace LevelSystem {
                 return sheepDesc;
             case UpgradeType::PlayerMachineGun: return "Give yourself a machine gun";
             case UpgradeType::PlayerCannon: return "Give yourself a cannon";
-            case UpgradeType::SheepMachineGun: return "Arm all sheep with machine guns";
-            case UpgradeType::SheepCannon: return "Arm all sheep with cannons";
+            case UpgradeType::SheepMachineGun: return "Arm 10% sheep with machine guns";
+            case UpgradeType::SheepCannon: return "Arm 10% sheep with cannons";
             default: return "Unknown effect";
         }
     }

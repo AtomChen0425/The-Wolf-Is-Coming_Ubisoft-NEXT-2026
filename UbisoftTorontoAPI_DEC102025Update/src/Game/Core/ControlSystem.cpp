@@ -157,6 +157,7 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
                     weapon.currentCooldown -= dt;
                   
                     // Fire a bullet
+                    if (weapon.currentCooldown > 0.0f) continue;
                     Vec3 bulletDirection = Vec3{ std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
                                                 std::sin(playerTag.rotationPitch),
                                                 std::cos(playerTag.rotationPitch) * std::cos(playerTag.rotationYaw) };

@@ -36,6 +36,9 @@ float Lerp(float a, float b, float t) {
     return a + (b - a) * t;
 }
 
+void EngineSystem::SetGameState(GameState newState) {
+    gameState = newState;
+}
 void EngineSystem::InitializeScenes() {
     // Register all game scenes
     sceneManager.RegisterScene("StartScreen", std::make_unique<StartScene>(this));
@@ -143,8 +146,9 @@ void EngineSystem::Update(const float deltaTimeMs) {
         }
         
         // If round is complete, go to upgrade scene
-        if (roundComplete) {
+        if (roundComplete && gameState == GameState::Playing) {
             sceneManager.SwitchToScene("UpgradeScene");
+            gameState = GameState::Upgrading;
             return;  // Don't continue game logic this frame
         }
         

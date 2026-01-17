@@ -97,6 +97,7 @@ namespace SheepSystem {
             for (Weapon& weapon : inventory.weapons) {
                 weapon.currentCooldown -= dt;
 
+				if (weapon.currentCooldown > 0.0f) continue;
                 // Fire a bullet
                 Vec3 bulletDirection = Normalize3D(Vec3{ dx, 0, dz });
                 Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player

@@ -48,6 +48,7 @@ struct Camera3D {
 enum class GameState {
     StartScreen,
     Playing,
+    Upgrading,
     GameOver,
     Settings
 };
@@ -86,7 +87,7 @@ public:
     GameSettings& GetSettings() { return settings; }
     GameConfig& GetGameConfig() { return config; }  // Renamed from GetConfig for clarity
     GameLevelData& GetLevelData() { return levelData; }  // Access to level/round data
-    
+    void SetGameState(GameState newState);
 private:
     std::unique_ptr<EntityManager> registry;
     Camera3D camera;
@@ -97,6 +98,6 @@ private:
     GameSettings settings;
     GameConfig config;
     GameLevelData levelData;  // Track level progression and round data
-    
+	
     void InitializeScenes();
 };
