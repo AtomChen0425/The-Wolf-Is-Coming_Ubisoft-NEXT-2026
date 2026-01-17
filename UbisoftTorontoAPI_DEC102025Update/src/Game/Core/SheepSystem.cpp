@@ -60,8 +60,55 @@ inline void Limit(Vec3& v, float max) {
     }
 }
 
-namespace SheepSystem {
 
+namespace SheepSystem {
+    void SheepShoot(EntityManager& registry, float dt) {
+        // 创建子弹实体
+        std::vector<Vec3> targetPositions;
+        View<EnemyTag, Transform3D> enemyView(registry);
+        for (auto id : enemyView) {
+            targetPositions.push_back(enemyView.get<Transform3D>(id).pos);
+        }
+        if (targetPositions.empty()) {
+            return;
+        }
+        View<SheepTag, WeaponInventory, Transform3D> sheepView(registry);
+        for (auto id : sheepView) {
+            auto& inventory = sheepView.get<WeaponInventory>(id);
+            auto& sheepPos = sheepView.get<Transform3D>(id).pos;
+
+            float nearestDistSq = std::numeric_limits<float>::max();
+            Vec3 nearestTarget;
+            bool foundTarget = false;
+
+            for (size_t i = 0; i < targetPositions.size(); i++) {
+                float dx = targetPositions[i].x - sheepPos.x;
+                float dz = targetPositions[i].z - sheepPos.z;
+                float distSq = dx * dx + dz * dz;
+
+                if (distSq < nearestDistSq) {
+                    nearestDistSq = distSq;
+                    nearestTarget = targetPositions[i];
+                    foundTarget = true;
+                }
+            }
+            float dx = nearestTarget.x - sheepPos.x;
+            float dz = nearestTarget.z - sheepPos.z;
+            for (Weapon& weapon : inventory.weapons) {
+                weapon.currentCooldown -= dt;
+
+                // Fire a bullet
+                Vec3 bulletDirection = Normalize3D(Vec3{ dx, 0, dz });
+                Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+                // Create bullet entity
+                Entity bullet = registry.createEntity();
+                registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });
+                registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
+                registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
+                weapon.currentCooldown = weapon.fireRate;
+            }
+        }
+    }
     void InitSheep(EntityManager& registry, float startX, float startZ, int count) {
         for (int i = 0; i < count; i++) {
             Entity sheep = registry.createEntity();
@@ -78,12 +125,9 @@ namespace SheepSystem {
             registry.addComponent(sheep, Velocity3D{ Vec3{0,0,0} });
             registry.addComponent(sheep, SheepTag{});
             registry.addComponent(sheep, SheepComponent{}); // 使用默认 Boids 参数
-
-            // 重要：添加 Collider3D 和 RigidBody (如果系统需要) 以便与地面碰撞
-            // 注意：你现有的 PhysicsSystem 似乎只处理 PlayerTag，
-            // 你可能需要修改 PhysicsSystem 让他也处理 SheepTag，或者在这里简单模拟
             registry.addComponent(sheep, PhysicsTag{ true}); //
-            // 更好的做法是在 PhysicsSystem 里把 View<..., PlayerTag> 改成 View<..., Velocity3D> 并过滤掉静态物体
+            WeaponInventory inventory;
+			registry.addComponent(sheep, inventory);
         }
     }
 

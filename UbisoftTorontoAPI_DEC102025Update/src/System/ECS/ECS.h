@@ -11,7 +11,7 @@
 // ==========================================
 using EntityID = uint64_t;
 using EntityVersion = uint64_t;
-constexpr std::size_t MAX_ENTITY = 2048;
+constexpr std::size_t MAX_ENTITY = 1 << 20;
 constexpr uint64_t NULL_INDEX = static_cast<uint64_t>(-1); // 用于标记无效索引
 
 struct Entity {

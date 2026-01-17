@@ -11,6 +11,7 @@
   GameScenes.cpp
   SheepSystem.cpp
   WolfSystem.cpp
+  GameTest.cpp
   ECSSystem.cpp
   RenderHelper.cpp
   Generating Code...

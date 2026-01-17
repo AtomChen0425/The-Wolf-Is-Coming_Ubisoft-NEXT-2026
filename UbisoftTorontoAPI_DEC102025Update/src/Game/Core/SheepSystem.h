@@ -6,4 +6,5 @@ namespace SheepSystem {
 
     // 每帧更新 (在 EngineSystem::Update 中调用)
     void Update(EntityManager& registry, float dtMs);
+    void SheepShoot(EntityManager& registry, float dt);
 }

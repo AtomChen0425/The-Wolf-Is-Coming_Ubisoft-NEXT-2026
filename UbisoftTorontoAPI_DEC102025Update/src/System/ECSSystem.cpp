@@ -150,10 +150,9 @@ void EngineSystem::Update(const float deltaTimeMs) {
         
         // Update player control (handles input and movement, and camera control)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
-        // Update enemy AI (movement, shooting, bullets)
-        //EnemyAISystem::Update(*registry, deltaTimeMs);
 		// Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
+        SheepSystem::SheepShoot(*registry, deltaTimeMs);
         // Check and resolve collisions (after movement is applied)
         // Update wolf behavior (wolves chase nearest player or sheep)
         // Use dynamic spawn interval from level data
