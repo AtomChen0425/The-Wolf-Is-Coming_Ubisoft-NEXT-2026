@@ -301,7 +301,7 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     // RenderSheepSprite(registry, camera);
     
     // Render crosshair on top of everything
-    RenderCrosshair();
+    RenderCrosshair(registry, camera);
     
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
@@ -311,10 +311,61 @@ void RenderSystem::Update(EntityManager& registry, const float dt) {
 // ============================================================================
 // Crosshair rendering
 // ============================================================================
-void RenderSystem::RenderCrosshair() {
-	// Screen center coordinates (1024x768 resolution)
-	const float centerX = 512.0f;
-	const float centerY = 384.0f;
+void RenderSystem::RenderCrosshair(EntityManager& registry, Camera3D& camera) {
+	// Find the player to get their position and rotation
+	View<Transform3D, PlayerTag> playerView(registry);
+	
+	bool playerFound = false;
+	float crosshairScreenX = 512.0f;  // Default to screen center
+	float crosshairScreenY = 384.0f;
+	
+	for (EntityID id : playerView) {
+		auto& t = playerView.get<Transform3D>(id);
+		auto& player = playerView.get<PlayerTag>(id);
+		
+		// Calculate a point in front of the player in world space
+		// Distance in front of player (adjust this value to control how far ahead the crosshair aims)
+		const float aimDistance = 200.0f;
+		
+		// Calculate world position in front of player using player's yaw rotation
+		const float playerYaw = player.rotationYaw;
+		const float worldX = t.pos.x + aimDistance * std::sin(playerYaw);
+		const float worldY = t.pos.y;  // Keep at player's height
+		const float worldZ = t.pos.z + aimDistance * std::cos(playerYaw);
+		
+		// Project this 3D world point to screen using NDC projection (same as RenderCube_inNDC)
+		// Camera-relative position
+		const float rx = worldX - camera.x;
+		const float ry = worldY - camera.y;
+		const float rz = worldZ - camera.z;
+		
+		// Apply yaw rotation
+		const float cosYaw = std::cos(camera.yawAngle);
+		const float sinYaw = std::sin(camera.yawAngle);
+		const float rotatedX = rx * cosYaw + rz * sinYaw;
+		const float rotatedZ = -rx * sinYaw + rz * cosYaw;
+		
+		// Apply pitch rotation
+		const float cosPitch = std::cos(camera.pitchAngle);
+		const float sinPitch = std::sin(camera.pitchAngle);
+		const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
+		const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
+		
+		// Check if point is in front of camera
+		const float nearZ = 1.0f;
+		if (pitchedZ > nearZ) {
+			// Project to screen
+			const float fov = 600.0f;
+			const float centerX = 1024.0f / 2.0f;
+			const float centerY = 768.0f / 2.0f;
+			
+			crosshairScreenX = rotatedX * (fov / pitchedZ) + centerX;
+			crosshairScreenY = pitchedY * (fov / pitchedZ) + centerY;
+			playerFound = true;
+		}
+		
+		break;  // Only process first player
+	}
 	
 	// Crosshair size and gap
 	const float lineLength = 15.0f;  // Length of each line from center
@@ -326,16 +377,22 @@ void RenderSystem::RenderCrosshair() {
 	const float b = 0.0f;
 	
 	// Draw horizontal line (left and right)
-	App::DrawLine(centerX - lineLength - gap, centerY, centerX - gap, centerY, r, g, b);
-	App::DrawLine(centerX + gap, centerY, centerX + lineLength + gap, centerY, r, g, b);
+	App::DrawLine(crosshairScreenX - lineLength - gap, crosshairScreenY, 
+	              crosshairScreenX - gap, crosshairScreenY, r, g, b);
+	App::DrawLine(crosshairScreenX + gap, crosshairScreenY, 
+	              crosshairScreenX + lineLength + gap, crosshairScreenY, r, g, b);
 	
 	// Draw vertical line (top and bottom)
-	App::DrawLine(centerX, centerY - lineLength - gap, centerX, centerY - gap, r, g, b);
-	App::DrawLine(centerX, centerY + gap, centerX, centerY + lineLength + gap, r, g, b);
+	App::DrawLine(crosshairScreenX, crosshairScreenY - lineLength - gap, 
+	              crosshairScreenX, crosshairScreenY - gap, r, g, b);
+	App::DrawLine(crosshairScreenX, crosshairScreenY + gap, 
+	              crosshairScreenX, crosshairScreenY + lineLength + gap, r, g, b);
 	
-	// Optional: Draw center dot for precision
-	App::DrawLine(centerX - 1, centerY, centerX + 1, centerY, r, g, b);
-	App::DrawLine(centerX, centerY - 1, centerX, centerY + 1, r, g, b);
+	// Draw center dot for precision
+	App::DrawLine(crosshairScreenX - 1, crosshairScreenY, 
+	              crosshairScreenX + 1, crosshairScreenY, r, g, b);
+	App::DrawLine(crosshairScreenX, crosshairScreenY - 1, 
+	              crosshairScreenX, crosshairScreenY + 1, r, g, b);
 }
 
 // ============================================================================

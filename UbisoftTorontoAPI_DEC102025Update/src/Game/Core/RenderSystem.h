@@ -9,7 +9,7 @@ namespace RenderSystem {
 	void Update(EntityManager& registry, const float deltaTimeMs);
 	
 	// Crosshair rendering
-	void RenderCrosshair();
+	void RenderCrosshair(EntityManager& registry, Camera3D& camera);
 	
 	// Sprite rendering functions for 3D entities with proper depth sorting
 	// These can be used to replace cube rendering for wolves, player, and sheep
