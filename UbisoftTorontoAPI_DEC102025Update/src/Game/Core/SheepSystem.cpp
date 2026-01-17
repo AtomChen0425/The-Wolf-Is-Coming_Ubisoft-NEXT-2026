@@ -5,20 +5,17 @@
 #include <vector>
 #include <unordered_map>
 
-// --- ���׿ռ������Ż� (Spatial Grid) ---
-// ���ڿ��ٲ��Ҹ������򣬱��� O(N^2) ���Ӷ�
 struct SpatialGrid {
     float cellSize;
     std::unordered_map<int, std::vector<EntityID>> grid;
 
     SpatialGrid(float size) : cellSize(size) {}
 
-    // ������ת��ΪΨһ�� Hash Key
     int GetKey(float x, float z) {
-        // ��ֹ��������������⣬��һ����ƫ��
+
         int cx = static_cast<int>(std::floor((x + 100000.0f) / cellSize));
         int cz = static_cast<int>(std::floor((z + 100000.0f) / cellSize));
-        return cx * 73856093 ^ cz * 19349663; // �򵥵Ŀռ��ϣ
+        return cx * 73856093 ^ cz * 19349663; // 
     }
 
     void Clear() { grid.clear(); }
@@ -27,7 +24,6 @@ struct SpatialGrid {
         grid[GetKey(x, z)].push_back(id);
     }
 
-    // ��ȡ 3x3 ��Χ�ڵ��ھ�
     void Query(float x, float z, std::vector<EntityID>& results) {
         int centerCx = static_cast<int>(std::floor((x + 100000.0f) / cellSize));
         int centerCz = static_cast<int>(std::floor((z + 100000.0f) / cellSize));
@@ -63,7 +59,6 @@ inline void Limit(Vec3& v, float max) {
 
 namespace SheepSystem {
     void SheepShoot(EntityManager& registry, float dt) {
-        // �����ӵ�ʵ��
         std::vector<Vec3> targetPositions;
         View<EnemyTag, Transform3D> enemyView(registry);
         for (auto id : enemyView) {
@@ -84,7 +79,8 @@ namespace SheepSystem {
             for (size_t i = 0; i < targetPositions.size(); i++) {
                 float dx = targetPositions[i].x - sheepPos.x;
                 float dz = targetPositions[i].z - sheepPos.z;
-                float distSq = dx * dx + dz * dz;
+				float dy = targetPositions[i].y - sheepPos.y;
+                float distSq = dx * dx + dz * dz +dy *dy;
 
                 if (distSq < nearestDistSq) {
                     nearestDistSq = distSq;
@@ -92,15 +88,43 @@ namespace SheepSystem {
                     foundTarget = true;
                 }
             }
+			if (!foundTarget) continue;
+
             float dx = nearestTarget.x - sheepPos.x;
             float dz = nearestTarget.z - sheepPos.z;
-            for (Weapon& weapon : inventory.weapons) {
+			float dy = nearestTarget.y - sheepPos.y;
+            Vec3 bulletDirection = Normalize3D(Vec3{ dx, dy, dz });
+            
+            size_t weaponCount = inventory.weapons.size();
+
+            const float totalArc = 1.5f * 3.14159265f;
+            const float radius = 10.0f; // 圆的半径
+
+            float currentYaw = std::atan2(bulletDirection.x, bulletDirection.z);
+            //float currentYaw = playerTag.rotationYaw;
+            float startAngle = currentYaw - (totalArc / 2.0f);
+
+            float angleStep = (weaponCount > 1) ? (totalArc / (weaponCount - 1)) : 0.0f;
+
+            for (int i = 0; i < weaponCount; ++i) {
+                Weapon& weapon = inventory.weapons[i];
                 weapon.currentCooldown -= dt;
 
 				if (weapon.currentCooldown > 0.0f) continue;
                 // Fire a bullet
-                Vec3 bulletDirection = Normalize3D(Vec3{ dx, 0, dz });
-                Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+                float theta = (weaponCount > 1) ? (startAngle + i * angleStep) : currentYaw;
+                
+
+                // 根据原代码的坐标系习惯 (sin对应X, cos对应Z)，计算圆周偏移
+                Vec3 circleOffset = Vec3{
+                    std::sin(theta) * radius,
+                    0.0f,
+                    std::cos(theta) * radius
+                };
+
+                // 最终生成位置
+                Vec3 bulletPosition = sheepPos + circleOffset;
+                //Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
                 // Create bullet entity
                 Entity bullet = registry.createEntity();
                 registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });
@@ -113,8 +137,6 @@ namespace SheepSystem {
     void InitSheep(EntityManager& registry, float startX, float startZ, int count) {
         for (int i = 0; i < count; i++) {
             Entity sheep = registry.createEntity();
-
-            // ����ֲ�����ʼ����Χ
             float offsetX = (rand() % 200 - 100.0f);
             float offsetZ = (rand() % 200 - 100.0f);
 
@@ -143,18 +165,18 @@ namespace SheepSystem {
         for (auto id : playerView) {
             targetPos = playerView.get<Transform3D>(id).pos;
             hasPlayer = true;
-            break; // ֻ����һ�����
+            break; // 
         }
 
-        // 2. �ռ����е���λ�� (���ڿ־��߼�)
+        //
         std::vector<Vec3> enemies;
         View<EnemyTag, Transform3D> enemyView(registry);
         for (auto id : enemyView) {
             enemies.push_back(enemyView.get<Transform3D>(id).pos);
         }
 
-        // 3. �����ռ�����
-        static SpatialGrid grid(80.0f); // ���Ӵ�С�Դ�����Ұ�뾶
+        // 
+        static SpatialGrid grid(80.0f); // 
         grid.Clear();
         View<SheepTag, Transform3D, Velocity3D, SheepComponent> sheepView(registry);
 
