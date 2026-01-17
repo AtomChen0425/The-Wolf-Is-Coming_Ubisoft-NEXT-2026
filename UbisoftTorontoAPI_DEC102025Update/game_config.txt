@@ -9,7 +9,7 @@ damping=8
 rotationSpeed=2
 
 # Camera Controls
-mouseSensitivity=0.003
+mouseSensitivity=0.005
 maxPitch=1.4
 minPitch=-1.4
 

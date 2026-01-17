@@ -162,4 +162,7 @@
       <UniqueIdentifier>{F92C88F3-B767-316C-986F-42D5BDA1056E}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\game_config.txt" />
+  </ItemGroup>
 </Project>
