@@ -197,7 +197,7 @@ void RenderBullets3D(EntityManager& registry, Camera3D& camera) {
 
 void RenderParticles(EntityManager& registry, Camera3D& camera) {
     View<Transform3D, ParticleTag> view(registry);
-    // Ò²¿ÉÒÔÏñ RenderRoad3D ÄÇÑù×öÉî¶ÈÅÅÐò£¬ÎªÁËÐÔÄÜÁ£×ÓÍ¨³£¿ÉÒÔ²»×ö£¬»òÕß¼òµ¥µÄ×ö
+    // Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RenderRoad3D ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼òµ¥µï¿½ï¿½ï¿½
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
         gRenderHelper->RenderCube_inNDC(t, camera);
@@ -212,15 +212,178 @@ void RenderSystem::Render(EntityManager& registry, Camera25D& camera) {
 }
 void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     
-    
-    
+    // Render map blocks (always cubes)
     RenderRoad3D(registry, camera);
+    
+    // Render bullets (always cubes)
     RenderBullets3D(registry, camera);
+    
+    // Render player
+    // To switch to sprite rendering, comment out RenderPlayer3D and uncomment RenderPlayerSprite
     RenderPlayer3D(registry, camera);
+    // RenderPlayerSprite(registry, camera);
+    
+    // Render particles
 	RenderParticles(registry, camera);
+    
+    // Render animals (wolves and sheep)
+    // To switch to sprite rendering, comment out RenderAnimal3D and uncomment the sprite functions below
     RenderAnimal3D(registry, camera);
+    // RenderWolvesSprite(registry, camera);
+    // RenderSheepSprite(registry, camera);
     
 }
 void RenderSystem::Update(EntityManager& registry, const float dt) {
 	UpdateSpriteAnimation(registry, dt);
+}
+
+// ============================================================================
+// Sprite rendering functions for 3D entities with proper depth sorting
+// These can be used to replace cube rendering for wolves, player, and sheep
+// ============================================================================
+
+void RenderSystem::RenderWolvesSprite(EntityManager& registry, Camera3D& camera) {
+    View<Transform3D, WolfTag, SpriteComponent> view(registry);
+    
+    // Collect all wolves and sort by depth (z-coordinate in world space)
+    // Entities further from camera (higher z) are rendered first
+    std::vector<EntityID> sortedWolves;
+    for (EntityID id : view) {
+        sortedWolves.push_back(id);
+    }
+    
+    // Sort by z-depth for proper layering (painter's algorithm)
+    // Objects with higher z (further back) render first
+    std::sort(sortedWolves.begin(), sortedWolves.end(), [&](EntityID a, EntityID b) {
+        auto& ta = view.get<Transform3D>(a);
+        auto& tb = view.get<Transform3D>(b);
+        
+        // Calculate depth from camera for each wolf
+        float depthA = ta.pos.z - camera.z;
+        float depthB = tb.pos.z - camera.z;
+        
+        return depthA > depthB; // Render far to near
+    });
+    
+    // Render wolves in sorted order
+    for (EntityID id : sortedWolves) {
+        auto& t = view.get<Transform3D>(id);
+        auto& spr = view.get<SpriteComponent>(id);
+        
+        if (!spr.sprite) continue;
+        
+        // Calculate screen position based on 3D transform and camera
+        float screenX = t.pos.x - camera.x;
+        float screenZ = t.pos.z - camera.z;
+        
+        // Apply camera perspective transformation
+        float cosYaw = std::cos(camera.yawAngle);
+        float sinYaw = std::sin(camera.yawAngle);
+        
+        // Rotate around camera yaw
+        float rotatedX = screenX * cosYaw + screenZ * sinYaw;
+        float rotatedZ = -screenX * sinYaw + screenZ * cosYaw;
+        
+        // Project to screen (simple orthographic for now)
+        float finalScreenX = camera.width / 2.0f + rotatedX;
+        float finalScreenY = camera.height / 2.0f - rotatedZ - t.pos.y + camera.y;
+        
+        // Render sprite shadow on ground
+        float shadowY = camera.height / 2.0f - rotatedZ;
+        gRenderHelper->DrawShadow(finalScreenX, shadowY, t.width * 0.5f);
+        
+        // Set sprite position and draw
+        spr.sprite->SetPosition(finalScreenX, finalScreenY);
+        spr.sprite->Draw();
+    }
+}
+
+void RenderSystem::RenderPlayerSprite(EntityManager& registry, Camera3D& camera) {
+    View<Transform3D, PlayerTag, SpriteComponent> view(registry);
+    
+    for (EntityID id : view) {
+        auto& t = view.get<Transform3D>(id);
+        auto& spr = view.get<SpriteComponent>(id);
+        
+        if (!spr.sprite) continue;
+        
+        // Calculate screen position based on 3D transform and camera
+        float screenX = t.pos.x - camera.x;
+        float screenZ = t.pos.z - camera.z;
+        
+        // Apply camera perspective transformation
+        float cosYaw = std::cos(camera.yawAngle);
+        float sinYaw = std::sin(camera.yawAngle);
+        
+        // Rotate around camera yaw
+        float rotatedX = screenX * cosYaw + screenZ * sinYaw;
+        float rotatedZ = -screenX * sinYaw + screenZ * cosYaw;
+        
+        // Project to screen (simple orthographic for now)
+        float finalScreenX = camera.width / 2.0f + rotatedX;
+        float finalScreenY = camera.height / 2.0f - rotatedZ - t.pos.y + camera.y;
+        
+        // Render sprite shadow on ground
+        float shadowY = camera.height / 2.0f - rotatedZ;
+        gRenderHelper->DrawShadow(finalScreenX, shadowY, t.width * 0.5f);
+        
+        // Set sprite position and draw
+        spr.sprite->SetPosition(finalScreenX, finalScreenY);
+        spr.sprite->Draw();
+    }
+}
+
+void RenderSystem::RenderSheepSprite(EntityManager& registry, Camera3D& camera) {
+    View<Transform3D, SheepTag, SpriteComponent> view(registry);
+    
+    // Collect all sheep and sort by depth (z-coordinate in world space)
+    std::vector<EntityID> sortedSheep;
+    for (EntityID id : view) {
+        sortedSheep.push_back(id);
+    }
+    
+    // Sort by z-depth for proper layering (painter's algorithm)
+    // Objects with higher z (further back) render first
+    std::sort(sortedSheep.begin(), sortedSheep.end(), [&](EntityID a, EntityID b) {
+        auto& ta = view.get<Transform3D>(a);
+        auto& tb = view.get<Transform3D>(b);
+        
+        // Calculate depth from camera for each sheep
+        float depthA = ta.pos.z - camera.z;
+        float depthB = tb.pos.z - camera.z;
+        
+        return depthA > depthB; // Render far to near
+    });
+    
+    // Render sheep in sorted order
+    for (EntityID id : sortedSheep) {
+        auto& t = view.get<Transform3D>(id);
+        auto& spr = view.get<SpriteComponent>(id);
+        
+        if (!spr.sprite) continue;
+        
+        // Calculate screen position based on 3D transform and camera
+        float screenX = t.pos.x - camera.x;
+        float screenZ = t.pos.z - camera.z;
+        
+        // Apply camera perspective transformation
+        float cosYaw = std::cos(camera.yawAngle);
+        float sinYaw = std::sin(camera.yawAngle);
+        
+        // Rotate around camera yaw
+        float rotatedX = screenX * cosYaw + screenZ * sinYaw;
+        float rotatedZ = -screenX * sinYaw + screenZ * cosYaw;
+        
+        // Project to screen (simple orthographic for now)
+        float finalScreenX = camera.width / 2.0f + rotatedX;
+        float finalScreenY = camera.height / 2.0f - rotatedZ - t.pos.y + camera.y;
+        
+        // Render sprite shadow on ground
+        float shadowY = camera.height / 2.0f - rotatedZ;
+        gRenderHelper->DrawShadow(finalScreenX, shadowY, t.width * 0.5f);
+        
+        // Set sprite position and draw
+        spr.sprite->SetPosition(finalScreenX, finalScreenY);
+        spr.sprite->Draw();
+    }
 }
