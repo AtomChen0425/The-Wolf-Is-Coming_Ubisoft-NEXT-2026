@@ -56,7 +56,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
             float deltaY = (mouseY - camera.lastMouseY) * mouseSensitivity;
             
 			playerTag.rotationYaw += deltaX; // Rotate player with camera
-			playerTag.rotationPitch = Clamp(playerTag.rotationPitch - deltaY, 0, config.maxPitch);
+			playerTag.rotationPitch = Clamp(playerTag.rotationPitch - deltaY, config.minPitch, config.maxPitch);
             // Update camera rotation based on mouse movement
 			//playerTag.rotationPitch -= deltaY; // Invert to match typical FPS controls
             // Vertical mouse movement controls pitch (up/down viewing)
@@ -154,15 +154,41 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
         if ((App::IsKeyPressed(App::KEY_J) || App::IsMousePressed(0)) ) {
             if (view.has<WeaponInventory>(id)&& view.get<WeaponInventory>(id).weapons.size() > 0) {
                 auto& inventory = view.get<WeaponInventory>(id);
-                for (Weapon& weapon : inventory.weapons) {
+                size_t weaponCount = inventory.weapons.size();
+
+                // 1. 定义 3/4 圆的总弧度 (270度 = 1.5 * PI)
+                const float totalArc = 1.5f * 3.14159265f;
+                const float radius = 20.0f; // 圆的半径
+
+                // 2. 计算起始角度：以玩家当前的 Yaw 为中心，向左偏移一半的总弧度
+                // 这样 90 度的缺口会正好在玩家正后方
+                float currentYaw = playerTag.rotationYaw;
+                float startAngle = currentYaw - (totalArc / 2.0f);
+
+                // 3. 计算每把武器之间的角度间隔
+                // 如果只有 1 把武器，直接居中；否则分母为 (count - 1) 以填满两端
+                float angleStep = (weaponCount > 1) ? (totalArc / (weaponCount - 1)) : 0.0f;
+                for (int i = 0; i < weaponCount; ++i) {
+                    Weapon& weapon = inventory.weapons[i];
                     weapon.currentCooldown -= dt;
                   
                     // Fire a bullet
+                    float theta = (weaponCount > 1) ? (startAngle + i * angleStep) : currentYaw;
+
+                    // 根据原代码的坐标系习惯 (sin对应X, cos对应Z)，计算圆周偏移
+                    Vec3 circleOffset = Vec3{
+                        std::sin(theta) * radius,
+                        0.0f,
+                        std::cos(theta) * radius
+                    };
+
+                    // 最终生成位置
+                    Vec3 bulletPosition = playerTransform.pos + circleOffset;
                     if (weapon.currentCooldown > 0.0f) continue;
                     Vec3 bulletDirection = Vec3{ std::cos(playerTag.rotationPitch) * std::sin(playerTag.rotationYaw),
                                                 std::sin(playerTag.rotationPitch),
                                                 std::cos(playerTag.rotationPitch) * std::cos(playerTag.rotationYaw) };
-                    Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+                    //Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
                     // Create bullet entity
                     Entity bullet = registry.createEntity();
                     registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });

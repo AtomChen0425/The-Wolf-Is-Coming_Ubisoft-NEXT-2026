@@ -66,8 +66,8 @@ void EngineSystem::InitializeGame() {
 
     // Initialize camera position and offsets for 3D view
     camera.followOffsetX = 0.0f;
-    camera.followOffsetY = 200.0f;
-    camera.followOffsetZ = -400.0f;
+    camera.followOffsetY = 100.0f;
+    camera.followOffsetZ = -300.0f;
     camera.x = 0.0f;
     camera.y = camera.followOffsetY;
     camera.z = camera.followOffsetZ;

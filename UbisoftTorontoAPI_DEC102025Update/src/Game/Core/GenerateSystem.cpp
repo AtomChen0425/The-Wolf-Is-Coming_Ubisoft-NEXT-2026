@@ -152,24 +152,10 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     registry.addComponent(entity, PlayerTag{true, 0, 0, 0});
     registry.addComponent(entity, PlayerStats{});  // Add player stats for upgrades
     registry.addComponent(entity, PhysicsTag{}); //
-    registry.addComponent(entity, inventory);
-    registry.addComponent(entity, Health{100, 100}); //
-    CSimpleSprite* pSprite = App::CreateSprite("data/TestData/Test.bmp", 8, 4);
-
-    // 
-    const float speed = 1.0f / 15.0f;
-    pSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
-    pSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
-    pSprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
-    pSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
-    pSprite->SetScale(1.0f);
-
-    // 
-
-	Weapon startingWeapon;
-	startingWeapon.type = WeaponType::Pistol;
-	startingWeapon.name = "Basic Pistol";
-	startingWeapon.damage = 20.0f;
+    Weapon startingWeapon;
+    startingWeapon.type = WeaponType::Pistol;
+    startingWeapon.name = "Basic Pistol";
+    startingWeapon.damage = 20.0f;
     startingWeapon.fireRate = 50.0f;  // Fast fire rate
     startingWeapon.currentCooldown = 0.0f;
     startingWeapon.projectileSpeed = config.bulletSpeed;
@@ -180,6 +166,22 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     startingWeapon.r = 1.0f;
     startingWeapon.g = 0.5f;
     startingWeapon.b = 0.0f;
+	inventory.weapons.push_back(startingWeapon);
+    registry.addComponent(entity, inventory);
+    registry.addComponent(entity, Health{100, 100}); //
+    CSimpleSprite* pSprite = App::CreateSprite("data/TestData/Test.bmp", 8, 4);
+
+    // 
+    const float speed = 1.0f / 15.0f;
+    pSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
+    pSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
+    pSprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
+    pSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
+    pSprite->SetScale(0.8f);
+
+    // 
+
+	
     registry.addComponent(entity, SpriteComponent{ pSprite, 0 });
 }
 

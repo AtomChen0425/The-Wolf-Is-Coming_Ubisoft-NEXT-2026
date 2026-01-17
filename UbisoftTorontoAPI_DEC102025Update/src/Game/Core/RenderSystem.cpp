@@ -288,9 +288,9 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     // Render player
     // To switch to sprite rendering, comment out RenderPlayer3D and uncomment RenderPlayerSprite
     //RenderPlayer3D(registry, camera);
-	//RenderCharacters3D(registry, camera);
-    RenderPlayerSprite(registry, camera);
-    RenderAnimal3D(registry, camera);
+	RenderCharacters3D(registry, camera);
+    //RenderPlayerSprite(registry, camera);
+    //RenderAnimal3D(registry, camera);
     // Render particles
 	RenderParticles(registry, camera);
     
@@ -438,7 +438,7 @@ void RenderSystem::RenderPlayerSprite(EntityManager& registry, Camera3D& camera)
         }
         
         // Set sprite position and draw
-        spr.sprite->SetPosition(finalScreenX, finalScreenY);
+        spr.sprite->SetPosition(finalScreenX, finalScreenY+10);
         spr.sprite->Draw();
     }
 }
