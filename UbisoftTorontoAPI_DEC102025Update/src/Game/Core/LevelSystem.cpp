@@ -3,16 +3,46 @@
 #include "../../System/Component/Component.h"
 #include "SheepSystem.h"
 #include "../../System/Math/Math.h"
+#include "GenerateSystem.h"
 #include <vector>
 #include <algorithm>
 
 namespace LevelSystem {
-    
-    bool Update(GameLevelData& levelData, float deltaTimeMs) {
+
+    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry) {
         // Update timers
         levelData.totalGameTimeMs += deltaTimeMs;
         levelData.currentRoundTimeMs += deltaTimeMs;
-        
+        // Spawn different wolf types at different intervals
+        // Basic wolves (use existing spawn interval from level data)
+        if (generationTimers.gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
+            GenerateSystem::GenerateWolf(registry);
+            generationTimers.gSpawnTimerMs = 0.0f;
+        }
+
+        // Sniper wolves (slower spawn rate)
+        if (generationTimers.sniperWolfSpawnTimer >= levelData.sniperWolfSpawnIntervalMs && levelData.currentRound > 3) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Sniper);
+            generationTimers.sniperWolfSpawnTimer = 0.0f;
+        }
+
+        // Tank wolves (slowest spawn rate)
+        if (generationTimers.tankWolfSpawnTimer >= levelData.tankWolfSpawnIntervalMs && levelData.currentRound > 5) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Tank);
+            generationTimers.tankWolfSpawnTimer = 0.0f;
+        }
+
+        // Fast wolves (faster spawn rate)
+        if (generationTimers.fastWolfSpawnTimer >= levelData.fastWolfSpawnIntervalMs && levelData.currentRound > 9) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Fast);
+            generationTimers.fastWolfSpawnTimer = 0.0f;
+        }
+
+        // Hunter wolves (moderate spawn rate)
+        if (generationTimers.hunterWolfSpawnTimer >= levelData.hunterWolfSpawnIntervalMs && levelData.currentRound > 12) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Hunter);
+            generationTimers.hunterWolfSpawnTimer = 0.0f;
+        }
         // Check if round is complete
         if (levelData.IsRoundComplete()) {
             return true;  // Signal that round is complete
@@ -49,11 +79,11 @@ namespace LevelSystem {
     void GenerateRandomUpgrades(UpgradeType upgradeOptions[3]) {
         // Generate 3 random unique upgrades
         std::vector<UpgradeType> allUpgrades = {
-            UpgradeType::HealthBoost,
+   /*         UpgradeType::HealthBoost,
             UpgradeType::SpeedBoost,
             UpgradeType::JumpBoost,
             UpgradeType::GravityReduction,
-            UpgradeType::BulletSpeed,
+            UpgradeType::BulletSpeed,*/
             UpgradeType::AddSheep,
             UpgradeType::PlayerMachineGun,
             UpgradeType::PlayerCannon,
@@ -104,6 +134,7 @@ namespace LevelSystem {
                     weapon.projectileSize = 5.0f;
                     weapon.projectileLife = 2000.0f;
                     weapon.explosionRadius = 0.0f;
+					weapon.knockback = 100.0f;
                     weapon.r = 1.0f;
                     weapon.g = 1.0f;
                     weapon.b = 0.0f;
@@ -117,6 +148,7 @@ namespace LevelSystem {
                     weapon.projectileSize = 15.0f;
                     weapon.projectileLife = 3000.0f;
                     weapon.explosionRadius = 50.0f;
+                    weapon.knockback = 500.0f;
                     weapon.r = 1.0f;
                     weapon.g = 0.5f;
                     weapon.b = 0.0f;
@@ -142,6 +174,7 @@ namespace LevelSystem {
                 weapon.projectileSize = 3.0f;
                 weapon.projectileLife = 2000.0f;
                 weapon.explosionRadius = 0.0f;
+				weapon.knockback = 50.0f;
                 weapon.r = 0.5f;
                 weapon.g = 1.0f;
                 weapon.b = 0.5f;
@@ -154,7 +187,8 @@ namespace LevelSystem {
                 weapon.projectileSpeed = 250.0f;
                 weapon.projectileSize = 10.0f;
                 weapon.projectileLife = 3000.0f;
-                weapon.explosionRadius = 40.0f;
+                weapon.explosionRadius = 50.0f;
+				weapon.knockback = 300.0f;
                 weapon.r = 0.5f;
                 weapon.g = 1.0f;
                 weapon.b = 1.0f;

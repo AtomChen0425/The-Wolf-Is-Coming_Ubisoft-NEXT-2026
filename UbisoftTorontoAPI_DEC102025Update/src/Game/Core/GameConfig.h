@@ -37,7 +37,7 @@ struct GameConfig {
     int chunkRenderRadius = 3;   // How many chunks to render in each direction
     
     // Block heights
-    float floorHeight = 10.0f;
+    float floorHeight = 30.0f;
     float tallBlockHeight = 60.0f;
     float scorePointHeight = 30.0f;
     

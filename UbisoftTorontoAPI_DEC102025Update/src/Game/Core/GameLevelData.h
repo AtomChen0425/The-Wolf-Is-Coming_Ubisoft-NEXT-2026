@@ -17,15 +17,23 @@ struct GameLevelData {
     float currentWolfSpawnIntervalMs;       // Current wolf spawn interval
     float wolfSpawnReductionPerRound;       // How much to reduce spawn interval each round (set from config)
     float minWolfSpawnIntervalMs;           // Minimum wolf spawn interval (set from config)
-    
+
+	float sniperWolfSpawnIntervalMs;		// Sniper wolf spawn interval (set from config)
+	float tankWolfSpawnIntervalMs;		// Tank wolf spawn interval (set from config)
+	float fastWolfSpawnIntervalMs;		// Fast wolf spawn interval (set from config)
+	float hunterWolfSpawnIntervalMs;		// Hunter wolf spawn interval (set from config)
     // Default constructor - must call Initialize() before use
     GameLevelData() 
         : roundDurationMs(0.0f),
           baseWolfSpawnIntervalMs(0.0f),
           currentWolfSpawnIntervalMs(0.0f),
           wolfSpawnReductionPerRound(0.0f),
-          minWolfSpawnIntervalMs(0.0f) {}
-    
+          minWolfSpawnIntervalMs(0.0f),
+          sniperWolfSpawnIntervalMs(0.0f),
+          tankWolfSpawnIntervalMs(0.0f),
+          fastWolfSpawnIntervalMs(0.0f),
+          hunterWolfSpawnIntervalMs(0.0f) {}
+
     // Initialize from config (must be called after construction)
     void Initialize(const GameConfig& config) {
         roundDurationMs = config.roundDurationMs;
@@ -33,6 +41,10 @@ struct GameLevelData {
         currentWolfSpawnIntervalMs = config.baseWolfSpawnIntervalMs;
         wolfSpawnReductionPerRound = config.wolfSpawnReductionPerRound;
         minWolfSpawnIntervalMs = config.minWolfSpawnIntervalMs;
+        sniperWolfSpawnIntervalMs = config.sniperWolfSpawnIntervalMs;
+        tankWolfSpawnIntervalMs = config.tankWolfSpawnIntervalMs;
+        fastWolfSpawnIntervalMs = config.fastWolfSpawnIntervalMs;
+        hunterWolfSpawnIntervalMs = config.hunterWolfSpawnIntervalMs;
     }
     
     // Reset to initial state

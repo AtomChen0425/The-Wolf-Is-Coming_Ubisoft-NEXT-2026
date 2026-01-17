@@ -58,6 +58,15 @@ enum class CameraControlMode {
     ArrowKeys
 };
 
+struct GenerationTimer
+{
+    float gSpawnTimerMs = 0.0f;
+    float sniperWolfSpawnTimer = 0.0f;
+    float tankWolfSpawnTimer = 0.0f;
+    float fastWolfSpawnTimer = 0.0f;
+    float hunterWolfSpawnTimer = 0.0f;
+};
+
 struct GameSettings {
     CameraControlMode cameraControlMode = CameraControlMode::Mouse;
 };
@@ -68,16 +77,13 @@ public:
     EngineSystem();
     ~EngineSystem() = default;
 	float gTimerMs = 0.0f;
-    float gSpawnTimerMs = 0.0f;
+    
 	float gSpawnIntervalMs = 2000.0f;
     int   gScore = 0;
     
     // Spawn timers for different wolf types
-    float sniperWolfSpawnTimer = 0.0f;
-    float tankWolfSpawnTimer = 0.0f;
-    float fastWolfSpawnTimer = 0.0f;
-    float hunterWolfSpawnTimer = 0.0f;
     
+	GenerationTimer generationTimers;
     void Update(const float deltaTimeMs);
     void Render();
     void Shutdown();

@@ -464,8 +464,8 @@ void CheckPlayerGetPoints(EntityManager& registry) {
 	}
 }
 void CheckBulletDamage(EntityManager& registry) {
-    static std::vector<EntityID> blockToRemove;
-    blockToRemove.clear();
+    static std::vector<EntityID> EnemyToRemove;
+    EnemyToRemove.clear();
     static std::vector<EntityID> bulletToRemove;
     bulletToRemove.clear();
     View<Bullet, Transform3D> bulletView(registry);
@@ -498,6 +498,10 @@ void CheckBulletDamage(EntityManager& registry) {
 				enemyVel =  enemyDirection * ( - bulletKnockback); // Apply knockback
                 enemyHealth.currentHealth -= bulletDamage;
 
+                if (enemyHealth.currentHealth <= 0) {
+                    ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                    EnemyToRemove.push_back(enemyId);
+                }
                 if (bullet.explosionRadius > 0.0f) {
                     // 创建爆炸特效
                     ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
@@ -512,24 +516,21 @@ void CheckBulletDamage(EntityManager& registry) {
                             auto& hp = allEnemies.get<Health>(otherId);
                             hp.currentHealth -= bullet.damage;
                             if (hp.currentHealth <= 0) {
-                                ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
-                                blockToRemove.push_back(enemyId);
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                EnemyToRemove.push_back(otherId);
                             }
                         }
-                        
+
                     }
                 }
-                if (enemyHealth.currentHealth <= 0) {
-                    ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
-                    blockToRemove.push_back(enemyId);
-                }
+				break; // Bullet can hit only one enemy
             }
         }
     }
     for (EntityID id : bulletToRemove) {
         registry.destroyEntity(id);
 	}
-    for (EntityID id : blockToRemove) {
+    for (EntityID id : EnemyToRemove) {
         registry.destroyEntity(id);
 	}
 }

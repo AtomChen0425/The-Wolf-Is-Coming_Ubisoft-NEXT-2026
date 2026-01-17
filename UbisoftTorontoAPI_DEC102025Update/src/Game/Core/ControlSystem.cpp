@@ -165,7 +165,7 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
                     Vec3 bulletPosition = playerTransform.pos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
                     // Create bullet entity
                     Entity bullet = registry.createEntity();
-                    registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize });
+                    registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });
                     registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
                     registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
                     registry.addComponent(bullet, TrailEmitter{ 50.0f, 0.0f, 300.0f, 5.0f, 1.0f, 0.5f, 0.0f });
