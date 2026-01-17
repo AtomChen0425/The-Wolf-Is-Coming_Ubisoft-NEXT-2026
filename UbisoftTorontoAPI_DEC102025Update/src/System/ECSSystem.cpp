@@ -163,12 +163,12 @@ void EngineSystem::Update(const float deltaTimeMs) {
 		}
         WolfSystem::Update(*registry, deltaTimeMs);
 
-        PhysicsSystem::Update(*registry, deltaTimeMs);
+        
         
         MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
         CollisionSystem::Update(*registry);
-        
+        PhysicsSystem::Update(*registry, deltaTimeMs);
         // Generate chunks based on player position
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {

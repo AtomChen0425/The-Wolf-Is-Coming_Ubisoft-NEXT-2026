@@ -19,6 +19,9 @@
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\LevelSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -29,6 +32,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\GameScenes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\SceneManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\SheepSystem.cpp">
@@ -58,13 +67,6 @@
     <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Game\Core\LevelSystem.cpp" />
-    <ClCompile Include="..\..\src\Game\Core\Scene\GameScenes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Game\Core\Scene\SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.h">
@@ -82,7 +84,13 @@
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GameLevelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\LevelSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.h">
@@ -95,6 +103,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\RenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\GameScenes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\SheepSystem.h">
@@ -136,14 +150,6 @@
     <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Game\Core\GameLevelData.h" />
-    <ClInclude Include="..\..\src\Game\Core\LevelSystem.h" />
-    <ClInclude Include="..\..\src\Game\Core\Scene\GameScenes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Game\Core\Scene\SceneManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\CMakeLists.txt" />
@@ -155,8 +161,5 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{F92C88F3-B767-316C-986F-42D5BDA1056E}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\game_config.txt" />
   </ItemGroup>
 </Project>

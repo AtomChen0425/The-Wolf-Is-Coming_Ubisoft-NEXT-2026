@@ -49,7 +49,7 @@ void EnemyMovementSystem(EntityManager& registry,const float deltaTimeMs) {
     Vec2 targetPos = { 0.0f, 0.0f };
     bool playerFound = false;
 
-    // View<PlayerTag, Position>: ֻɸѡ����ұ�ǩ��ʵ��
+    // View<PlayerTag, Position>:
     View<PlayerTag, Position> playerView(registry);
 
     for (EntityID id : playerView) {
@@ -118,5 +118,5 @@ void MovementSystem::Update(EntityManager& registry, const float dt) {
     //SpriteMovementSystem3D(registry, dt);
     /*SpriteMovementSystem(registry, dt);
     EnemyMovementSystem(registry, dt);*/
-    SheepMovementSystem(registry, dt);
+    //SheepMovementSystem(registry, dt);
 }

@@ -3,6 +3,7 @@
 #include "../../System/Physic/Collision.h"
 #include "../../Game/Core/ParticleSystem.h"
 #include <cmath>
+#include "../System/Math/Math.h"
 #include <unordered_map>
 Collision* gCollision;
 struct CollisionGrid {
@@ -471,6 +472,7 @@ void CheckBulletDamage(EntityManager& registry) {
     View<Health, Transform3D,EnemyTag> enemyView(registry);
     for (EntityID bulletId : bulletView) {
 		float bulletDamage = bulletView.get<Bullet>(bulletId).damage;
+        float bulletKnockback = bulletView.get<Bullet>(bulletId).knockback;
         auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
         Vec3 bulletPos = bulletTransform.pos;
         Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
@@ -482,6 +484,7 @@ void CheckBulletDamage(EntityManager& registry) {
         for (EntityID enemyId : enemyView) {
             auto& enemyHealth = enemyView.get<Health>(enemyId);
 			auto& enemyTransform = enemyView.get<Transform3D>(enemyId);
+			auto& enemyVel = enemyView.get<Velocity3D>(enemyId).vel;
             Vec3 colliderMin(enemyTransform.pos.x - enemyTransform.width / 2,
                 enemyTransform.pos.y - enemyTransform.height / 2,
                 enemyTransform.pos.z - enemyTransform.depth / 2);
@@ -490,6 +493,8 @@ void CheckBulletDamage(EntityManager& registry) {
                 enemyTransform.pos.z + enemyTransform.depth / 2);
             if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
 				bulletToRemove.push_back(bulletId);
+				Vec3 enemyDirection = Normalize3D(enemyVel);
+				enemyVel =  enemyDirection * ( - bulletKnockback); // Apply knockback
                 enemyHealth.currentHealth -= bulletDamage;
                 if (enemyHealth.currentHealth <= 0) {
                     ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);

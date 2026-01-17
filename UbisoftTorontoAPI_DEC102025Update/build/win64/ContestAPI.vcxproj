@@ -83,6 +83,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\glut\include;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\miniaudio;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /FS</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -136,6 +137,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\glut\include;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\miniaudio;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /FS</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -190,6 +192,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\glut\include;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\miniaudio;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /FS</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -244,6 +247,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\glut\include;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\miniaudio;D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\ContestAPI\vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /FS</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>

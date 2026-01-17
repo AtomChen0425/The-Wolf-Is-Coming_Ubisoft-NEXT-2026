@@ -15,11 +15,6 @@ static float Distance3D(const Vec3& a, const Vec3& b) {
 }
 
 // Helper function to normalize a Vec3
-static Vec3 Normalize3D(const Vec3& v) {
-    float len = std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len < 0.0001f) return Vec3(0.0f, 0.0f, 0.0f);
-    return Vec3(v.x / len, v.y / len, v.z / len);
-}
 
 // Helper function to get player position
 static bool GetPlayerPosition(EntityManager& registry, Vec3& outPosition) {

@@ -92,7 +92,7 @@ events:
       The output was:
       0
       适用于 .NET Framework MSBuild 版本 17.14.23+b0019275e
-      生成启动时间为 2026/1/16 17:51:08。
+      生成启动时间为 2026/1/16 20:19:15。
       
       节点 1 上的项目“D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)。
       PrepareForBuild:
@@ -121,7 +121,7 @@ events:
           0 个警告
           0 个错误
       
-      已用时间 00:00:00.58
+      已用时间 00:00:00.50
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -981,7 +981,7 @@ events:
       The output was:
       0
       适用于 .NET Framework MSBuild 版本 17.14.23+b0019275e
-      生成启动时间为 2026/1/16 17:51:09。
+      生成启动时间为 2026/1/16 20:19:16。
       
       节点 1 上的项目“D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj”(默认目标)。
       PrepareForBuild:
@@ -1010,7 +1010,7 @@ events:
           0 个警告
           0 个错误
       
-      已用时间 00:00:00.52
+      已用时间 00:00:00.48
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -1532,8 +1532,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-mm35jq"
-      binary: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-mm35jq"
+      source: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tiys1k"
+      binary: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tiys1k"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Ob0 /Od"
@@ -1542,39 +1542,39 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-mm35jq'
+        Change Dir: 'D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tiys1k'
         
-        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_07874.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_4bb05.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.14.23+b0019275e
-        鐢熸垚鍚姩鏃堕棿涓?2026/1/16 17:51:10銆?
+        鐢熸垚鍚姩鏃堕棿涓?2026/1/16 20:19:16銆?
         
-        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-mm35jq\\cmTC_07874.vcxproj鈥?榛樿鐩爣)銆?
+        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tiys1k\\cmTC_4bb05.vcxproj鈥?榛樿鐩爣)銆?
         PrepareForBuild:
           宸插惎鐢ㄧ粨鏋勫寲杈撳嚭銆傜紪璇戝櫒璇婃柇鐨勬牸寮忚缃皢鍙嶆槧閿欒灞傛缁撴瀯銆傛湁鍏宠缁嗕俊鎭紝璇峰弬闃?https://aka.ms/cpp/structured-output銆?
-          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-mm35jq\\Debug\\鈥濄€?
-          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_07874.dir\\Debug\\cmTC_07874.tlog\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tiys1k\\Debug\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_4bb05.dir\\Debug\\cmTC_4bb05.tlog\\鈥濄€?
         InitializeBuildStatus:
-          姝ｅ湪鍒涘缓鈥渃mTC_07874.dir\\Debug\\cmTC_07874.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
-          姝ｅ湪瀵光€渃mTC_07874.dir\\Debug\\cmTC_07874.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
+          姝ｅ湪鍒涘缓鈥渃mTC_4bb05.dir\\Debug\\cmTC_4bb05.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
+          姝ｅ湪瀵光€渃mTC_4bb05.dir\\Debug\\cmTC_4bb05.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
         ClCompile:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_07874.dir\\Debug\\\\" /Fd"cmTC_07874.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_4bb05.dir\\Debug\\\\" /Fd"cmTC_4bb05.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
           鐢ㄤ簬 x64 鐨?Microsoft (R) C/C++ 浼樺寲缂栬瘧鍣?19.44.35220 鐗?
           鐗堟潈鎵€鏈?C) Microsoft Corporation銆備繚鐣欐墍鏈夋潈鍒┿€?
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_07874.dir\\Debug\\\\" /Fd"cmTC_07874.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_4bb05.dir\\Debug\\\\" /Fd"cmTC_4bb05.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-mm35jq\\Debug\\cmTC_07874.exe" /INCREMENTAL /ILK:"cmTC_07874.dir\\Debug\\cmTC_07874.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-mm35jq/Debug/cmTC_07874.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-mm35jq/Debug/cmTC_07874.lib" /MACHINE:X64  /machine:x64 cmTC_07874.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_07874.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-mm35jq\\Debug\\cmTC_07874.exe
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tiys1k\\Debug\\cmTC_4bb05.exe" /INCREMENTAL /ILK:"cmTC_4bb05.dir\\Debug\\cmTC_4bb05.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tiys1k/Debug/cmTC_4bb05.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tiys1k/Debug/cmTC_4bb05.lib" /MACHINE:X64  /machine:x64 cmTC_4bb05.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_4bb05.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tiys1k\\Debug\\cmTC_4bb05.exe
         FinalizeBuildStatus:
-          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_07874.dir\\Debug\\cmTC_07874.tlog\\unsuccessfulbuild鈥濄€?
-          姝ｅ湪瀵光€渃mTC_07874.dir\\Debug\\cmTC_07874.tlog\\cmTC_07874.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
-        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-mm35jq\\cmTC_07874.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
+          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_4bb05.dir\\Debug\\cmTC_4bb05.tlog\\unsuccessfulbuild鈥濄€?
+          姝ｅ湪瀵光€渃mTC_4bb05.dir\\Debug\\cmTC_4bb05.tlog\\cmTC_4bb05.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
+        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tiys1k\\cmTC_4bb05.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
         
         宸叉垚鍔熺敓鎴愩€?
             0 涓鍛?
             0 涓敊璇?
         
-        宸茬敤鏃堕棿 00:00:00.70
+        宸茬敤鏃堕棿 00:00:00.65
         
       exitCode: 0
   -
@@ -1614,8 +1614,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-zoylg0"
-      binary: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-zoylg0"
+      source: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tuvfm8"
+      binary: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tuvfm8"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Ob0 /Od"
@@ -1625,39 +1625,39 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-zoylg0'
+        Change Dir: 'D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tuvfm8'
         
-        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_f2555.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_51741.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.14.23+b0019275e
-        鐢熸垚鍚姩鏃堕棿涓?2026/1/16 17:51:11銆?
+        鐢熸垚鍚姩鏃堕棿涓?2026/1/16 20:19:17銆?
         
-        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-zoylg0\\cmTC_f2555.vcxproj鈥?榛樿鐩爣)銆?
+        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tuvfm8\\cmTC_51741.vcxproj鈥?榛樿鐩爣)銆?
         PrepareForBuild:
           宸插惎鐢ㄧ粨鏋勫寲杈撳嚭銆傜紪璇戝櫒璇婃柇鐨勬牸寮忚缃皢鍙嶆槧閿欒灞傛缁撴瀯銆傛湁鍏宠缁嗕俊鎭紝璇峰弬闃?https://aka.ms/cpp/structured-output銆?
-          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-zoylg0\\Debug\\鈥濄€?
-          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_f2555.dir\\Debug\\cmTC_f2555.tlog\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tuvfm8\\Debug\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_51741.dir\\Debug\\cmTC_51741.tlog\\鈥濄€?
         InitializeBuildStatus:
-          姝ｅ湪鍒涘缓鈥渃mTC_f2555.dir\\Debug\\cmTC_f2555.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
-          姝ｅ湪瀵光€渃mTC_f2555.dir\\Debug\\cmTC_f2555.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
+          姝ｅ湪鍒涘缓鈥渃mTC_51741.dir\\Debug\\cmTC_51741.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
+          姝ｅ湪瀵光€渃mTC_51741.dir\\Debug\\cmTC_51741.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
         ClCompile:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_f2555.dir\\Debug\\\\" /Fd"cmTC_f2555.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_51741.dir\\Debug\\\\" /Fd"cmTC_51741.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
           鐢ㄤ簬 x64 鐨?Microsoft (R) C/C++ 浼樺寲缂栬瘧鍣?19.44.35220 鐗?
           鐗堟潈鎵€鏈?C) Microsoft Corporation銆備繚鐣欐墍鏈夋潈鍒┿€?
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_f2555.dir\\Debug\\\\" /Fd"cmTC_f2555.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_51741.dir\\Debug\\\\" /Fd"cmTC_51741.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-zoylg0\\Debug\\cmTC_f2555.exe" /INCREMENTAL /ILK:"cmTC_f2555.dir\\Debug\\cmTC_f2555.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-zoylg0/Debug/cmTC_f2555.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-zoylg0/Debug/cmTC_f2555.lib" /MACHINE:X64  /machine:x64 cmTC_f2555.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_f2555.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-zoylg0\\Debug\\cmTC_f2555.exe
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tuvfm8\\Debug\\cmTC_51741.exe" /INCREMENTAL /ILK:"cmTC_51741.dir\\Debug\\cmTC_51741.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tuvfm8/Debug/cmTC_51741.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-tuvfm8/Debug/cmTC_51741.lib" /MACHINE:X64  /machine:x64 cmTC_51741.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_51741.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tuvfm8\\Debug\\cmTC_51741.exe
         FinalizeBuildStatus:
-          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_f2555.dir\\Debug\\cmTC_f2555.tlog\\unsuccessfulbuild鈥濄€?
-          姝ｅ湪瀵光€渃mTC_f2555.dir\\Debug\\cmTC_f2555.tlog\\cmTC_f2555.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
-        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-zoylg0\\cmTC_f2555.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
+          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_51741.dir\\Debug\\cmTC_51741.tlog\\unsuccessfulbuild鈥濄€?
+          姝ｅ湪瀵光€渃mTC_51741.dir\\Debug\\cmTC_51741.tlog\\cmTC_51741.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
+        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-tuvfm8\\cmTC_51741.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
         
         宸叉垚鍔熺敓鎴愩€?
             0 涓鍛?
             0 涓敊璇?
         
-        宸茬敤鏃堕棿 00:00:00.74
+        宸茬敤鏃堕棿 00:00:00.78
         
       exitCode: 0
   -

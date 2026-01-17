@@ -126,8 +126,6 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         // 4. Apply velocity to position
         // CollisionSystem will detect and resolve any collisions after this
 		Vec3 dirSpeed = Vec3(strafeSpeed, 1.0f, forwardSpeed);
-        float cosAngle = std::cos(playerTag.rotationYaw);
-        float sinAngle = -std::sin(playerTag.rotationYaw);
 		Vec3 localMove = vel * dirSpeed * dtSec;
 
         Vec4 worldMove4 = RotateByY(playerTag.rotationYaw, Vec4(localMove.x, localMove.y, localMove.z, 0.0f));
@@ -181,7 +179,7 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
 
                     // Create bullet entity
                     Entity bullet = registry.createEntity();
-                    registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,20,true });
+                    registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,20,true,0,0,300 });
                     registry.addComponent(bullet, Transform3D{ bulletPosition, 5.0f, 5.0f, 5.0f, config.bulletColorR, config.bulletColorG, config.bulletColorB });
                     registry.addComponent(bullet, Velocity3D{ bulletDirection * bulletSpeed });
                     playerTag.shootCooldown = 100.0f;

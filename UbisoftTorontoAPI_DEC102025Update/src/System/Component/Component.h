@@ -155,8 +155,9 @@ struct Bullet {
     float damage;             // Damage dealt on hit
     bool isPlayerBullet;      // true if fired by player, false if fired by enemy
 
-	float explosionRadius;   //if > 0, bullet causes area damage
+    float explosionRadius;   //if > 0, bullet causes area damage
     float size;
+    float knockback;
 };
 
 struct ParticleTag {};
@@ -241,7 +242,9 @@ struct Weapon {
     float projectileLife;   
     float explosionRadius;  
 
-    float r, g, b;         
+    float r, g, b;  
+
+    float knockback;
 };
 
 struct WeaponInventory {
