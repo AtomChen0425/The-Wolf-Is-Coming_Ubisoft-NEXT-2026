@@ -34,34 +34,14 @@ void StartScene::Update(float deltaTimeMs) {
 }
 
 void StartScene::Render() {
-    // Draw semi-transparent gray background for better UI visibility
-    // Using two triangles to form a rectangle
-    float left = 256.0f;   // Center horizontally
-    float top = 200.0f;    // Position vertically
-    float width = 600.0f;
-    float height = 400.0f;
-    float right = left + width;
-    float bottom = top + height;
-    float z = 0.0f;
-    float w = 1.0f;
-    float gray = 0.2f;     // Dark gray
-    float alpha = 0.7f;    // Semi-transparent (note: will appear as blended color)
-    
-    // First triangle (top-left to bottom-right)
-    App::DrawTriangle(left, top, z, w,
-                      right, top, z, w,
-                      left, bottom, z, w,
-                      gray, gray, gray,
-                      gray, gray, gray,
-                      gray, gray, gray);
-    
-    // Second triangle (bottom-right corner)
-    App::DrawTriangle(right, top, z, w,
-                      right, bottom, z, w,
-                      left, bottom, z, w,
-                      gray, gray, gray,
-                      gray, gray, gray,
-                      gray, gray, gray);
+    // TODO: Load and render custom background image
+    // Placeholder path: "./Assets/Textures/start_background.png"
+    // You can replace this with your custom background image
+    // Example code (uncomment and implement when ready):
+    // CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/start_background.png", 1, 1);
+    // bgSprite->SetPosition(512.0f, 384.0f);  // Center of screen (1024x768)
+    // bgSprite->SetScale(1.0f);
+    // bgSprite->Draw();
     
     uiManager.Render();
 }
@@ -295,32 +275,14 @@ void SettingsScene::Update(float deltaTimeMs) {
 }
 
 void SettingsScene::Render() {
-    // Draw semi-transparent gray background for better UI visibility
-    float left = 256.0f;
-    float top = 150.0f;
-    float width = 600.0f;
-    float height = 450.0f;
-    float right = left + width;
-    float bottom = top + height;
-    float z = 0.0f;
-    float w = 1.0f;
-    float gray = 0.2f;
-    
-    // First triangle
-    App::DrawTriangle(left, top, z, w,
-                      right, top, z, w,
-                      left, bottom, z, w,
-                      gray, gray, gray,
-                      gray, gray, gray,
-                      gray, gray, gray);
-    
-    // Second triangle
-    App::DrawTriangle(right, top, z, w,
-                      right, bottom, z, w,
-                      left, bottom, z, w,
-                      gray, gray, gray,
-                      gray, gray, gray,
-                      gray, gray, gray);
+    // TODO: Load and render custom background image
+    // Placeholder path: "./Assets/Textures/settings_background.png"
+    // You can replace this with your custom background image
+    // Example code (uncomment and implement when ready):
+    // CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/settings_background.png", 1, 1);
+    // bgSprite->SetPosition(512.0f, 384.0f);  // Center of screen (1024x768)
+    // bgSprite->SetScale(1.0f);
+    // bgSprite->Draw();
     
     // Render options with highlighting
     float mouseColor = (selectedOption == 0) ? 1.0f : 0.5f;
@@ -486,32 +448,14 @@ void UpgradeScene::Update(float deltaTimeMs) {
 }
 
 void UpgradeScene::Render() {
-    // Draw semi-transparent gray background for better UI visibility
-    float left = 156.0f;
-    float top = 150.0f;
-    float width = 800.0f;
-    float height = 450.0f;
-    float right = left + width;
-    float bottom = top + height;
-    float z = 0.0f;
-    float w = 1.0f;
-    float gray = 0.2f;
-    
-    // First triangle
-    App::DrawTriangle(left, top, z, w,
-                      right, top, z, w,
-                      left, bottom, z, w,
-                      gray, gray, gray,
-                      gray, gray, gray,
-                      gray, gray, gray);
-    
-    // Second triangle
-    App::DrawTriangle(right, top, z, w,
-                      right, bottom, z, w,
-                      left, bottom, z, w,
-                      gray, gray, gray,
-                      gray, gray, gray,
-                      gray, gray, gray);
+    // TODO: Load and render custom background image
+    // Placeholder path: "./Assets/Textures/upgrade_background.png"
+    // You can replace this with your custom background image
+    // Example code (uncomment and implement when ready):
+    // CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/upgrade_background.png", 1, 1);
+    // bgSprite->SetPosition(512.0f, 384.0f);  // Center of screen (1024x768)
+    // bgSprite->SetScale(1.0f);
+    // bgSprite->Draw();
     
     uiManager.Render();
 }
