@@ -106,3 +106,9 @@ static Vec3 Normalize3D(const Vec3& v) {
 	if (len < 0.0001f) return Vec3(0.0f, 0.0f, 0.0f);
 	return Vec3(v.x / len, v.y / len, v.z / len);
 }
+static float Distance3D(const Vec3& a, const Vec3& b) {
+	float dx = a.x - b.x;
+	float dy = a.y - b.y;
+	float dz = a.z - b.z;
+	return std::sqrt(dx * dx + dy * dy + dz * dz);
+}

@@ -125,7 +125,7 @@ namespace LevelSystem {
                 weapon.type = WeaponType::MachineGun;
                 weapon.name = "Sheep MG";
                 weapon.damage = 5.0f;
-                weapon.fireRate = 0.2f;
+                weapon.fireRate = 50.0f;
                 weapon.currentCooldown = 0.0f;
                 weapon.projectileSpeed = 400.0f;
                 weapon.projectileSize = 3.0f;
@@ -138,7 +138,7 @@ namespace LevelSystem {
                 weapon.type = WeaponType::Cannon;
                 weapon.name = "Sheep Cannon";
                 weapon.damage = 30.0f;
-                weapon.fireRate = 1.5f;
+                weapon.fireRate = 1000.0f;
                 weapon.currentCooldown = 0.0f;
                 weapon.projectileSpeed = 250.0f;
                 weapon.projectileSize = 10.0f;
@@ -153,12 +153,12 @@ namespace LevelSystem {
             int sheepCount = 0;
             for (EntityID id : sheepView) {
                 auto& inventory = sheepView.get<WeaponInventory>(id);
-                
                 sheepCount++;
+                inventory.weapons.push_back(weapon);
                 if (sheepCount > static_cast<int>(GetSheepCount(registry) * 0.1f)) {
                     break;
                 }
-                inventory.weapons.push_back(weapon);
+                
             }
             return;
         }

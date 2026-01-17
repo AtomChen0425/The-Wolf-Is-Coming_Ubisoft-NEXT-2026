@@ -259,7 +259,7 @@ void UpgradeScene::OnEnter() {
     uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
     
     // Render each option horizontally (3 boxes side by side)
-    float spacing = 200.0f;
+    float spacing = 300.0f;
     float startX = -spacing;
     
     for (int i = 0; i < 3; i++) {

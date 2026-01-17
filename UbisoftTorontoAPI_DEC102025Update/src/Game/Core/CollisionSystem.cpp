@@ -471,8 +471,9 @@ void CheckBulletDamage(EntityManager& registry) {
     View<Bullet, Transform3D> bulletView(registry);
     View<Health, Transform3D,EnemyTag> enemyView(registry);
     for (EntityID bulletId : bulletView) {
-		float bulletDamage = bulletView.get<Bullet>(bulletId).damage;
-        float bulletKnockback = bulletView.get<Bullet>(bulletId).knockback;
+		auto& bullet = bulletView.get<Bullet>(bulletId);
+		float bulletDamage = bullet.damage;
+        float bulletKnockback = bullet.knockback;
         auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
         Vec3 bulletPos = bulletTransform.pos;
         Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
@@ -496,6 +497,28 @@ void CheckBulletDamage(EntityManager& registry) {
 				Vec3 enemyDirection = Normalize3D(enemyVel);
 				enemyVel =  enemyDirection * ( - bulletKnockback); // Apply knockback
                 enemyHealth.currentHealth -= bulletDamage;
+
+                if (bullet.explosionRadius > 0.0f) {
+                    // 创建爆炸特效
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+
+                    // 查找爆炸范围内的所有敌人
+                    View<EnemyTag, Transform3D, Health> allEnemies(registry);
+                    for (EntityID otherId : allEnemies) {
+                        auto& otherT = allEnemies.get<Transform3D>(otherId);
+                        float dist = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (dist <= bullet.explosionRadius) {
+                            auto& hp = allEnemies.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage;
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                blockToRemove.push_back(enemyId);
+                            }
+                        }
+                        
+                    }
+                }
                 if (enemyHealth.currentHealth <= 0) {
                     ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
                     blockToRemove.push_back(enemyId);

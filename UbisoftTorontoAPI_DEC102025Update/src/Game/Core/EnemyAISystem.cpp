@@ -7,12 +7,7 @@
 static const float MAX_BULLET_DISTANCE = 5000.0f;  // Maximum distance bullets can travel from origin
 
 // Helper function to calculate distance between two 3D points
-static float Distance3D(const Vec3& a, const Vec3& b) {
-    float dx = a.x - b.x;
-    float dy = a.y - b.y;
-    float dz = a.z - b.z;
-    return std::sqrt(dx * dx + dy * dy + dz * dz);
-}
+
 
 // Helper function to normalize a Vec3
 
