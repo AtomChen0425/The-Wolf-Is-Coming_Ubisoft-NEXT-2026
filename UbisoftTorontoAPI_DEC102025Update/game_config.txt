@@ -10,7 +10,7 @@ rotationSpeed=2
 
 # Camera Controls
 mouseSensitivity=0.005
-maxPitch=1.4
+maxPitch=0.3
 minPitch=-1.4
 
 # Map Generation

@@ -70,13 +70,6 @@ void RenderSystem25D(EntityManager& registry, Camera25D& camera) {
     }
 }
 
-// Helper function to calculate squared distance between two 3D points
-inline float DistanceSq(float x1, float y1, float z1, float x2, float y2, float z2) {
-    float dx = x1 - x2;
-    float dy = y1 - y2;
-    float dz = z1 - z2;
-    return dx * dx + dy * dy + dz * dz;
-}
 // Calculate the minimum depth (closest point) of a cube in camera space
 // This is used for proper z-sorting to avoid occlusion issues
 static float MaxDepthInCameraSpace(const Transform3D& t, const Camera3D& camera) {

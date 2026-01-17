@@ -125,15 +125,13 @@ void EngineSystem::Update(const float deltaTimeMs) {
         }
         // No physics/collision updates on game over screen
         return;
-    }
+    } else if (gameState == GameState::Upgrading) {
+
+        return;
+	}
     
     // Playing state - normal game updates
     if (gameState == GameState::Playing) {
-        // Check for R to reset even during gameplay
-        if (App::IsKeyPressed(App::KEY_R)) {
-            ResetGame();
-            return;
-        }
         
         // Update level system (track time and round progression)
         bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs);

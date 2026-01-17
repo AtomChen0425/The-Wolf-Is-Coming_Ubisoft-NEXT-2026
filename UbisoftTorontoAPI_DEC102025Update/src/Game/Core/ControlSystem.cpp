@@ -56,8 +56,9 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
             float deltaY = (mouseY - camera.lastMouseY) * mouseSensitivity;
             
 			playerTag.rotationYaw += deltaX; // Rotate player with camera
+			playerTag.rotationPitch = Clamp(playerTag.rotationPitch - deltaY, 0, config.maxPitch);
             // Update camera rotation based on mouse movement
-			playerTag.rotationPitch -= deltaY; // Invert to match typical FPS controls
+			//playerTag.rotationPitch -= deltaY; // Invert to match typical FPS controls
             // Vertical mouse movement controls pitch (up/down viewing)
             
             // Store current mouse position for next frame
@@ -167,6 +168,7 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
                     registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,true,weapon.explosionRadius,weapon.projectileSize });
                     registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
                     registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
+                    registry.addComponent(bullet, TrailEmitter{ 50.0f, 0.0f, 300.0f, 5.0f, 1.0f, 0.5f, 0.0f });
                     weapon.currentCooldown = weapon.fireRate;
                     }
             }
@@ -183,6 +185,7 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
                     registry.addComponent(bullet, Bullet{ bulletDirection ,bulletSpeed, 1000,20,true,0,0,300 });
                     registry.addComponent(bullet, Transform3D{ bulletPosition, 5.0f, 5.0f, 5.0f, config.bulletColorR, config.bulletColorG, config.bulletColorB });
                     registry.addComponent(bullet, Velocity3D{ bulletDirection * bulletSpeed });
+                    registry.addComponent(bullet, TrailEmitter{ 50.0f, 0.0f, 300.0f, 5.0f, 1.0f, 0.5f, 0.0f });
                     playerTag.shootCooldown = 100.0f;
                 }
             }

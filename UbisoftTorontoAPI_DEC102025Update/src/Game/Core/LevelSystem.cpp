@@ -32,6 +32,13 @@ namespace LevelSystem {
     
     bool CheckGameOver(EntityManager& registry) {
         // Game is over if there are no sheep left
+		View<PlayerTag,Transform3D> playerView(registry);
+        for (auto id : playerView) {
+            auto& playerPos = playerView.get<Transform3D>(id).pos;
+            if (playerPos.y < -500.0f) {
+                return true; // Game over if player falls below -500
+            }
+		}
         return GetSheepCount(registry) == 0;
     }
     

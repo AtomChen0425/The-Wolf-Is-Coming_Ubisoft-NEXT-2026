@@ -286,6 +286,16 @@ void UpgradeScene::OnEnter() {
 }
 
 void UpgradeScene::OnExit() {
+    EntityManager& registry = engineSystem->GetRegistry();
+    View<EnemyTag> enemyView(registry); // Preload EnemyTag view for performance
+    static std::vector<EntityID> EnemyToRemove;
+    for (EntityID id : enemyView) {
+        EnemyToRemove.push_back(id);
+
+    }
+    for (EntityID id : EnemyToRemove) {
+        registry.destroyEntity(id);
+    }
     uiManager.Clear();
 }
 
