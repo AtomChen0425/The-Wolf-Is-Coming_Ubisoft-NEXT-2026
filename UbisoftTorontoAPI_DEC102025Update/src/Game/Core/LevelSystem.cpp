@@ -43,7 +43,11 @@ namespace LevelSystem {
             UpgradeType::JumpBoost,
             UpgradeType::GravityReduction,
             UpgradeType::BulletSpeed,
-            UpgradeType::AddSheep
+            UpgradeType::AddSheep,
+            UpgradeType::PlayerMachineGun,
+            UpgradeType::PlayerCannon,
+            UpgradeType::SheepMachineGun,
+            UpgradeType::SheepCannon
         };
         
         // Simple shuffle for 3 picks
@@ -72,7 +76,88 @@ namespace LevelSystem {
             return;
         }
         
-        // Find player and apply upgrade
+        // Handle player weapon upgrades
+        if (type == UpgradeType::PlayerMachineGun || type == UpgradeType::PlayerCannon) {
+            View<PlayerTag, WeaponInventory> playerView(registry);
+            for (EntityID id : playerView) {
+                auto& inventory = playerView.get<WeaponInventory>(id);
+                
+                Weapon weapon;
+                if (type == UpgradeType::PlayerMachineGun) {
+                    weapon.type = WeaponType::MachineGun;
+                    weapon.name = "Machine Gun";
+                    weapon.damage = 10.0f;
+                    weapon.fireRate = 0.1f;  // Fast fire rate
+                    weapon.currentCooldown = 0.0f;
+                    weapon.projectileSpeed = 500.0f;
+                    weapon.projectileSize = 5.0f;
+                    weapon.projectileLife = 2000.0f;
+                    weapon.explosionRadius = 0.0f;
+                    weapon.r = 1.0f;
+                    weapon.g = 1.0f;
+                    weapon.b = 0.0f;
+                } else {  // PlayerCannon
+                    weapon.type = WeaponType::Cannon;
+                    weapon.name = "Cannon";
+                    weapon.damage = 50.0f;
+                    weapon.fireRate = 1.0f;  // Slow fire rate
+                    weapon.currentCooldown = 0.0f;
+                    weapon.projectileSpeed = 300.0f;
+                    weapon.projectileSize = 15.0f;
+                    weapon.projectileLife = 3000.0f;
+                    weapon.explosionRadius = 50.0f;
+                    weapon.r = 1.0f;
+                    weapon.g = 0.5f;
+                    weapon.b = 0.0f;
+                }
+                inventory.weapons.push_back(weapon);
+                break;
+            }
+            return;
+        }
+        
+        // Handle sheep weapon upgrades
+        if (type == UpgradeType::SheepMachineGun || type == UpgradeType::SheepCannon) {
+            View<SheepTag, WeaponInventory> sheepView(registry);
+            
+            Weapon weapon;
+            if (type == UpgradeType::SheepMachineGun) {
+                weapon.type = WeaponType::MachineGun;
+                weapon.name = "Sheep MG";
+                weapon.damage = 5.0f;
+                weapon.fireRate = 0.2f;
+                weapon.currentCooldown = 0.0f;
+                weapon.projectileSpeed = 400.0f;
+                weapon.projectileSize = 3.0f;
+                weapon.projectileLife = 2000.0f;
+                weapon.explosionRadius = 0.0f;
+                weapon.r = 0.5f;
+                weapon.g = 1.0f;
+                weapon.b = 0.5f;
+            } else {  // SheepCannon
+                weapon.type = WeaponType::Cannon;
+                weapon.name = "Sheep Cannon";
+                weapon.damage = 30.0f;
+                weapon.fireRate = 1.5f;
+                weapon.currentCooldown = 0.0f;
+                weapon.projectileSpeed = 250.0f;
+                weapon.projectileSize = 10.0f;
+                weapon.projectileLife = 3000.0f;
+                weapon.explosionRadius = 40.0f;
+                weapon.r = 0.5f;
+                weapon.g = 1.0f;
+                weapon.b = 1.0f;
+            }
+            
+            // Add weapon to all sheep
+            for (EntityID id : sheepView) {
+                auto& inventory = sheepView.get<WeaponInventory>(id);
+                inventory.weapons.push_back(weapon);
+            }
+            return;
+        }
+        
+        // Find player and apply stat upgrade
         View<PlayerTag, PlayerStats> view(registry);
         
         for (EntityID id : view) {
@@ -99,8 +184,7 @@ namespace LevelSystem {
                     stats.bulletSpeedBonus += config.bulletSpeedUpgradeAmount;
                     break;
                     
-                case UpgradeType::AddSheep:
-                    // Already handled above
+                default:
                     break;
             }
         }
@@ -114,6 +198,10 @@ namespace LevelSystem {
             case UpgradeType::GravityReduction: return "Gravity Reduction";
             case UpgradeType::BulletSpeed: return "Bullet Speed";
             case UpgradeType::AddSheep: return "Add Sheep";
+            case UpgradeType::PlayerMachineGun: return "Player Machine Gun";
+            case UpgradeType::PlayerCannon: return "Player Cannon";
+            case UpgradeType::SheepMachineGun: return "Sheep Machine Gun";
+            case UpgradeType::SheepCannon: return "Sheep Cannon";
             default: return "Unknown";
         }
     }
@@ -131,6 +219,10 @@ namespace LevelSystem {
             case UpgradeType::AddSheep:
                 snprintf(sheepDesc, sizeof(sheepDesc), "Add %d more sheep", config.sheepAddedPerUpgrade);
                 return sheepDesc;
+            case UpgradeType::PlayerMachineGun: return "Give yourself a machine gun";
+            case UpgradeType::PlayerCannon: return "Give yourself a cannon";
+            case UpgradeType::SheepMachineGun: return "Arm all sheep with machine guns";
+            case UpgradeType::SheepCannon: return "Arm all sheep with cannons";
             default: return "Unknown effect";
         }
     }

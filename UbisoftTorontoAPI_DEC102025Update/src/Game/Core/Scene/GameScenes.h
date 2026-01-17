@@ -96,4 +96,12 @@ public:
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
+    int selectedUpgrade;  // Currently selected upgrade (0-2)
+    LevelSystem::UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
+    
+    // UI element pointers
+    UIText* upgradeNames[3];
+    UIText* upgradeDescs[3];
+    UIText* leftBrackets[3];
+    UIText* rightBrackets[3];
 };
