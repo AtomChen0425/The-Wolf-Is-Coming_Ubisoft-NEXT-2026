@@ -601,7 +601,61 @@ void CheckWolfHeartsPlayer(EntityManager& registry) {
     }
 
 }
+
+void CheckBulletHitMap(EntityManager& registry) {
+    View<Bullet, Transform3D> bulletView(registry);
+    View<Collider3D, Transform3D,MapBlockTag> colliderView(registry);
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+    for (EntityID bulletId : bulletView) {
+        auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
+		auto& bullet = bulletView.get<Bullet>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+        Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
+            bulletPos.y - bulletTransform.height / 2,
+            bulletPos.z - bulletTransform.depth / 2);
+        Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
+            bulletPos.y + bulletTransform.height / 2,
+            bulletPos.z + bulletTransform.depth / 2);
+        for (EntityID colliderId : colliderView) {
+            auto& colliderTransform = colliderView.get<Transform3D>(colliderId);
+            Vec3 colliderMin(colliderTransform.pos.x - colliderTransform.width / 2,
+                colliderTransform.pos.y - colliderTransform.height / 2,
+                colliderTransform.pos.z - colliderTransform.depth / 2);
+            Vec3 colliderMax(colliderTransform.pos.x + colliderTransform.width / 2,
+                colliderTransform.pos.y + colliderTransform.height / 2,
+                colliderTransform.pos.z + colliderTransform.depth / 2);
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+                if (bullet.explosionRadius > 0.0f) {
+                    // 创建爆炸特效
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+                    View<EnemyTag, Transform3D, Health> allEnemies(registry);
+                    for (EntityID otherId : allEnemies) {
+                        auto& otherT = allEnemies.get<Transform3D>(otherId);
+                        float dist = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (dist <= bullet.explosionRadius) {
+                            auto& hp = allEnemies.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage;
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                bulletToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
+                            }
+                        }
+
+                    }
+                }
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                break; // Bullet can hit only one collider
+            }
+        }
+    }
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
+    }
+}
 void CollisionSystem::Update(EntityManager& registry) {
+    CheckBulletHitMap(registry);
     CheckPlayer3DCollisions(registry);
 	//CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
