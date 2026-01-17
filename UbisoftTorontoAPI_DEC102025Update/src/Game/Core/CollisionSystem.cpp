@@ -565,10 +565,46 @@ void CheckWolfEatSheep(EntityManager& registry) {
         registry.destroyEntity(id);
 	}
 }
+
+void CheckWolfHeartsPlayer(EntityManager& registry) {
+    View<WolfTag, Transform3D> wolfView(registry);
+    View<PlayerTag, Transform3D,Health> playerView(registry);
+    static std::vector<EntityID> playersToRemove;
+    playersToRemove.clear();
+    for (EntityID wolfId : wolfView) {
+        auto& wolfTransform = wolfView.get<Transform3D>(wolfId);
+        Vec3 wolfPos = wolfTransform.pos;
+        Vec3 wolfMin(wolfPos.x - wolfTransform.width / 2,
+            wolfPos.y - wolfTransform.height / 2,
+            wolfPos.z - wolfTransform.depth / 2);
+        Vec3 wolfMax(wolfPos.x + wolfTransform.width / 2,
+            wolfPos.y + wolfTransform.height / 2,
+            wolfPos.z + wolfTransform.depth / 2);
+        for (EntityID playerId : playerView) {
+            auto& playerTransform = playerView.get<Transform3D>(playerId);
+			auto& playerHealth = playerView.get<Health>(playerId);
+            Vec3 colliderMin(playerTransform.pos.x - playerTransform.width / 2,
+                playerTransform.pos.y - playerTransform.height / 2,
+                playerTransform.pos.z - playerTransform.depth / 2);
+            Vec3 colliderMax(playerTransform.pos.x + playerTransform.width / 2,
+                playerTransform.pos.y + playerTransform.height / 2,
+                playerTransform.pos.z + playerTransform.depth / 2);
+            if (gCollision->AABB3D(wolfMin, wolfMax, colliderMin, colliderMax)) {
+                playerHealth.currentHealth -= 10;
+				Vec3 dir = Normalize3D(playerTransform.pos - wolfTransform.pos);
+				const float knockbackImpulse = 20.0f;
+				auto& playerVel = playerView.get<Velocity3D>(playerId).vel;
+				playerVel = dir * knockbackImpulse;
+            }
+        }
+    }
+
+}
 void CollisionSystem::Update(EntityManager& registry) {
     CheckPlayer3DCollisions(registry);
 	//CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
 	CheckWolfEatSheep(registry);
+    CheckWolfHeartsPlayer(registry);    
 }

@@ -35,8 +35,12 @@ namespace LevelSystem {
 		View<PlayerTag,Transform3D> playerView(registry);
         for (auto id : playerView) {
             auto& playerPos = playerView.get<Transform3D>(id).pos;
+			auto& playerHealth = playerView.get<Health>(id);
             if (playerPos.y < -500.0f) {
                 return true; // Game over if player falls below -500
+            }
+            if (playerHealth.currentHealth <= 0) {
+                return true; // Game over if player health is 0
             }
 		}
         return GetSheepCount(registry) == 0;

@@ -209,7 +209,7 @@ struct SheepComponent {
 
     float viewRadius = 60.0f;      // 邻居感知半径
     float enemyDetectRange = 150.0f; // 敌人检测半径
-    float maxSpeed = 90.0f;        // 最大速度
+    float maxSpeed = 190.0f;        // 最大速度
     float maxForce = 50.0f;       // 转向灵活性
 };
 

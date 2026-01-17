@@ -46,7 +46,7 @@ PlayingScene::PlayingScene(EngineSystem* engine)
 void PlayingScene::OnEnter() {
     uiManager.Clear();
     // Add UI elements
-    scoreText = uiManager.AddText("Score: 0", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
+    scoreText = uiManager.AddText("Health: 100", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
     roundText = uiManager.AddText("Round: 1", 10, 35, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     timeText = uiManager.AddText("Time: 60s", 10, 60, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     sheepText = uiManager.AddText("Sheep: 0", 10, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopLeft);
@@ -66,12 +66,12 @@ void PlayingScene::Update(float deltaTimeMs) {
     // Update score display
     View<PlayerTag> playerView(registry);
     for (EntityID id : playerView) {
-        auto& player = playerView.get<PlayerTag>(id);
+        auto& player = playerView.get<Health>(id);
 
-        if (player.score != m_lastScore) {
-            m_lastScore = player.score;
+        if (player.currentHealth != m_lastScore) {
+            m_lastScore = player.currentHealth;
             if (scoreText) {
-                scoreText->SetText("Score: " + std::to_string(m_lastScore));
+                scoreText->SetText("Health: " + std::to_string(m_lastScore));
             }
         }
     }

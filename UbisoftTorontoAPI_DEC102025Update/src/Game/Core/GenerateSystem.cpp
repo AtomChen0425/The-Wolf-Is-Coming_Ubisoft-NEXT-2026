@@ -151,6 +151,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
     registry.addComponent(entity, PlayerStats{});  // Add player stats for upgrades
     registry.addComponent(entity, PhysicsTag{}); //
     registry.addComponent(entity, inventory);
+    registry.addComponent(entity, Health{100, 100}); //
 }
 
 // Create a default simple template
