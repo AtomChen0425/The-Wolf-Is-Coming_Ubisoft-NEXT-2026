@@ -162,7 +162,19 @@ namespace WolfSystem {
         // Update each wolf
         View<WolfTag, Transform3D, Velocity3D, WolfComponent> wolfView(registry);
 
+        // Store all wolf positions and sizes for collision detection
+        std::vector<EntityID> wolfIDs;
+        std::vector<Vec3> wolfPositions;
+        std::vector<float> wolfSizes;
+        
         for (auto id : wolfView) {
+            wolfIDs.push_back(id);
+            wolfPositions.push_back(wolfView.get<Transform3D>(id).pos);
+            wolfSizes.push_back(wolfView.get<Transform3D>(id).width);
+        }
+
+        for (size_t idx = 0; idx < wolfIDs.size(); idx++) {
+            EntityID id = wolfIDs[idx];
             auto& t = wolfView.get<Transform3D>(id);
             auto& v = wolfView.get<Velocity3D>(id);
             auto& params = wolfView.get<WolfComponent>(id);
@@ -217,9 +229,36 @@ namespace WolfSystem {
                 chaseForce.z = vel.z * -0.5f;
             }
 
+            // Add separation force to avoid overlapping with other wolves
+            Vec3 separationForce = { 0, 0, 0 };
+            float mySize = wolfSizes[idx];
+            
+            for (size_t j = 0; j < wolfPositions.size(); j++) {
+                if (idx == j) continue;  // Skip self
+                
+                float dx = pos.x - wolfPositions[j].x;
+                float dz = pos.z - wolfPositions[j].z;
+                float distSq = dx * dx + dz * dz;
+                
+                // Separation radius = sum of radii + small buffer
+                float otherSize = wolfSizes[j];
+                float minDist = (mySize + otherSize) * 0.6f;  // 0.6 to allow some overlap buffer
+                float minDistSq = minDist * minDist;
+                
+                if (distSq < minDistSq && distSq > 0.0001f) {
+                    float dist = std::sqrt(distSq);
+                    // Stronger repulsion when closer
+                    float repulsionStrength = (minDist - dist) / dist * 300.0f;
+                    separationForce.x += (dx / dist) * repulsionStrength;
+                    separationForce.z += (dz / dist) * repulsionStrength;
+                }
+            }
+
             // Apply force to velocity
             vel.x += chaseForce.x * dt;
             vel.z += chaseForce.z * dt;
+            vel.x += separationForce.x * dt;
+            vel.z += separationForce.z * dt;
 
             // Limit maximum speed
             WolfLimit(vel, params.maxSpeed);
