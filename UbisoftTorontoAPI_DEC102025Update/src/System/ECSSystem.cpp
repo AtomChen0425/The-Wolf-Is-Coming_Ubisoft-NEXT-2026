@@ -74,6 +74,7 @@ void EngineSystem::InitializeGame() {
 
     camera.fov = config.fov;
     // Create the player using config values
+	CollisionSystem::ResetCollisionGrid();
     GenerateSystem::CreatePlayer3D(*registry);
 
     // Generate initial chunks around spawn point using chunk-based system

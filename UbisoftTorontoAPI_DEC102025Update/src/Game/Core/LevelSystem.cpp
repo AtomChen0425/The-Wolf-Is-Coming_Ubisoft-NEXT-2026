@@ -4,6 +4,7 @@
 #include "SheepSystem.h"
 #include "../../System/Math/Math.h"
 #include "GenerateSystem.h"
+#include "../ContestAPI/app.h"
 #include <vector>
 #include <algorithm>
 
@@ -209,7 +210,41 @@ namespace LevelSystem {
             }
 
             // Add weapon to 10% of sheep
-            int sheepCount = 0;
+            CSimpleSprite* pSprite2 = App::CreateSprite("data/TestData/Sheep2.png", 2, 1);
+
+            // 
+            const float speed = 1.0f / 15.0f;
+            pSprite2->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_LEFT, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_RIGHT, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_FORWARDS, speed, { 0,1 });
+            pSprite2->SetScale(0.3f);
+            // 
+            std::vector<EntityID> sheepIds;
+            for (EntityID id : sheepView) {
+                sheepIds.push_back(id);
+            }
+
+            const int total = static_cast<int>(sheepIds.size());
+            if (total <= 0) {
+                return;
+            }
+
+            
+            for (size_t i = 0; i + 1 < sheepIds.size(); ++i) {
+                const size_t j = i + static_cast<size_t>(Rand01() * static_cast<float>(sheepIds.size() - i));
+                std::swap(sheepIds[i], sheepIds[j]);
+            }
+
+            const int toGive = std::max(1, static_cast<int>(total * 0.1f));
+
+            for (int i = 0; i < toGive; ++i) {
+                auto& inventory = sheepView.get<WeaponInventory>(sheepIds[static_cast<size_t>(i)]);
+				auto& sheepSprite = sheepView.get<SpriteComponent>(sheepIds[static_cast<size_t>(i)]);
+				sheepSprite.sprite = pSprite2;
+                inventory.weapons.push_back(weapon);
+            }
+            /*int sheepCount = 0;
             for (EntityID id : sheepView) {
                 auto& inventory = sheepView.get<WeaponInventory>(id);
                 sheepCount++;
@@ -218,7 +253,7 @@ namespace LevelSystem {
                     break;
                 }
 
-            }
+            }*/
             return;
         }
 

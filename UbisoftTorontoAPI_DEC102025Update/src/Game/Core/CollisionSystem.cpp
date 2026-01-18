@@ -54,6 +54,10 @@ void CollisionSystem::OnMapGenerated(EntityManager& registry, const std::vector<
         colGrid.Insert(id, t);
     }
 }
+void CollisionSystem::ResetCollisionGrid()
+{
+    colGrid.Clear();
+}
 void CheckBulletHitMap(EntityManager& registry) {
     View<Bullet, Transform3D> bulletView(registry);
     View<Collider3D, Transform3D, MapBlockTag> colliderView(registry);
