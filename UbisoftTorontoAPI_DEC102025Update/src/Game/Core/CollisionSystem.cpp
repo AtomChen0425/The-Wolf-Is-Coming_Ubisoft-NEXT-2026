@@ -2,6 +2,7 @@
 #include "../../System/Component/Component.h"
 #include "../../System/Physic/Collision.h"
 #include "../../Game/Core/ParticleSystem.h"
+#include "WolfSystem.h"
 #include <cmath>
 #include "../System/Math/Math.h"
 #include <unordered_map>
@@ -564,6 +565,9 @@ void CheckBulletDamage(EntityManager& registry) {
     View<Health, Transform3D,EnemyTag> enemyView(registry);
     for (EntityID bulletId : bulletView) {
 		auto& bullet = bulletView.get<Bullet>(bulletId);
+        if (!bullet.isPlayerBullet) {
+            continue; // Skip enemy bullets
+		}
 		float bulletDamage = bullet.damage;
         float bulletKnockback = bullet.knockback;
         auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
@@ -750,11 +754,32 @@ void CheckBulletHitMap1(EntityManager& registry) {
 
 void CheckEnemyBulletCollision(EntityManager& registry) {
     View<Bullet, EnemyBulletTag, Transform3D> enemyBulletView(registry);
-    View<PlayerTag, Transform3D, Health> playerView(registry);
-    static std::vector<Entity> EnemyToRemove;
-    EnemyToRemove.clear();
+    // Get all potential targets (players and sheep)
+    std::vector<Transform3D> targetTransform;
+    std::vector<bool> isPlayerTarget;  // Track if target is player (true) or sheep (false)
+	std::vector<EntityID> targetsEntityID;
+    // Add all players as potential targets
+    View<PlayerTag, Transform3D> playerView(registry);
+    for (auto id : playerView) {
+        targetTransform.push_back(playerView.get<Transform3D>(id));
+        isPlayerTarget.push_back(true);
+		targetsEntityID.push_back(id);
+        break; // Only target the first player found
+    }
+
+    // Add all sheep as potential targets
+    View<SheepTag, Transform3D> sheepView(registry);
+    for (auto id : sheepView) {
+        targetTransform.push_back(sheepView.get<Transform3D>(id));
+        isPlayerTarget.push_back(false);
+        targetsEntityID.push_back(id);
+    }
+    static std::vector<Entity> TargetToRemove;
+    TargetToRemove.clear();
     static std::vector<Entity> bulletToRemove;
     bulletToRemove.clear();
+    static std::vector<Vec3> wolfToAdd;
+    wolfToAdd.clear();
     for (EntityID bulletId : enemyBulletView) {
         auto& bulletTransform = enemyBulletView.get<Transform3D>(bulletId);
 		auto& bullet = enemyBulletView.get<Bullet>(bulletId);
@@ -765,22 +790,45 @@ void CheckEnemyBulletCollision(EntityManager& registry) {
         Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
             bulletPos.y + bulletTransform.height / 2,
             bulletPos.z + bulletTransform.depth / 2);
-        for (EntityID playerId : playerView) {
-            auto& playerTransform = playerView.get<Transform3D>(playerId);
-            auto& playerHealth = playerView.get<Health>(playerId);
-            Vec3 colliderMin(playerTransform.pos.x - playerTransform.width / 2,
-                playerTransform.pos.y - playerTransform.height / 2,
-                playerTransform.pos.z - playerTransform.depth / 2);
-            Vec3 colliderMax(playerTransform.pos.x + playerTransform.width / 2,
-                playerTransform.pos.y + playerTransform.height / 2,
-                playerTransform.pos.z + playerTransform.depth / 2);
-            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
-                playerHealth.currentHealth -= bullet.damage;
-                Vec3 dir = Normalize3D(playerTransform.pos - bulletTransform.pos);
-                auto& playerVel = playerView.get<Velocity3D>(playerId).vel;
-                playerVel = dir * bullet.knockback;
+        for (size_t i = 0; i < targetTransform.size(); i++) {
+            Vec3 targetPos = targetTransform[i].pos;
+            Vec3 targetMin(targetPos.x - targetTransform[i].width / 2,
+                targetPos.y - targetTransform[i].height / 2,
+                targetPos.z - targetTransform[i].depth / 2);
+            Vec3 targetMax(targetPos.x + targetTransform[i].width / 2,
+                targetPos.y + targetTransform[i].height / 2,
+                targetPos.z + targetTransform[i].depth / 2);
+            if (gCollision->AABB3D(bulletMin, bulletMax, targetMin, targetMax)) {
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                if (isPlayerTarget[i]) {
+                    // Handle player hit
+                    auto& playerHealth = playerView.get<Health>(targetsEntityID[i]);
+                    playerHealth.currentHealth -= bullet.damage;
+                    Vec3 dir = Normalize3D(playerView.get<Transform3D>(targetsEntityID[i]).pos - bulletTransform.pos);
+                    auto& playerVel = playerView.get<Velocity3D>(targetsEntityID[i]).vel;
+                    playerVel = dir * bullet.knockback;
+                } else {
+                    // Handle sheep hit
+					Entity& sheepEntity = Entity{ targetsEntityID[i],registry.getEntityVersion(targetsEntityID[i]) };
+                    TargetToRemove.push_back(sheepEntity);
+                    if (enemyBulletView.has<MagicTag>(bulletId)) {
+                        wolfToAdd.push_back(targetPos);
+                        ParticleSystem::CreateExplosion(registry, targetPos, 20, Vec3{ 0.0f, 1.0f, 0.0f }, 150.0f);
+					}
+					
+                }
+                break;
             }
         }
+    }
+    for (Entity& e : TargetToRemove) {
+        registry.destroyEntity(e);
+    }
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
+    }
+    for (Vec3& pos : wolfToAdd) {
+        WolfSystem::InitWolfOfType(registry, pos.x, pos.z, WolfType::Basic);
     }
 }
 void CollisionSystem::Update(EntityManager& registry) {

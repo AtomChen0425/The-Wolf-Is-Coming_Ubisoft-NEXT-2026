@@ -161,7 +161,7 @@ struct Bullet {
     float knockback;
 };
 struct EnemyBulletTag {};
-
+struct MagicTag {};
 struct ParticleTag {};
 
 struct ParticlePhysics {
@@ -263,7 +263,7 @@ struct Weapon {
 
     float r, g, b;  
 
-    float knockback;
+    float knockback = 0.0f;
 };
 
 struct WeaponInventory {

@@ -71,6 +71,58 @@ void WolfShoot(EntityManager& registry, float dt, Vec3& targetPosition) {
         }
     }
 }
+void WolfShootByID(WeaponInventory& inventory, Transform3D& wolfTransform, float dt, Vec3& targetPosition,EntityManager& registry) {
+        auto& wolfPos = wolfTransform.pos;
+        Vec3 nearestTarget;
+        bool foundTarget = false;
+
+        float dx = targetPosition.x - wolfPos.x;
+        float dz = targetPosition.z - wolfPos.z;
+        float dy = targetPosition.y - wolfPos.y;
+        Vec3 bulletDirection = Normalize3D(Vec3{ dx, dy, dz });
+
+        size_t weaponCount = inventory.weapons.size();
+
+        const float totalArc = 1.5f * 3.14159265f;
+        const float radius = 10.0f; // Բ�İ뾶
+
+        float currentYaw = std::atan2(bulletDirection.x, bulletDirection.z);
+        float startAngle = currentYaw - (totalArc / 2.0f);
+
+        float angleStep = (weaponCount > 1) ? (totalArc / (weaponCount - 1)) : 0.0f;
+
+        for (int i = 0; i < weaponCount; ++i) {
+            Weapon& weapon = inventory.weapons[i];
+            weapon.currentCooldown -= dt;
+
+            if (weapon.currentCooldown > 0.0f) continue;
+            float theta = (weaponCount > 1) ? (startAngle + i * angleStep) : currentYaw;
+
+            Vec3 circleOffset = Vec3{
+                std::sin(theta) * radius,
+                0.0f,
+                std::cos(theta) * radius
+            };
+
+            Vec3 bulletPosition = wolfPos + circleOffset;
+            //Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
+            // Create bullet entity
+            Entity bullet = registry.createEntity();
+            registry.addComponent(bullet, Bullet{ bulletDirection ,weapon.projectileSpeed, weapon.projectileLife,weapon.damage,false,weapon.explosionRadius,weapon.projectileSize,weapon.knockback });
+            registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
+            registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
+            registry.addComponent(bullet, EnemyBulletTag{}); // Enemy bullet
+            if (weapon.type == WeaponType::MagicWand) {
+				registry.addComponent(bullet, MagicTag{});
+            }
+        
+            registry.addComponent(bullet, TrailEmitter{ 50.0f, 0.0f, 300.0f, 5.0f, 0.0f, 0.5f, 0.0f });
+        
+            
+            weapon.currentCooldown = weapon.fireRate;
+        }
+}
+
 namespace WolfSystem {
 
     void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type) {
@@ -80,8 +132,8 @@ namespace WolfSystem {
         float size = 20.0f;
         float r = 0.4f, g = 0.2f, b = 0.1f;  // Color
         int maxHealth = 100;
-        float chaseForce = 200.0f;
-        float maxSpeed = 150.0f;
+        float chaseForce = 300.0f;
+        float maxSpeed = 200.0f;
         float detectionRange = 400.0f;
         bool canJump = false;
         CSimpleSprite* pSprite = nullptr;
@@ -202,7 +254,7 @@ namespace WolfSystem {
             gun.type = WeaponType::MachineGun;
             gun.name = "Wolf Gun";
             gun.damage = 8.0f;
-            gun.fireRate = 700.0f;
+            gun.fireRate = 70.0f;
             gun.currentCooldown = 0.0f;
             gun.projectileSpeed = 1000.0f;
             gun.projectileSize = 10.0f;
@@ -221,12 +273,13 @@ namespace WolfSystem {
             wand.type = WeaponType::MagicWand;
             wand.name = "Magic Wand";
             wand.damage = 12.0f;
-            wand.fireRate = 800.0f;
+            wand.fireRate = 80.0f;
             wand.currentCooldown = 0.0f;
             wand.projectileSpeed = 600.0f;
             wand.projectileSize = 12.0f;
             wand.projectileLife = 7000.0f;
             wand.explosionRadius = 0.0f;
+            wand.knockback = 10.0f;
             wand.r = 0.7f;
             wand.g = 0.0f;
             wand.b = 0.5f;
@@ -258,7 +311,7 @@ namespace WolfSystem {
         View<PlayerTag, Transform3D> playerView(registry);
         for (auto id : playerView) {
             targetPositions.push_back(playerView.get<Transform3D>(id).pos);
-            WolfShoot(registry, dt, targetPositions[0]);
+            //WolfShoot(registry, dt, targetPositions[0]);
             isPlayerTarget.push_back(true);
 			break; // Only target the first player found
         }
@@ -322,7 +375,10 @@ namespace WolfSystem {
             if (!foundTarget) {
                 continue;
             }
-
+            if (wolfView.has<WeaponInventory>(id)) {
+                // Only chase if within detection range
+				WolfShootByID(wolfView.get<WeaponInventory>(id), wolfView.get<Transform3D>(id), dt, nearestTarget, registry);
+			}
             float nearestDist = std::sqrt(nearestDistSq);
 
             // Calculate chase force toward nearest target

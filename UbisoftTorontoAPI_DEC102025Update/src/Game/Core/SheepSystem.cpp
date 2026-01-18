@@ -191,7 +191,7 @@ namespace SheepSystem {
             float offsetZ = (rand() % 200 - 100.0f);
 
             registry.addComponent(sheep, Transform3D{
-                Vec3{startX + offsetX, 20.0f, startZ + offsetZ},
+                Vec3{startX + offsetX, 30.0f, startZ + offsetZ},
                 15.0f, 15.0f, 15.0f, // 
                 0.9f, 0.9f, 0.9f     // 
                 });

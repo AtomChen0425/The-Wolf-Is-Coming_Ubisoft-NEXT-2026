@@ -29,6 +29,7 @@ namespace LevelSystem {
         // Tank wolves (slowest spawn rate)
         if (generationTimers.tankWolfSpawnTimer >= levelData.tankWolfSpawnIntervalMs && levelData.currentRound > 5) {
             GenerateSystem::GenerateWolfOfType(registry, WolfType::Tank);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Magic);
             generationTimers.tankWolfSpawnTimer = 0.0f;
         }
 
@@ -52,10 +53,21 @@ namespace LevelSystem {
     }
     
     int GetSheepCount(EntityManager& registry) {
+        static std::vector<Entity> TargetToRemove;
+        TargetToRemove.clear();
         int count = 0;
         View<SheepTag> sheepView(registry);
         for (auto id : sheepView) {
+			auto& sheepTransform = sheepView.get<Transform3D>(id);
+            if (sheepTransform.pos.y < -600.0f)
+            {
+				TargetToRemove.push_back({ id, registry.getEntityVersion(id) });
+                continue;
+            }// Only count sheep that are above -500 in Y
             count++;
+        }
+        for (auto e : TargetToRemove) {
+			registry.destroyEntity(e);
         }
         return count;
     }
