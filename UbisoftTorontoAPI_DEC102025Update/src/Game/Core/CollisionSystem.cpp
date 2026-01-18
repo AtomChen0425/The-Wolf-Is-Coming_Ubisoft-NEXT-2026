@@ -111,19 +111,16 @@ void CheckBulletHitMap(EntityManager& registry) {
 
             if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
 
-                // --- 命中逻辑 ---
                 if (bullet.explosionRadius > 0.0f) {
                     ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
 
-                    // 注意：这里仍然遍历所有敌人 (O(Enemy))
-                    // 如果敌人很多，建议也为敌人建立一个 Grid，或者简单地只计算距离平方
+
                     View<EnemyTag, Transform3D, Health> allEnemies(registry);
-                    float radiusSq = bullet.explosionRadius * bullet.explosionRadius; // 预计算平方
+                    float radiusSq = bullet.explosionRadius * bullet.explosionRadius; 
 
                     for (EntityID otherId : allEnemies) {
                         auto& otherT = allEnemies.get<Transform3D>(otherId);
 
-                        // 优化：使用距离平方 (DistanceSquared3D) 避免开方运算
                         float distSq = Distance3D(otherT.pos, bulletTransform.pos);
 
                         if (distSq <= radiusSq) {
@@ -131,21 +128,21 @@ void CheckBulletHitMap(EntityManager& registry) {
                             hp.currentHealth -= bullet.damage;
                             if (hp.currentHealth <= 0) {
                                 ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
-                                // 使用带版本号的Entity结构以安全删除
+
                                 bulletToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
                             }
                         }
                     }
                 }
 
-                // 标记删除子弹
+
                 bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
-                break; // 子弹撞墙后销毁，不再检测其他墙壁
+                break; 
             }
         }
     }
 
-    // 6. 统一删除
+
     for (Entity& e : bulletToRemove) {
         if (registry.isValid(e)) {
             registry.destroyEntity(e);
@@ -388,26 +385,24 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
 //}
 
 void CheckPhysics3DCollisions(EntityManager& registry) {
-    // A. 准备阶段：构建静态碰撞体的空间网格
-    // 假设格子大小为 100 (根据你的地图块大小调整，建议略大于最大的墙)
+
     static CollisionGrid colGrid(120.0f);
     colGrid.Clear();
 
     View<Collider3D, Transform3D> colliderView(registry);
 
-    // O(M): 遍历所有墙/地，放入网格
+
     for (EntityID id : colliderView) {
         auto& t = colliderView.get<Transform3D>(id);
         colGrid.Insert(id, t);
     }
 
-    // B. 检测阶段：遍历所有动态实体
+
     View<PhysicsTag, Transform3D, Velocity3D> entityView(registry);
 
-    // 用于缓存查询结果的 vector，避免在循环内反复分配内存
+
     static std::vector<EntityID> nearbyColliders;
 
-    // O(N): 遍历所有物理实体
     for (EntityID entityId : entityView) {
         auto& physicsTag = entityView.get<PhysicsTag>(entityId);
         auto& entityTransform = entityView.get<Transform3D>(entityId);
@@ -424,20 +419,14 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
             pos.y + entityTransform.height / 2,
             pos.z + entityTransform.depth / 2);
 
-        // --- 优化核心：只获取附近的碰撞体 ---
         nearbyColliders.clear();
         colGrid.GetPotentialColliders(pos.x, pos.z, nearbyColliders);
 
         float highestFloor = -1000.0f;
 
-        // O(k): k 是附近碰撞体的数量，通常只有 个位数
-        for (EntityID colliderId : nearbyColliders) {
-            // 防止重复检测 (如果一个物体跨了多个格子，可能会在 list 里出现多次)
-            // 简单的做法是不管它，反正 AABB 计算很快。
-            // 严谨的做法可以用一个 visited set，但 vector 遍历通常更快。
 
-            // 注意：因为 nearbyColliders 存的是 ID，我们需要重新获取组件引用
-            // 这里假设 registry.getComponent 是 O(1) 的 (数组索引)
+        for (EntityID colliderId : nearbyColliders) {
+
             auto* pCollider = registry.getComponent<Collider3D>(Entity{ colliderId, registry.getEntityVersion(colliderId) });
             auto* pTransform = registry.getComponent<Transform3D>(Entity{ colliderId, registry.getEntityVersion(colliderId) });
 
@@ -446,16 +435,15 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
             auto& collider = *pCollider;
             auto& transform = *pTransform;
 
-            // 碰撞体 AABB
             Vec3 colliderMin(transform.pos.x - transform.width / 2,
                 transform.pos.y - transform.height / 2,
                 transform.pos.z - transform.depth / 2);
             Vec3 colliderMax(transform.pos.x + transform.width / 2,
                 transform.pos.y + transform.height / 2,
                 transform.pos.z + transform.depth / 2);
-            // AABB 检测
+
             if (gCollision->AABB3D(entityMin, entityMax, colliderMin, colliderMax)) {
-                // ... 你的原有逻辑保持不变 ...
+
 
                 float penetrationX = (entityMin.x < colliderMin.x) ?
                     (colliderMin.x - entityMax.x) : (colliderMax.x - entityMin.x);
@@ -490,7 +478,7 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
                         vel.y = 0.0f;
                     }
                 }
-                // 更新 AABB 以便下一次检测准确
+
                 entityMin = Vec3(pos.x - entityTransform.width / 2,
                     pos.y - entityTransform.height / 2,
                     pos.z - entityTransform.depth / 2);
@@ -500,10 +488,10 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
             }
         }
 
-        // 地面吸附逻辑
+
         if (highestFloor > -999.0f) {
             float entityBottom = pos.y - entityTransform.height / 2;
-            // 稍微放宽一点判定范围，防止抖动
+
             if (entityBottom <= highestFloor + 4.0f) {
                 pos.y = highestFloor + entityTransform.height / 2;
                 vel.y = 0.0f;
@@ -751,7 +739,7 @@ void CheckBulletHitMap1(EntityManager& registry) {
     }
 }
 
-void CheckEnemyBulletCollision(EntityManager& registry, const GameConfig& config) {
+void CheckEnemyBulletCollision(EntityManager& registry) {
     View<Bullet, EnemyBulletTag, Transform3D> enemyBulletView(registry);
     // Get all potential targets (players and sheep)
     std::vector<Transform3D> targetTransform;
@@ -828,16 +816,16 @@ void CheckEnemyBulletCollision(EntityManager& registry, const GameConfig& config
         registry.destroyEntity(e);
     }
     for (Vec3& pos : wolfToAdd) {
-        WolfSystem::InitWolfOfType(registry, pos.x, pos.z, WolfType::Basic, config);
+        WolfSystem::InitWolfOfType(registry, pos.x, pos.z, WolfType::Basic);
     }
 }
-void CollisionSystem::Update(EntityManager& registry, const GameConfig& config) {
+void CollisionSystem::Update(EntityManager& registry) {
     //CheckBulletHitMap(registry);
     //CheckPlayer3DCollisions(registry);
     CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
-    CheckEnemyBulletCollision(registry, config);
+    CheckEnemyBulletCollision(registry);
     CheckWolfEatSheep(registry);
     CheckWolfHeartsPlayer(registry);
 }

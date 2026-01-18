@@ -6,23 +6,21 @@
 
 namespace GenerateSystem
 {
-	void CreatePlayer(EntityManager& registry);
-	void CreatePlayer3D(EntityManager& registry, const GameConfig& config);
+	//void CreatePlayer25D(EntityManager& registry);
+	void CreatePlayer3D(EntityManager& registry);
 	void SpawnEnemy(EntityManager& registry);
-	void MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ, const GameConfig& config);
+	void MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ);
 
 	// Chunk-based map generation for infinite 4-direction map
-	void ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config);
+	void ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks);
 
 	// Template-based map generation
-	void GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ, const GameConfig& config);
-	MapTemplate CreateDefaultTemplate(const GameConfig& config);
-	MapTemplate CreateTestTemplate(const GameConfig& config);
+	void GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ);
+	MapTemplate CreateDefaultTemplate();
+	MapTemplate CreateTestTemplate();
 
-	// Create a test enemy with AI components (for demonstration purposes)
-	void CreateTestEnemyWithAI(EntityManager& registry, float x, float y, float z, bool enableMovement, bool enableShooting);
 
 	// Wolf generation functions
-	void GenerateWolf(EntityManager& registry, const GameConfig& config);  // Generate basic wolf (backward compatibility)
-	void GenerateWolfOfType(EntityManager& registry, WolfType type, const GameConfig& config);  // Generate specific wolf type
+	void GenerateWolf(EntityManager& registry);  // Generate basic wolf (backward compatibility)
+	void GenerateWolfOfType(EntityManager& registry, WolfType type);  // Generate specific wolf type
 };

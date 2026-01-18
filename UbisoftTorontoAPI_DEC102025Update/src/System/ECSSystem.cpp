@@ -21,13 +21,13 @@ EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)
 {
     // Load game configuration from file
-    if (!config.LoadFromFile("game_config.txt")) {
-        // If loading fails, save default config for next time
-        config.SaveToFile("game_config.txt");
-    }
+    //if (!config.LoadFromFile("game_config.txt")) {
+    //    // If loading fails, save default config for next time
+    //    config.SaveToFile("game_config.txt");
+    //}
 
     // Initialize level data with config values
-    levelData.Initialize(config);
+    levelData.Initialize();
 
     InitializeScenes();
 }
@@ -74,10 +74,10 @@ void EngineSystem::InitializeGame() {
 
     camera.fov = config.fov;
     // Create the player using config values
-    GenerateSystem::CreatePlayer3D(*registry, config);
+    GenerateSystem::CreatePlayer3D(*registry);
 
     // Generate initial chunks around spawn point using chunk-based system
-    GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks, config);
+    GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks);
     SheepSystem::InitSheep(*registry, config.playerSpawnX, config.playerSpawnZ + 200.0f, 50);
 
     //WolfSystem::InitWolves(*registry, config.playerSpawnX + 300.0f, config.playerSpawnZ + 400.0f, 5);
@@ -149,7 +149,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
     if (gameState == GameState::Playing) {
 
         // Update level system (track time and round progression)
-        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs, generationTimers, *registry, config);
+        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs, generationTimers, *registry);
 
         // Check if all sheep are dead (game over condition)
         if (LevelSystem::CheckGameOver(*registry)) {
@@ -168,11 +168,11 @@ void EngineSystem::Update(const float deltaTimeMs) {
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {
             auto& playerTransform = playerView.get<Transform3D>(id);
-            GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
+            GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks);
 
         }
         // Update player control (handles input and movement, and camera control)
-        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
+        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings);
         // Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
         SheepSystem::SheepShoot(*registry, deltaTimeMs);
@@ -183,7 +183,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
 
         MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
-        CollisionSystem::Update(*registry, config);
+        CollisionSystem::Update(*registry);
         PhysicsSystem::Update(*registry, deltaTimeMs);
         RenderSystem::Update(*registry, deltaTimeMs);
 

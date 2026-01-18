@@ -5,5 +5,5 @@
 
 namespace ControlSystem
 {
-	void Update(EntityManager& registry, float dtms, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings, const GameConfig& config);
+	void Update(EntityManager& registry, float dtms, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings);
 };

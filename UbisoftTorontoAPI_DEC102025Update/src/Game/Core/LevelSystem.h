@@ -27,7 +27,7 @@ namespace LevelSystem {
 
     // Update level timer and check for round completion
     // Returns true if the round just completed (for triggering upgrade scene)
-    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry, const GameConfig& config);
+    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry);
 
     // Check if game should end (all sheep dead)
     // Returns true if game over condition is met
@@ -40,11 +40,11 @@ namespace LevelSystem {
     void GenerateRandomUpgrades(UpgradeType upgradeOptions[3]);
 
     // Apply an upgrade to the player
-    void ApplyUpgrade(EntityManager& registry, const GameConfig& config, UpgradeType type);
+    void ApplyUpgrade(EntityManager& registry, UpgradeType type);
 
     // Get upgrade name for display
     const char* GetUpgradeName(UpgradeType type);
 
     // Get upgrade description for display
-    const char* GetUpgradeDescription(UpgradeType type, const GameConfig& config);
+    const char* GetUpgradeDescription(UpgradeType type);
 }

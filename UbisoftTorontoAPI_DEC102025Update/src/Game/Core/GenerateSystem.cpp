@@ -56,7 +56,7 @@ void GenerateSystem::SpawnEnemy(EntityManager& registry) {
     }
 }
 
-void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ, const GameConfig& config) {
+void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ, float& nextSpawnZ) {
     const float blockSize = config.blockSize;       // Length of each road block
     const float renderDistance = config.renderDistance; // How far ahead to render
     const float deleteDistance = config.deleteDistance;  // How far behind to delete
@@ -68,8 +68,8 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
     // --- 1. Spawn road sections ahead of player using templates ---
     while (nextSpawnZ < playerZ + renderDistance) {
         // Generate a random template for this section
-        MapTemplate tmpl = CreateTestTemplate(config);
-        GenerateMapFromTemplate(registry, tmpl, nextSpawnZ, config);
+        MapTemplate tmpl = CreateTestTemplate();
+        GenerateMapFromTemplate(registry, tmpl, nextSpawnZ);
 
         // Create side walls for this section
         const int roadWidth = config.roadWidth;
@@ -129,7 +129,7 @@ void GenerateSystem::MapGenerationSystem(EntityManager& registry, float playerZ,
         registry.destroyEntity(e);
     }
 }
-void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& config) {
+void GenerateSystem::CreatePlayer3D(EntityManager& registry) {
     Entity entity = registry.createEntity();
     WeaponInventory inventory;
     registry.addComponent(entity, Transform3D{
@@ -183,7 +183,7 @@ void GenerateSystem::CreatePlayer3D(EntityManager& registry, const GameConfig& c
 }
 
 // Create a default simple template
-MapTemplate GenerateSystem::CreateDefaultTemplate(const GameConfig& config) {
+MapTemplate GenerateSystem::CreateDefaultTemplate() {
     const int roadWidth = config.roadWidth;
     MapTemplate tmpl(roadWidth, 1); // roadWidth wide, 1 deep
 
@@ -195,7 +195,7 @@ MapTemplate GenerateSystem::CreateDefaultTemplate(const GameConfig& config) {
     return tmpl;
 }
 
-MapTemplate GenerateSystem::CreateTestTemplate(const GameConfig& config) {
+MapTemplate GenerateSystem::CreateTestTemplate() {
     const int roadWidth = config.roadWidth;
     MapTemplate tmpl(roadWidth, 1);
 
@@ -244,7 +244,7 @@ MapTemplate GenerateSystem::CreateTestTemplate(const GameConfig& config) {
 }
 
 // Generate map blocks from a template at a specific Z position
-void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ, const GameConfig& config) {
+void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapTemplate& mapTemplate, float startZ) {
     const float blockSize = config.blockSize;
     const float floorHeight = config.floorHeight;
     const float tallBlockHeight = config.tallBlockHeight;
@@ -375,7 +375,7 @@ void GenerateSystem::GenerateMapFromTemplate(EntityManager& registry, const MapT
         }
     }
 }
-void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameConfig& config) {
+void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ) {
     const float blockSize = config.blockSize;
     const int chunkSize = config.chunkSize;
     const float floorHeight = config.floorHeight;
@@ -421,7 +421,7 @@ void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ, const GameCo
     }
 }
 
-void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks) {
     const float blockSize = config.blockSize;
     const int chunkSize = config.chunkSize;
     const int renderRadius = config.chunkRenderRadius;
@@ -471,7 +471,7 @@ void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ,
     }
 }
 
-//void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+//void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks) {
 //    const float blockSize = config.blockSize;
 //    const int chunkSize = config.chunkSize;
 //    const int renderRadius = config.chunkRenderRadius;
@@ -523,7 +523,7 @@ void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ,
 //}
 
 // Chunk-based generation system for infinite 4-direction map
-void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks, const GameConfig& config) {
+void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks) {
     const float blockSize = config.blockSize;
     const int chunkSize = config.chunkSize;
     const int renderRadius = config.chunkRenderRadius;
@@ -542,21 +542,21 @@ void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float player
 
             // Only generate if not already loaded
             if (loadedChunks.find(chunkKey) == loadedChunks.end()) {
-                GenerateChunk(registry, chunkX, chunkZ, config);
+                GenerateChunk(registry, chunkX, chunkZ);
                 loadedChunks.insert(chunkKey);
             }
         }
     }
 
     // Despawn distant chunks
-    DespawnDistantChunks(registry, playerX, playerZ, loadedChunks, config);
+    DespawnDistantChunks(registry, playerX, playerZ, loadedChunks);
 }
-void GenerateSystem::GenerateWolf(EntityManager& registry, const GameConfig& config) {
+void GenerateSystem::GenerateWolf(EntityManager& registry) {
     // Generate basic wolf type for backward compatibility
-    GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic, config);
+    GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic);
 }
 
-void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type, const GameConfig& config) {
+void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type) {
     // Find player position to spawn wolf around them
     View<PlayerTag, Transform3D> playerView(registry);
     Vec3 playerPos;
@@ -585,5 +585,5 @@ void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type, 
     };
 
     // Use WolfSystem to create wolf of specific type
-    WolfSystem::InitWolfOfType(registry, spawnPos.x, spawnPos.z, type, config);
+    WolfSystem::InitWolfOfType(registry, spawnPos.x, spawnPos.z, type);
 }

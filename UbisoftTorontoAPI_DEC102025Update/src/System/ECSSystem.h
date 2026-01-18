@@ -98,7 +98,6 @@ public:
     EntityManager* GetEntityManager() { return registry.get(); }  // Add this for UpgradeScene
     Camera3D& GetCamera() { return camera; }
     GameSettings& GetSettings() { return settings; }
-    GameConfig& GetGameConfig() { return config; }  // Renamed from GetConfig for clarity
     GameLevelData& GetLevelData() { return levelData; }  // Access to level/round data
     void SetGameState(GameState newState);
 private:
@@ -109,7 +108,6 @@ private:
     GameState gameState = GameState::StartScreen;
     SceneManager sceneManager;
     GameSettings settings;
-    GameConfig config;
     GameLevelData levelData;  // Track level progression and round data
 
     void InitializeScenes();

@@ -123,7 +123,7 @@ void WolfShootByID(WeaponInventory& inventory, Transform3D& wolfTransform, float
 
 namespace WolfSystem {
 
-    void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type, const GameConfig& config) {
+    void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type) {
         Entity wolf = registry.createEntity();
 
         // Base stats that will be modified by type
@@ -293,14 +293,14 @@ namespace WolfSystem {
         }
     }
 
-    void InitWolves(EntityManager& registry, float startX, float startZ, int count, const GameConfig& config) {
+    void InitWolves(EntityManager& registry, float startX, float startZ, int count) {
         for (int i = 0; i < count; i++) {
             // Random starting position within a range
             float offsetX = (rand() % 300 - 150.0f);
             float offsetZ = (rand() % 300 - 150.0f);
 
             // Create basic type wolves
-            InitWolfOfType(registry, startX + offsetX, startZ + offsetZ, WolfType::Basic, config);
+            InitWolfOfType(registry, startX + offsetX, startZ + offsetZ, WolfType::Basic);
         }
     }
 

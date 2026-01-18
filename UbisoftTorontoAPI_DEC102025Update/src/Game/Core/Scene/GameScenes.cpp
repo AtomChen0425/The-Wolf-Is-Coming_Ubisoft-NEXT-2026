@@ -345,7 +345,7 @@ void UpgradeScene::OnEnter() {
         upgradeNames[i] = uiManager.AddText(optionText, xPos - 80, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
 
         // Description
-        std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
+        std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i]);
         upgradeDescs[i] = uiManager.AddText(descText, xPos - 90, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
     }
 
@@ -436,7 +436,7 @@ void UpgradeScene::Update(float deltaTimeMs) {
     // Confirm selection
     if (enterPressed && !enterWasPressed) {
         // Apply upgrade using LevelSystem
-        LevelSystem::ApplyUpgrade(engineSystem->GetRegistry(), engineSystem->GetGameConfig(), upgradeOptions[selectedUpgrade]);
+        LevelSystem::ApplyUpgrade(engineSystem->GetRegistry(), upgradeOptions[selectedUpgrade]);
         // Advance to next round
         engineSystem->GetLevelData().NextRound();
         // Clear UI before switching

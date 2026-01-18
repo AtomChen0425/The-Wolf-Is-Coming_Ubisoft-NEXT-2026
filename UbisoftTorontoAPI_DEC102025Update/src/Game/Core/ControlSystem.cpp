@@ -6,7 +6,7 @@
 #include <cmath>
 #include "Math/Math.h"
 
-void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings, const GameConfig& config) {
+void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings) {
     float dtSec = dt / 1000.0f;
     float playerCurrentZ = 0.0f;
 
@@ -140,7 +140,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
 
 }
 
-void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
+void FireControl(EntityManager& registry, float dt) {
     float dtSec = dt / 1000.0f;
     float bulletSpeed = config.bulletSpeed;
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
@@ -219,8 +219,8 @@ void FireControl(EntityManager& registry, float dt, const GameConfig& config) {
     }
 }
 
-void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings, const GameConfig& config)
+void ControlSystem::Update(EntityManager& registry, float dt, float& nextSpawnZ, Camera3D& camera, const GameSettings& settings)
 {
-    PlayerControl3D(registry, dt, nextSpawnZ, camera, settings, config);
-    FireControl(registry, dt, config);
+    PlayerControl3D(registry, dt, nextSpawnZ, camera, settings);
+    FireControl(registry, dt);
 }

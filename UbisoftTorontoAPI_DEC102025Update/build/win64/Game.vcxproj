@@ -472,7 +472,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Render\RenderHelper.cpp" />
     <ClCompile Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.cpp" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Text Include="..\..\game_config.txt" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\ZERO_CHECK.vcxproj">
       <Project>{CF4129DD-1E5A-3790-9576-C6B27BE9644E}</Project>

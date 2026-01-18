@@ -285,7 +285,7 @@ struct GameConfig {
     float sheepBulletTrailColorR = 1.0f;
     float sheepBulletTrailColorG = 0.5f;
     float sheepBulletTrailColorB = 0.0f;
-
+    GameConfig();
     // Load config from file (returns true if successful)
     bool LoadFromFile(const std::string& filename);
 
@@ -295,3 +295,4 @@ struct GameConfig {
     // Load default values
     void LoadDefaults();
 };
+extern GameConfig config;

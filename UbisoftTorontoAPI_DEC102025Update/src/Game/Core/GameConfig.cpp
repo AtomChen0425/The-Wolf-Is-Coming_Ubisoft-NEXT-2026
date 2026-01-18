@@ -5,6 +5,10 @@
 #include <unordered_map>
 #include <functional>
 
+GameConfig config;
+GameConfig::GameConfig() {
+    LoadFromFile("game_config.txt");
+}
 void GameConfig::LoadDefaults() {
     // Player physics
     gravity = -980.0f;

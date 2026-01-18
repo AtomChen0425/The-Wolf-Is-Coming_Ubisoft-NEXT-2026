@@ -156,4 +156,7 @@
       <UniqueIdentifier>{727F3BA7-D654-347A-916B-28620D756338}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\game_config.txt" />
+  </ItemGroup>
 </Project>

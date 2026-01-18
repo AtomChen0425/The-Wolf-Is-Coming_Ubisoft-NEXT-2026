@@ -36,7 +36,7 @@ struct GameLevelData {
     }
 
     // Initialize from config (must be called after construction)
-    void Initialize(const GameConfig& config) {
+    void Initialize() {
         roundDurationMs = config.roundDurationMs;
         baseWolfSpawnIntervalMs = config.baseWolfSpawnIntervalMs;
         currentWolfSpawnIntervalMs = config.baseWolfSpawnIntervalMs;

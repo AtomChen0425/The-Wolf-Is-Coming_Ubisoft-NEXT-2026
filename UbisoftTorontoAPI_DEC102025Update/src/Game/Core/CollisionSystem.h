@@ -3,5 +3,5 @@
 #include "../../Game/Core/GameConfig.h"
 namespace CollisionSystem
 {
-	void Update(EntityManager& registry, const GameConfig& config);
+	void Update(EntityManager& registry);
 };
