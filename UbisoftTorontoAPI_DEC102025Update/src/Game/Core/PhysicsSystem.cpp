@@ -7,12 +7,12 @@ void PhysicsSystem3D(EntityManager& registry, float dtMs) {
     for (EntityID id : view) {
         auto& pos = view.get<Transform3D>(id).pos;
         auto& vel = view.get<Velocity3D>(id).vel;
-		auto& tag = view.get<PhysicsTag>(id);
+        auto& tag = view.get<PhysicsTag>(id);
         vel.y += gravity * dtSec;
         if (tag.isOnGround && vel.y < 0.0f) {
             vel.y = 0.0f;
-		}
-        
+        }
+
 
         pos.x += vel.x * dtSec;
         pos.z += vel.z * dtSec;

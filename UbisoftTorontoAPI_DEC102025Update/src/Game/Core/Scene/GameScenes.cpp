@@ -1,9 +1,9 @@
 #include "GameScenes.h"
-#include "../ECSSystem.h"
-#include "../../ContestAPI/app.h"
-#include "../Component/Component.h"
-#include "../ECS/ECS.h"
-#include "../../Game/Core/LevelSystem.h"
+#include "../System/ECSSystem.h"
+#include "../ContestAPI/app.h"
+#include "../System/Component/Component.h"
+#include "../System/ECS/ECS.h"
+#include "../Game/Core/LevelSystem.h"
 
 // StartScene Implementation
 StartScene::StartScene(EngineSystem* engine)
@@ -29,27 +29,41 @@ void StartScene::OnExit() {
 }
 
 void StartScene::Update(float deltaTimeMs) {
-    // No game logic updates on start screen
-    // Scene transition is handled by EngineSystem
+
 }
 
 void StartScene::Render() {
+
+    CSimpleSprite* bgSprite = App::CreateSprite("data/TestData/SettingBackground.png", 1, 1);
+    bgSprite->SetPosition(512.0f, 384.0f);
+    bgSprite->SetScale(1.0f);
+    bgSprite->Draw();
+
     uiManager.Render();
 }
 
 // PlayingScene Implementation
 PlayingScene::PlayingScene(EngineSystem* engine)
     : engineSystem(engine), m_lastScore(-1), scoreText(nullptr),
-    roundText(nullptr), timeText(nullptr), sheepText(nullptr) {
+    roundText(nullptr), timeText(nullptr), sheepText(nullptr),
+    totalEntityText(nullptr), bulletEntityText(nullptr),
+    wolfEntityText(nullptr), sheepEntityText(nullptr), chunkEntityText(nullptr) {
 }
 
 void PlayingScene::OnEnter() {
     uiManager.Clear();
     // Add UI elements
-    scoreText = uiManager.AddText("Score: 0", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
+    scoreText = uiManager.AddText("Health: 100", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
     roundText = uiManager.AddText("Round: 1", 10, 35, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     timeText = uiManager.AddText("Time: 60s", 10, 60, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     sheepText = uiManager.AddText("Sheep: 0", 10, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopLeft);
+
+    // Entity count displays on the right side
+    totalEntityText = uiManager.AddText("Total Entities: 0", 150, 10, 0.8f, 0.8f, 0.8f, UIAlignment::TopRight);
+    bulletEntityText = uiManager.AddText("Bullets: 0", 100, 35, 0.7f, 0.7f, 1.0f, UIAlignment::TopRight);
+    wolfEntityText = uiManager.AddText("Wolves: 0", 100, 60, 1.0f, 0.5f, 0.5f, UIAlignment::TopRight);
+    sheepEntityText = uiManager.AddText("Sheep: 0", 100, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopRight);
+    chunkEntityText = uiManager.AddText("Chunks: 0", 100, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
 
     m_lastScore = -1;
 }
@@ -66,12 +80,12 @@ void PlayingScene::Update(float deltaTimeMs) {
     // Update score display
     View<PlayerTag> playerView(registry);
     for (EntityID id : playerView) {
-        auto& player = playerView.get<PlayerTag>(id);
+        auto& player = playerView.get<Health>(id);
 
-        if (player.score != m_lastScore) {
-            m_lastScore = player.score;
+        if (player.currentHealth != m_lastScore) {
+            m_lastScore = player.currentHealth;
             if (scoreText) {
-                scoreText->SetText("Score: " + std::to_string(m_lastScore));
+                scoreText->SetText("Health: " + std::to_string(m_lastScore));
             }
         }
     }
@@ -92,12 +106,60 @@ void PlayingScene::Update(float deltaTimeMs) {
         int sheepCount = LevelSystem::GetSheepCount(registry);
         sheepText->SetText("Sheep: " + std::to_string(sheepCount));
     }
+
+    // Count entities by type
+    int totalEntities = registry.getAliveEntitiesCount();
+
+    // Count bullets
+    int bulletCount = 0;
+    View<Bullet> bulletView(registry);
+    for (EntityID id : bulletView) {
+        bulletCount++;
+    }
+
+    // Count wolves
+    int wolfCount = 0;
+    View<WolfTag> wolfView(registry);
+    for (EntityID id : wolfView) {
+        wolfCount++;
+    }
+
+    // Count sheep entities
+    int sheepEntityCount = 0;
+    View<SheepTag> sheepView(registry);
+    for (EntityID id : sheepView) {
+        sheepEntityCount++;
+    }
+
+    // Count map blocks/chunks
+    int chunkCount = 0;
+    View<MapBlockTag> chunkView(registry);
+    for (EntityID id : chunkView) {
+        chunkCount++;
+    }
+
+    // Update entity count displays
+    if (totalEntityText) {
+        totalEntityText->SetText("Total Entities: " + std::to_string(totalEntities));
+    }
+    if (bulletEntityText) {
+        bulletEntityText->SetText("Bullets: " + std::to_string(bulletCount));
+    }
+    if (wolfEntityText) {
+        wolfEntityText->SetText("Wolves: " + std::to_string(wolfCount));
+    }
+    if (sheepEntityText) {
+        sheepEntityText->SetText("Sheep: " + std::to_string(sheepEntityCount));
+    }
+    if (chunkEntityText) {
+        chunkEntityText->SetText("Chunks: " + std::to_string(chunkCount));
+    }
 }
 
 void PlayingScene::Render() {
-    // Optional: Render HUD elements like score
+    // Only render UI elements on top of everything
+    // Background should be rendered before 3D game content via RenderBackground()
     uiManager.Render();
-
 }
 
 // GameOverScene Implementation
@@ -209,6 +271,12 @@ void SettingsScene::Update(float deltaTimeMs) {
 }
 
 void SettingsScene::Render() {
+
+    CSimpleSprite* bgSprite = App::CreateSprite("data/TestData/SettingBackground.png", 1, 1);
+    bgSprite->SetPosition(512.0f, 384.0f);
+    bgSprite->SetScale(1.0f);
+    bgSprite->Draw();
+
     // Render options with highlighting
     float mouseColor = (selectedOption == 0) ? 1.0f : 0.5f;
     float arrowColor = (selectedOption == 1) ? 1.0f : 0.5f;
@@ -239,20 +307,74 @@ void SettingsScene::Render() {
 // UpgradeScene Implementation
 UpgradeScene::UpgradeScene(EngineSystem* engine)
     : engineSystem(engine), selectedUpgrade(0) {
+    for (int i = 0; i < 3; i++) {
+        upgradeNames[i] = nullptr;
+        upgradeDescs[i] = nullptr;
+        leftBrackets[i] = nullptr;
+        rightBrackets[i] = nullptr;
+    }
 }
 
 void UpgradeScene::OnEnter() {
     uiManager.Clear();
     selectedUpgrade = 0;
-    //GenerateRandomUpgrades();
 
-    // Build UI once on enter and keep pointers
+    // Generate random upgrades using LevelSystem
+    LevelSystem::GenerateRandomUpgrades(upgradeOptions);
+
     // Title
     uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
+
+    // Render each option horizontally (3 boxes side by side)
+    float spacing = 300.0f;
+    float startX = -spacing;
+
+    for (int i = 0; i < 3; i++) {
+        float xPos = startX + i * spacing;
+        float yPos = -20.0f;
+
+        // Selection brackets (initially hidden for non-selected items)
+        float bracketAlpha = (i == selectedUpgrade) ? 1.0f : 0.0f;
+        leftBrackets[i] = uiManager.AddText("[", xPos - 130, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
+        rightBrackets[i] = uiManager.AddText("]", xPos + 100, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
+
+        // Upgrade name
+        float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
+        std::string optionText = LevelSystem::GetUpgradeName(upgradeOptions[i]);
+        upgradeNames[i] = uiManager.AddText(optionText, xPos - 80, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
+
+        // Description
+        std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
+        upgradeDescs[i] = uiManager.AddText(descText, xPos - 90, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
+    }
+
+    // Instructions
+    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -90, 150, 0.2f, 0.2f, 0.2f, UIAlignment::MiddleCenter);
 }
 
 void UpgradeScene::OnExit() {
+    EntityManager& registry = engineSystem->GetRegistry();
+    View<EnemyTag> enemyView(registry); // Preload EnemyTag view for performance
+    View<Bullet> bulletView(registry); // Preload Bullet view for performance
+    static std::vector<Entity> EnemyToRemove;
+    static std::vector<Entity> BulletToRemove;
+    for (EntityID id : enemyView) {
+        EnemyToRemove.push_back({ id, registry.getEntityVersion(id) });
+
+    }
+    for (const Entity& e : EnemyToRemove) {
+        registry.destroyEntity(e);
+    }
+
+    for (EntityID id : bulletView) {
+        BulletToRemove.push_back({ id, registry.getEntityVersion(id) });
+
+    }
+    for (const Entity& e : BulletToRemove) {
+        registry.destroyEntity(e);
+    }
+
     uiManager.Clear();
 }
 
@@ -280,12 +402,49 @@ void UpgradeScene::Update(float deltaTimeMs) {
         if (selectedUpgrade > 2) selectedUpgrade = 0;
     }
 
-    //// Confirm selection
-    //if (enterPressed && !enterWasPressed) {
-    //    ApplyUpgrade(upgradeOptions[selectedUpgrade]);
-    //    // Return to playing scene
-    //    engineSystem->GetSceneManager().SwitchToScene("PlayingScene");
-    //}
+    // Update UI if selection changed
+    if (previousSelection != selectedUpgrade) {
+        // Update previous selection (dim it)
+        if (upgradeNames[previousSelection]) {
+            upgradeNames[previousSelection]->SetColor(0.5f, 0.5f, 0.0f);
+        }
+        if (upgradeDescs[previousSelection]) {
+            upgradeDescs[previousSelection]->SetColor(0.35f, 0.35f, 0.35f);
+        }
+        if (leftBrackets[previousSelection]) {
+            leftBrackets[previousSelection]->SetColor(0.0f, 0.0f, 0.0f);
+        }
+        if (rightBrackets[previousSelection]) {
+            rightBrackets[previousSelection]->SetColor(0.0f, 0.0f, 0.0f);
+        }
+
+        // Update new selection (brighten it)
+        if (upgradeNames[selectedUpgrade]) {
+            upgradeNames[selectedUpgrade]->SetColor(1.0f, 1.0f, 0.0f);
+        }
+        if (upgradeDescs[selectedUpgrade]) {
+            upgradeDescs[selectedUpgrade]->SetColor(0.7f, 0.7f, 0.7f);
+        }
+        if (leftBrackets[selectedUpgrade]) {
+            leftBrackets[selectedUpgrade]->SetColor(1.0f, 1.0f, 0.0f);
+        }
+        if (rightBrackets[selectedUpgrade]) {
+            rightBrackets[selectedUpgrade]->SetColor(1.0f, 1.0f, 0.0f);
+        }
+    }
+
+    // Confirm selection
+    if (enterPressed && !enterWasPressed) {
+        // Apply upgrade using LevelSystem
+        LevelSystem::ApplyUpgrade(engineSystem->GetRegistry(), engineSystem->GetGameConfig(), upgradeOptions[selectedUpgrade]);
+        // Advance to next round
+        engineSystem->GetLevelData().NextRound();
+        // Clear UI before switching
+        uiManager.Clear();
+        // Return to playing scene
+        engineSystem->GetSceneManager().SwitchToScene("Playing");
+        engineSystem->SetGameState(GameState::Playing);
+    }
 
     leftWasPressed = leftPressed;
     rightWasPressed = rightPressed;
@@ -293,39 +452,10 @@ void UpgradeScene::Update(float deltaTimeMs) {
 }
 
 void UpgradeScene::Render() {
-    // Render the 3 upgrade options horizontally
-    uiManager.Clear();
-    
-    // Title
-    uiManager.AddText("LEVEL UP!", -50, -150, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Choose an Upgrade:", -80, -110, 0.9f, 0.9f, 0.9f, UIAlignment::MiddleCenter);
-    
-    // Render each option horizontally (3 boxes side by side)
-    float spacing = 200.0f; // Space between options
-    float startX = -spacing; // Center the 3 options
-    
-    //for (int i = 0; i < 3; i++) {
-    //    float xPos = startX + i * spacing;
-    //    float yPos = -20.0f; // Center vertically
-    //    
-    //    // Highlight selected option
-    //    float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
-    //    
-    //    // Draw selection indicator (box-like with brackets)
-    //    if (i == selectedUpgrade) {
-    //        uiManager.AddText("[", xPos - 100, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-    //        uiManager.AddText("]", xPos + 80, yPos - 40, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
-    //    }
-    //    
-    //    // Upgrade name (larger, more prominent)
-    //    std::string optionText = GetUpgradeName(upgradeOptions[i]);
-    //    uiManager.AddText(optionText, xPos - 60, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
-    //    
-    //    // Description (smaller, below name)
-    //    std::string descText = GetUpgradeDescription(upgradeOptions[i]);
-    //    uiManager.AddText(descText, xPos - 80, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
-    //}
+    CSimpleSprite* bgSprite = App::CreateSprite("data/TestData/SettingBackground.png", 1, 1);
+    bgSprite->SetPosition(512.0f, 384.0f);
+    bgSprite->SetScale(1.0f);
+    bgSprite->Draw();
 
-    // Just render the UI - don't rebuild it
     uiManager.Render();
 }

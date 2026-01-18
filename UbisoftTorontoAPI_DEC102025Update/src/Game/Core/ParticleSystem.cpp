@@ -5,21 +5,20 @@
 
 void ParticleSystem::Update(EntityManager& registry, float dt) {
     View<Transform3D, ParticlePhysics, ParticleTag> view(registry);
-    std::vector<EntityID> toDestroy;
+    std::vector<Entity> toDestroy;
 
     for (EntityID id : view) {
         auto& t = view.get<Transform3D>(id);
         auto& p = view.get<ParticlePhysics>(id);
 
-        // ºı…Ÿ Ÿ√¸
         p.life -= dt;
         if (p.life <= 0) {
-            toDestroy.push_back(id);
+            toDestroy.push_back({ id, registry.getEntityVersion(id) });
             continue;
         }
 
         float dtSeconds = dt / 1000.0f;
-        p.velocity.y -= p.gravity * 98.0f * dtSeconds; 
+        p.velocity.y -= p.gravity * 98.0f * dtSeconds;
 
         t.pos.x += p.velocity.x * dtSeconds;
         t.pos.y += p.velocity.y * dtSeconds;
@@ -27,14 +26,14 @@ void ParticleSystem::Update(EntityManager& registry, float dt) {
 
         float lifeRatio = 1 - (dt / p.life);
 
-        t.width *= lifeRatio; 
+        t.width *= lifeRatio;
         t.height *= lifeRatio;
         t.depth *= lifeRatio;
     }
 
 
-    for (EntityID id : toDestroy) {
-        registry.destroyEntity(id);
+    for (const Entity& e : toDestroy) {
+        registry.destroyEntity(e);
     }
 
     View<Transform3D, TrailEmitter> emitterView(registry);
@@ -75,8 +74,8 @@ void ParticleSystem::CreateExplosion(EntityManager& registry, Vec3 pos, int coun
         vel.y *= randomSpeed;
         vel.z *= randomSpeed;
 
-        float life = RandRange(1000.0f, 1500.0f); 
+        float life = RandRange(1000.0f, 1500.0f);
 
-        registry.addComponent(e, ParticlePhysics{ vel, life, life, 1.0f }); 
+        registry.addComponent(e, ParticlePhysics{ vel, life, life, 1.0f });
     }
 }

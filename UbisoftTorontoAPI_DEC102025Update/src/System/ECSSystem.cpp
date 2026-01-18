@@ -15,7 +15,7 @@
 #include "../Game/Core/LevelSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
-#include "Scene/GameScenes.h"
+#include "../Game/Core/Scene/GameScenes.h"
 
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)
@@ -25,7 +25,10 @@ EngineSystem::EngineSystem()
         // If loading fails, save default config for next time
         config.SaveToFile("game_config.txt");
     }
-    levelData.Reset();
+
+    // Initialize level data with config values
+    levelData.Initialize(config);
+
     InitializeScenes();
 }
 
@@ -33,6 +36,9 @@ float Lerp(float a, float b, float t) {
     return a + (b - a) * t;
 }
 
+void EngineSystem::SetGameState(GameState newState) {
+    gameState = newState;
+}
 void EngineSystem::InitializeScenes() {
     // Register all game scenes
     sceneManager.RegisterScene("StartScreen", std::make_unique<StartScene>(this));
@@ -40,7 +46,7 @@ void EngineSystem::InitializeScenes() {
     sceneManager.RegisterScene("GameOver", std::make_unique<GameOverScene>(this));
     sceneManager.RegisterScene("Settings", std::make_unique<SettingsScene>(this));
     sceneManager.RegisterScene("UpgradeScene", std::make_unique<UpgradeScene>(this));  // Add upgrade scene
-    
+
     // Start with the start screen
     sceneManager.SwitchToScene("StartScreen");
 }
@@ -48,19 +54,25 @@ void EngineSystem::InitializeScenes() {
 void EngineSystem::InitializeGame() {
     // Initialize the game world without starting gameplay
     registry = std::make_unique<EntityManager>();
-    gSpawnTimerMs = 0.0f;
+    generationTimers.gSpawnTimerMs = 0.0f;
+    generationTimers.sniperWolfSpawnTimer = 0.0f;
+    generationTimers.tankWolfSpawnTimer = 0.0f;
+    generationTimers.fastWolfSpawnTimer = 0.0f;
+    generationTimers.hunterWolfSpawnTimer = 0.0f;
     gScore = 0;
     nextSpawnZ = 0.0f;
     loadedChunks.clear();  // Clear loaded chunks
+    levelData.Reset();  // Reset level data for new game
 
     // Initialize camera position and offsets for 3D view
     camera.followOffsetX = 0.0f;
-    camera.followOffsetY = 200.0f;
-    camera.followOffsetZ = -400.0f;
+    camera.followOffsetY = 100.0f;
+    camera.followOffsetZ = -300.0f;
     camera.x = 0.0f;
     camera.y = camera.followOffsetY;
     camera.z = camera.followOffsetZ;
 
+    camera.fov = config.fov;
     // Create the player using config values
     GenerateSystem::CreatePlayer3D(*registry, config);
 
@@ -86,7 +98,14 @@ void EngineSystem::ResetGame() {
 
 void EngineSystem::Update(const float deltaTimeMs) {
     if (!registry) return;
-    gSpawnTimerMs += deltaTimeMs;
+    generationTimers.gSpawnTimerMs += deltaTimeMs;
+
+    // Update wolf type spawn timers
+    generationTimers.sniperWolfSpawnTimer += deltaTimeMs;
+    generationTimers.tankWolfSpawnTimer += deltaTimeMs;
+    generationTimers.fastWolfSpawnTimer += deltaTimeMs;
+    generationTimers.hunterWolfSpawnTimer += deltaTimeMs;
+
     sceneManager.Update(deltaTimeMs);
     // Handle input based on game state
     if (gameState == GameState::StartScreen) {
@@ -104,14 +123,16 @@ void EngineSystem::Update(const float deltaTimeMs) {
         sKeyWasPressed = sKeyPressed;
         // No physics/collision updates on start screen
         return;
-    } else if (gameState == GameState::Settings) {
+    }
+    else if (gameState == GameState::Settings) {
         // Settings scene handles its own input
         // Check if we returned to start screen
         if (sceneManager.GetCurrentSceneName() == "StartScreen") {
             gameState = GameState::StartScreen;
         }
         return;
-    } else if (gameState == GameState::GameOver) {
+    }
+    else if (gameState == GameState::GameOver) {
         // Check for R to reset
         if (App::IsKeyPressed(App::KEY_R)) {
             ResetGame();
@@ -119,110 +140,99 @@ void EngineSystem::Update(const float deltaTimeMs) {
         // No physics/collision updates on game over screen
         return;
     }
-    
+    else if (gameState == GameState::Upgrading) {
+
+        return;
+    }
+
     // Playing state - normal game updates
     if (gameState == GameState::Playing) {
-        // Check for R to reset even during gameplay
-        /*if (App::IsKeyPressed(App::KEY_R)) {
-            ResetGame();
-            return;
-        }*/
+
         // Update level system (track time and round progression)
-        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs);
-        
+        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs, generationTimers, *registry, config);
+
         // Check if all sheep are dead (game over condition)
         if (LevelSystem::CheckGameOver(*registry)) {
             gameState = GameState::GameOver;
             sceneManager.SwitchToScene("GameOver");
             return;
         }
-        
-        //// If round is complete, go to upgrade scene
-        //if (roundComplete) {
-        //    sceneManager.SwitchToScene("UpgradeScene");
-        //    return;  // Don't continue game logic this frame
-        //}
-        // Update level system (track time and round progression)
-        // Update player control (handles input and movement, and camera control)
-        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
-        // Update enemy AI (movement, shooting, bullets)
-        //EnemyAISystem::Update(*registry, deltaTimeMs);
-		// Update sheep behavior
-        SheepSystem::Update(*registry, deltaTimeMs);
-        // Check and resolve collisions (after movement is applied)
-        // Update wolf behavior (wolves chase nearest player or sheep)
-        if (gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
-            GenerateSystem::GenerateWolf(*registry);
-            gSpawnTimerMs = 0.0f;
-		}
-        WolfSystem::Update(*registry, deltaTimeMs);
 
-        PhysicsSystem::Update(*registry, deltaTimeMs);
-
-        MovementSystem::Update(*registry, deltaTimeMs);
-        ParticleSystem::Update(*registry, deltaTimeMs);
-        CollisionSystem::Update(*registry);
-        
+        // If round is complete, go to upgrade scene
+        if (roundComplete && gameState == GameState::Playing) {
+            sceneManager.SwitchToScene("UpgradeScene");
+            gameState = GameState::Upgrading;
+            return;  // Don't continue game logic this frame
+        }
         // Generate chunks based on player position
         View<PlayerTag, Transform3D> playerView(*registry);
         for (EntityID id : playerView) {
             auto& playerTransform = playerView.get<Transform3D>(id);
             GenerateSystem::ChunkGenerationSystem(*registry, playerTransform.pos.x, playerTransform.pos.z, loadedChunks, config);
-            
-            //// Check if player fell off the world
-            //if (playerTransform.pos.y < -500.0f) {
-            //    gameState = GameState::GameOver;
-            //    sceneManager.SwitchToScene("GameOver");
-            //    return;
-            //}
+
         }
-        
+        // Update player control (handles input and movement, and camera control)
+        ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
+        // Update sheep behavior
+        SheepSystem::Update(*registry, deltaTimeMs);
+        SheepSystem::SheepShoot(*registry, deltaTimeMs);
+
+        WolfSystem::Update(*registry, deltaTimeMs);
+
+
+
+        MovementSystem::Update(*registry, deltaTimeMs);
+        ParticleSystem::Update(*registry, deltaTimeMs);
+        CollisionSystem::Update(*registry, config);
+        PhysicsSystem::Update(*registry, deltaTimeMs);
+        RenderSystem::Update(*registry, deltaTimeMs);
+
         // Check for upgrade point collection
-        View<UpgradePointTag, Transform3D> upgradeView(*registry);
-        std::vector<EntityID> collectedUpgrades;
-        
-        for (EntityID upgradeId : upgradeView) {
-            auto& upgradeTag = upgradeView.get<UpgradePointTag>(upgradeId);
-            auto& upgradeTransform = upgradeView.get<Transform3D>(upgradeId);
-            
-            if (!upgradeTag.collected) {
-                // Check collision with player
-                for (EntityID playerId : playerView) {
-                    auto& playerTransform = playerView.get<Transform3D>(playerId);
-                    
-                    float dx = playerTransform.pos.x - upgradeTransform.pos.x;
-                    float dy = playerTransform.pos.y - upgradeTransform.pos.y;
-                    float dz = playerTransform.pos.z - upgradeTransform.pos.z;
-                    float distSq = dx*dx + dy*dy + dz*dz;
-                    
-                    if (distSq < 50.0f * 50.0f) {  // Collection radius
-                        upgradeTag.collected = true;
-                        collectedUpgrades.push_back(upgradeId);
-                        
-                        // Switch to upgrade scene
-                        sceneManager.SwitchToScene("UpgradeScene");
-                        break;
-                    }
-                }
-            }
-        }
-        
+        //View<UpgradePointTag, Transform3D> upgradeView(*registry);
+        //std::vector<EntityID> collectedUpgrades;
+        //
+        //for (EntityID upgradeId : upgradeView) {
+        //    auto& upgradeTag = upgradeView.get<UpgradePointTag>(upgradeId);
+        //    auto& upgradeTransform = upgradeView.get<Transform3D>(upgradeId);
+        //    
+        //    if (!upgradeTag.collected) {
+        //        // Check collision with player
+        //        for (EntityID playerId : playerView) {
+        //            auto& playerTransform = playerView.get<Transform3D>(playerId);
+        //            
+        //            float dx = playerTransform.pos.x - upgradeTransform.pos.x;
+        //            float dy = playerTransform.pos.y - upgradeTransform.pos.y;
+        //            float dz = playerTransform.pos.z - upgradeTransform.pos.z;
+        //            float distSq = dx*dx + dy*dy + dz*dz;
+        //            
+        //            if (distSq < 50.0f * 50.0f) {  // Collection radius
+        //                upgradeTag.collected = true;
+        //                collectedUpgrades.push_back(upgradeId);
+        //                
+        //                // Switch to upgrade scene
+        //                sceneManager.SwitchToScene("UpgradeScene");
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+
         // Remove collected upgrade points
-        for (EntityID id : collectedUpgrades) {
+        /*for (EntityID id : collectedUpgrades) {
             registry->destroyEntity(id);
-        }
+        }*/
     }
 }
 
 void EngineSystem::Render() {
     if (!registry) return;
-    
+
     // Update camera position for all states to ensure proper view
     CameraSystem::Update(*registry, camera);
-    
+
     // Render the 3D scene with camera
     RenderSystem::Render(*registry, camera);
-    
+
     // Render UI using Scene Manager
     sceneManager.Render();
 }

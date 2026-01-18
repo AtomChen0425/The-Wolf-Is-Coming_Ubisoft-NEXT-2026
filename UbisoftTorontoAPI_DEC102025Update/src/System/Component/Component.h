@@ -24,9 +24,8 @@ struct Velocity {
 // Sprite component (uses Contest API sprites)
 struct SpriteComponent {
     CSimpleSprite* sprite;
-    int currentAnimID; // Track current animation to avoid redundant SetAnimation calls
+    int currentAnimID; // Track current animation
 };
-
 // Tag components
 struct PlayerTag {
     bool isOnGround;
@@ -37,6 +36,7 @@ struct PlayerTag {
 };
 struct PhysicsTag { bool isOnGround; };
 struct EnemyTag {};
+struct AnimalTag {};
 
 // 2D Rigid body component
 struct RigidBody {
@@ -51,21 +51,9 @@ struct Health {
     int maxHealth;
 };
 
-// 3D Position component
-struct Position3D {
-    float x; // Left/right movement
-    float z; // Forward/backward movement (depth into screen)
-    float y; // Up/down movement (jump height, 0 = on ground)
-};
-
 // 3D Velocity component
 struct Velocity3D {
     Vec3 vel;
-};
-
-// Shadow component (for 2.5D rendering)
-struct Shadow {
-    float radius;
 };
 
 // 3D Transform component
@@ -85,8 +73,6 @@ struct Collider3D {
 // Map block tag
 struct MapBlockTag {};
 
-// Solid block tag - for blocks that can be placed on floors (like tall blocks)
-struct SolidBlockTag {};
 
 // Block types for map generation
 enum class BlockType {
@@ -102,23 +88,23 @@ struct MapTemplate {
     int width;      // Width in blocks
     int depth;      // Depth in blocks
     std::vector<BlockType> blocks; // Block data (row-major: z * width + x)
-    
+
     MapTemplate() : width(0), depth(0) {}
-    
+
     MapTemplate(int w, int d) : width(w), depth(d) {
         blocks.resize(w * d, BlockType::Empty);
     }
-    
+
     BlockType getBlock(int x, int z) const {
         if (!isValidPosition(x, z)) return BlockType::Empty;
         return blocks[z * width + x];
     }
-    
+
     void setBlock(int x, int z, BlockType type) {
         if (!isValidPosition(x, z)) return;
         blocks[z * width + x] = type;
     }
-    
+
 private:
     bool isValidPosition(int x, int z) const {
         return x >= 0 && x < width && z >= 0 && z < depth;
@@ -131,22 +117,6 @@ struct ScorePointTag {
     bool collected;
 };
 
-// Enemy movement component - makes enemy move toward player
-struct EnemyMoveToPlayer {
-    float speed;              // Movement speed
-    float detectionRange;     // Range within which enemy detects and moves toward player
-    bool isActive;            // Whether this component is currently active
-};
-
-// Enemy shooting component - makes enemy shoot projectiles at player
-struct EnemyShootAtPlayer {
-    float shootCooldown;      // Time between shots in milliseconds
-    float timeSinceLastShot;  // Time elapsed since last shot
-    float detectionRange;     // Range within which enemy can shoot at player
-    float projectileSpeed;    // Speed of the projectiles
-    bool isActive;            // Whether this component is currently active
-};
-
 // Bullet/Projectile component
 struct Bullet {
     Vec3 direction;           // Direction vector (normalized)
@@ -154,23 +124,28 @@ struct Bullet {
     float lifetime;           // How long the bullet lives (milliseconds)
     float damage;             // Damage dealt on hit
     bool isPlayerBullet;      // true if fired by player, false if fired by enemy
-};
 
+    float explosionRadius;   //if > 0, bullet causes area damage
+    float size;
+    float knockback;
+};
+struct EnemyBulletTag {};
+struct MagicTag {};
 struct ParticleTag {};
 
 struct ParticlePhysics {
     Vec3 velocity;
-	float life;       // remaining life
-	float maxLife;    // total life
-    float gravity;    // 
+    float life;       // remaining life
+    float maxLife;    // total life
+    float gravity;     
 };
 
 struct TrailEmitter {
-    float interval;        
-    float timeSinceLast;   
-    float particleLife;   
-    float size;           
-    float r, g, b;         
+    float interval;
+    float timeSinceLast;
+    float particleLife;
+    float size;
+    float r, g, b;
 };
 
 // Upgrade point component for roguelike progression
@@ -195,31 +170,71 @@ struct ChunkTag {
 
 struct SheepTag {};
 
-// Boids 行为参数 (可用于不同种类的羊)
+// Boids behavior component for sheep
 struct SheepComponent {
-    float separationWeight = 6.0f; // 分离权重 (防重叠) - 调大一点避免穿模
-    float alignmentWeight = 1.0f; // 对齐权重 (顺流)
-    float cohesionWeight = 1.0f; // 凝聚权重 (抱团)
-    float targetWeight = 1.2f; // 跟随权重 (找牧羊人)
-    float fearWeight = 8.0f; // 恐惧权重 (躲避狼) - 优先级最高
+    float separationWeight = 6.0f; // Weight for separation behavior
+    float alignmentWeight = 1.0f;   // Weight for alignment behavior
+    float cohesionWeight = 1.0f;    // Weight for cohesion behavior
+    float targetWeight = 1.2f;      // Weight for targeting behavior
+    float fearWeight = 8.0f;        // Weight for fear behavior
 
-    float viewRadius = 60.0f;      // 邻居感知半径
-    float enemyDetectRange = 150.0f; // 敌人检测半径
-    float maxSpeed = 90.0f;        // 最大速度
-    float maxForce = 50.0f;       // 转向灵活性
+    float viewRadius = 60.0f;      // View radius for detecting other entities
+    float enemyDetectRange = 150.0f; // Range to detect enemies
+    float maxSpeed = 190.0f;        // Maximum speed
+    float maxForce = 50.0f;       // Maximum steering force
 };
 
 struct WolfTag {};
 
+// Wolf type enum - different wolf variants
+enum class WolfType {
+    Basic,          // Standard wolf - balanced stats
+    Sniper,         // Has gun, moves slow, normal health
+    Tank,           // High health, slow movement
+    Fast,           // Fast movement, can jump
+    Hunter,          // Fast with jumping ability
+    Magic           // Uses magic projectiles
+};
+
 // Wolf behavior component - wolves chase nearest player or sheep
 struct WolfComponent {
+    WolfType type = WolfType::Basic;  // Type of wolf
+
     float chaseForce = 200.0f;      // Force applied when chasing
     float maxSpeed = 300.0f;        // Maximum movement speed
     float detectionRange = 400.0f;  // Range to detect and chase targets
     float minChaseDistance = 10.0f; // Stop chasing when this close to target
+
+    bool canJump = false;           // Can this wolf jump?
+    float jumpCooldown = 0.0f;      // Cooldown for jumping
 };
 
-struct  GameSetting
-{
-    float spawTimer =500.0f;
+enum class WeaponType {
+    Pistol,
+    MachineGun,
+    Cannon,
+    MagicWand
+};
+
+struct Weapon {
+    WeaponType type;
+    std::string name;
+
+
+    float damage;
+    float fireRate;
+    float currentCooldown;
+
+    float projectileSpeed;
+    float projectileSize;
+    float projectileLife;
+    float explosionRadius;
+
+    float r, g, b;
+
+    float knockback = 0.0f;
+};
+
+struct WeaponInventory {
+    std::vector<Weapon> weapons;
 };

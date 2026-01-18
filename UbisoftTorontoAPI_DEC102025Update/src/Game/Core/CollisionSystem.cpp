@@ -2,22 +2,20 @@
 #include "../../System/Component/Component.h"
 #include "../../System/Physic/Collision.h"
 #include "../../Game/Core/ParticleSystem.h"
+#include "WolfSystem.h"
 #include <cmath>
+#include "../System/Math/Math.h"
 #include <unordered_map>
 Collision* gCollision;
 struct CollisionGrid {
     float cellSize;
-    // Key: 哈希值, Value: 碰撞体EntityID列表
     std::unordered_map<int, std::vector<EntityID>> grid;
 
     CollisionGrid(float size) : cellSize(size) {}
 
-    // 计算空间哈希 Key
-    // 为了处理负坐标，我们加一个大偏移量
     int GetKey(float x, float z) {
         int cx = static_cast<int>(std::floor((x + 100000.0f) / cellSize));
         int cz = static_cast<int>(std::floor((z + 100000.0f) / cellSize));
-        // 使用质数混合做哈希，减少冲突
         return cx * 73856093 ^ cz * 19349663;
     }
 
@@ -25,9 +23,7 @@ struct CollisionGrid {
         grid.clear();
     }
 
-    // 将碰撞体插入到它覆盖的所有格子中 (处理大物体跨格子的情况)
     void Insert(EntityID id, const Transform3D& t) {
-        // 计算物体 AABB 覆盖的格子范围
         float minX = t.pos.x - t.width / 2.0f;
         float maxX = t.pos.x + t.width / 2.0f;
         float minZ = t.pos.z - t.depth / 2.0f;
@@ -38,7 +34,6 @@ struct CollisionGrid {
         int startZ = static_cast<int>(std::floor((minZ + 100000.0f) / cellSize));
         int endZ = static_cast<int>(std::floor((maxZ + 100000.0f) / cellSize));
 
-        // 遍历覆盖的所有格子并插入
         for (int x = startX; x <= endX; x++) {
             for (int z = startZ; z <= endZ; z++) {
                 int key = x * 73856093 ^ z * 19349663;
@@ -47,14 +42,10 @@ struct CollisionGrid {
         }
     }
 
-    // 获取某个点所在格子的所有潜在碰撞体
-    // 注意：因为Insert时已经处理了覆盖，查询时只需查中心点所在的格子即可
-    // 但为了防止物体刚好在边缘穿模，查询周围 3x3 依然是最稳妥的
     void GetPotentialColliders(float x, float z, std::vector<EntityID>& outList) {
         int cx = static_cast<int>(std::floor((x + 100000.0f) / cellSize));
         int cz = static_cast<int>(std::floor((z + 100000.0f) / cellSize));
 
-        // 查询周围 3x3 范围 (对于高速物体或正好在边界的情况更安全)
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 int key = (cx + i) * 73856093 ^ (cz + j) * 19349663;
@@ -66,6 +57,101 @@ struct CollisionGrid {
         }
     }
 };
+
+void CheckBulletHitMap(EntityManager& registry) {
+    View<Bullet, Transform3D> bulletView(registry);
+    View<Collider3D, Transform3D, MapBlockTag> colliderView(registry);
+
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+
+	// define grid cell size
+    static CollisionGrid grid(200.0f);
+    grid.Clear(); 
+
+	// Broad phase: insert all colliders into the grid
+    for (EntityID id : colliderView) {
+        auto& t = colliderView.get<Transform3D>(id);
+        grid.Insert(id, t);
+    }
+
+    static std::vector<EntityID> potentialColliders;
+
+    for (EntityID bulletId : bulletView) {
+        auto& bullet = bulletView.get<Bullet>(bulletId);
+        auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+
+        Vec3 bulletHalf(bulletTransform.width / 2, bulletTransform.height / 2, bulletTransform.depth / 2);
+        Vec3 bulletMin = bulletPos - bulletHalf;
+        Vec3 bulletMax = bulletPos + bulletHalf;
+
+		// Broad phase search
+        potentialColliders.clear();
+        grid.GetPotentialColliders(bulletPos.x, bulletPos.z, potentialColliders);
+
+		// there is no potential collider
+        if (potentialColliders.empty()) continue;
+
+		// remove duplicates
+        std::sort(potentialColliders.begin(), potentialColliders.end());
+        auto last = std::unique(potentialColliders.begin(), potentialColliders.end());
+        potentialColliders.erase(last, potentialColliders.end());
+
+		// narrow phase: precise AABB check
+        for (EntityID colliderId : potentialColliders) {
+            // 安全检查：防止该 Entity 在同一帧被其他逻辑销毁了
+            if (!colliderView.has<Transform3D>(colliderId)) continue;
+
+            auto& colliderTransform = colliderView.get<Transform3D>(colliderId);
+
+            Vec3 colliderHalf(colliderTransform.width / 2, colliderTransform.height / 2, colliderTransform.depth / 2);
+            Vec3 colliderMin = colliderTransform.pos - colliderHalf;
+            Vec3 colliderMax = colliderTransform.pos + colliderHalf;
+
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+
+                // --- 命中逻辑 ---
+                if (bullet.explosionRadius > 0.0f) {
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+
+                    // 注意：这里仍然遍历所有敌人 (O(Enemy))
+                    // 如果敌人很多，建议也为敌人建立一个 Grid，或者简单地只计算距离平方
+                    View<EnemyTag, Transform3D, Health> allEnemies(registry);
+                    float radiusSq = bullet.explosionRadius * bullet.explosionRadius; // 预计算平方
+
+                    for (EntityID otherId : allEnemies) {
+                        auto& otherT = allEnemies.get<Transform3D>(otherId);
+
+                        // 优化：使用距离平方 (DistanceSquared3D) 避免开方运算
+                        float distSq = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (distSq <= radiusSq) {
+                            auto& hp = allEnemies.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage;
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                // 使用带版本号的Entity结构以安全删除
+                                bulletToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
+                            }
+                        }
+                    }
+                }
+
+                // 标记删除子弹
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                break; // 子弹撞墙后销毁，不再检测其他墙壁
+            }
+        }
+    }
+
+    // 6. 统一删除
+    for (Entity& e : bulletToRemove) {
+        if (registry.isValid(e)) {
+            registry.destroyEntity(e);
+        }
+    }
+}
 // 2D collision for player-enemy
 void CheckPlayerEnemyCollision(EntityManager& registry) {
     View<PlayerTag, Position, Velocity, RigidBody, Health> playerView(registry);
@@ -93,7 +179,7 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
             const float knockbackImpulse = 10.0f;
 
             playerRigidBody.force = dir * knockbackImpulse;
-            registry.destroyEntity(enemyId);
+            registry.destroyEntity({ enemyId, registry.getEntityVersion(enemyId) });
             break;
         }
     }
@@ -102,64 +188,66 @@ void CheckPlayerEnemyCollision(EntityManager& registry) {
 // Simplified 3D collision system - just detect and respond
 void CheckPlayer3DCollisions(EntityManager& registry) {
     View<PlayerTag, Transform3D, Velocity3D> playerView(registry);
-    
+
     for (EntityID playerId : playerView) {
         auto& playerTag = playerView.get<PlayerTag>(playerId);
         auto& playerTransform = playerView.get<Transform3D>(playerId);
         auto& vel = playerView.get<Velocity3D>(playerId).vel;
         Vec3& pos = playerTransform.pos;
-        
+
         // Reset ground flag
         playerTag.isOnGround = false;
-        
+
         // Player bounding box
-        Vec3 playerMin(pos.x - playerTransform.width / 2, 
-                       pos.y - playerTransform.height / 2, 
-                       pos.z - playerTransform.depth / 2);
-        Vec3 playerMax(pos.x + playerTransform.width / 2, 
-                       pos.y + playerTransform.height / 2, 
-                       pos.z + playerTransform.depth / 2);
-        
+        Vec3 playerMin(pos.x - playerTransform.width / 2,
+            pos.y - playerTransform.height / 2,
+            pos.z - playerTransform.depth / 2);
+        Vec3 playerMax(pos.x + playerTransform.width / 2,
+            pos.y + playerTransform.height / 2,
+            pos.z + playerTransform.depth / 2);
+
         // Check all colliders
         View<Collider3D, Transform3D> colliderView(registry);
         float highestFloor = -1000.0f;
-        
+
         for (EntityID colliderId : colliderView) {
             auto& collider = colliderView.get<Collider3D>(colliderId);
             auto& transform = colliderView.get<Transform3D>(colliderId);
-            
+
             // Collider bounding box
             Vec3 colliderMin(transform.pos.x - transform.width / 2,
-                            transform.pos.y - transform.height / 2,
-                            transform.pos.z - transform.depth / 2);
+                transform.pos.y - transform.height / 2,
+                transform.pos.z - transform.depth / 2);
             Vec3 colliderMax(transform.pos.x + transform.width / 2,
-                            transform.pos.y + transform.height / 2,
-                            transform.pos.z + transform.depth / 2);
-            
+                transform.pos.y + transform.height / 2,
+                transform.pos.z + transform.depth / 2);
+
             // Check collision using AABB
             if (gCollision->AABB3D(playerMin, playerMax, colliderMin, colliderMax)) {
                 // Calculate penetration on each axis
-                float penetrationX = (playerMin.x < colliderMin.x) ? 
+                float penetrationX = (playerMin.x < colliderMin.x) ?
                     (colliderMin.x - playerMax.x) : (colliderMax.x - playerMin.x);
-                float penetrationY = (playerMin.y < colliderMin.y) ? 
+                float penetrationY = (playerMin.y < colliderMin.y) ?
                     (colliderMin.y - playerMax.y) : (colliderMax.y - playerMin.y);
-                float penetrationZ = (playerMin.z < colliderMin.z) ? 
+                float penetrationZ = (playerMin.z < colliderMin.z) ?
                     (colliderMin.z - playerMax.z) : (colliderMax.z - playerMin.z);
-                
+
                 float absX = std::abs(penetrationX);
                 float absY = std::abs(penetrationY);
                 float absZ = std::abs(penetrationZ);
-                
+
                 // Resolve on minimum penetration axis
                 if (absX < absY && absX < absZ) {
                     // X-axis collision (left/right wall)
                     pos.x += penetrationX;
                     vel.x = 0.0f;
-                } else if (absZ < absY) {
+                }
+                else if (absZ < absY) {
                     // Z-axis collision (front/back wall)
                     pos.z += penetrationZ;
                     vel.z = 0.0f;
-                } else {
+                }
+                else {
                     // Y-axis collision (floor/ceiling)
                     if (penetrationY > 0) {
                         // Hit from below (floor)
@@ -169,23 +257,24 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
                                 highestFloor = floorTop;
                             }
                         }
-                    } else {
+                    }
+                    else {
                         // Hit from above (ceiling)
                         pos.y += penetrationY;
                         vel.y = 0.0f;
                     }
                 }
-                
+
                 // Update bounding box after position change
-                playerMin = Vec3(pos.x - playerTransform.width / 2, 
-                               pos.y - playerTransform.height / 2, 
-                               pos.z - playerTransform.depth / 2);
-                playerMax = Vec3(pos.x + playerTransform.width / 2, 
-                               pos.y + playerTransform.height / 2, 
-                               pos.z + playerTransform.depth / 2);
+                playerMin = Vec3(pos.x - playerTransform.width / 2,
+                    pos.y - playerTransform.height / 2,
+                    pos.z - playerTransform.depth / 2);
+                playerMax = Vec3(pos.x + playerTransform.width / 2,
+                    pos.y + playerTransform.height / 2,
+                    pos.z + playerTransform.depth / 2);
             }
         }
-        
+
         // Apply floor collision if detected
         if (highestFloor > -999.0f) {
             float playerBottom = pos.y - playerTransform.height / 2;
@@ -313,12 +402,12 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
     }
 
     // B. 检测阶段：遍历所有动态实体
-    View<PhysicsTag, SheepTag, Transform3D, Velocity3D> entityView(registry);
+    View<PhysicsTag, Transform3D, Velocity3D> entityView(registry);
 
     // 用于缓存查询结果的 vector，避免在循环内反复分配内存
     static std::vector<EntityID> nearbyColliders;
 
-    // O(N): 遍历所有羊
+    // O(N): 遍历所有物理实体
     for (EntityID entityId : entityView) {
         auto& physicsTag = entityView.get<PhysicsTag>(entityId);
         auto& entityTransform = entityView.get<Transform3D>(entityId);
@@ -364,7 +453,6 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
             Vec3 colliderMax(transform.pos.x + transform.width / 2,
                 transform.pos.y + transform.height / 2,
                 transform.pos.z + transform.depth / 2);
-
             // AABB 检测
             if (gCollision->AABB3D(entityMin, entityMax, colliderMin, colliderMax)) {
                 // ... 你的原有逻辑保持不变 ...
@@ -402,7 +490,6 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
                         vel.y = 0.0f;
                     }
                 }
-
                 // 更新 AABB 以便下一次检测准确
                 entityMin = Vec3(pos.x - entityTransform.width / 2,
                     pos.y - entityTransform.height / 2,
@@ -431,9 +518,9 @@ void CheckPlayerGetPoints(EntityManager& registry) {
     Vec3 playerPos;
     Transform3D playerTransform;
     float playerRadius = 0.0f;
-	for (EntityID id : playerView) {
+    for (EntityID id : playerView) {
         playerId = id;
-		playerTransform = playerView.get<Transform3D>(id);
+        playerTransform = playerView.get<Transform3D>(id);
         playerPos = playerView.get<Transform3D>(id).pos;
         playerRadius = playerTransform.width / 2; // Assume width as diameter
         break;
@@ -457,20 +544,31 @@ void CheckPlayerGetPoints(EntityManager& registry) {
         if (gCollision->AABB3D(playerMin, playerMax, colliderMin, colliderMax)) {
             auto& scoreTag = scoreView.get<ScorePointTag>(scoreId);
             scoreTag.collected = true;
-			auto& playerTag = playerView.get<PlayerTag>(playerId);
-			playerTag.score += scoreTag.points;
+            auto& playerTag = playerView.get<PlayerTag>(playerId);
+            playerTag.score += scoreTag.points;
         }
-	}
+    }
 }
 void CheckBulletDamage(EntityManager& registry) {
-    static std::vector<EntityID> blockToRemove;
-    blockToRemove.clear();
-    static std::vector<EntityID> bulletToRemove;
+    static std::vector<Entity> EnemyToRemove;
+    EnemyToRemove.clear();
+    static std::vector<Entity> bulletToRemove;
     bulletToRemove.clear();
+    View<PlayerTag> playerView(registry);
+    int* playerScore = nullptr;
+    for (EntityID id : playerView) {
+        playerScore = &playerView.get<PlayerTag>(id).score;
+        break;
+    }
     View<Bullet, Transform3D> bulletView(registry);
-    View<Health, Transform3D,EnemyTag> enemyView(registry);
+    View<Health, Transform3D, EnemyTag> enemyView(registry);
     for (EntityID bulletId : bulletView) {
-		float bulletDamage = bulletView.get<Bullet>(bulletId).damage;
+        auto& bullet = bulletView.get<Bullet>(bulletId);
+        if (!bullet.isPlayerBullet) {
+            continue; // Skip enemy bullets
+        }
+        float bulletDamage = bullet.damage;
+        float bulletKnockback = bullet.knockback;
         auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
         Vec3 bulletPos = bulletTransform.pos;
         Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
@@ -481,7 +579,8 @@ void CheckBulletDamage(EntityManager& registry) {
             bulletPos.z + bulletTransform.depth / 2);
         for (EntityID enemyId : enemyView) {
             auto& enemyHealth = enemyView.get<Health>(enemyId);
-			auto& enemyTransform = enemyView.get<Transform3D>(enemyId);
+            auto& enemyTransform = enemyView.get<Transform3D>(enemyId);
+            auto& enemyVel = enemyView.get<Velocity3D>(enemyId).vel;
             Vec3 colliderMin(enemyTransform.pos.x - enemyTransform.width / 2,
                 enemyTransform.pos.y - enemyTransform.height / 2,
                 enemyTransform.pos.z - enemyTransform.depth / 2);
@@ -489,27 +588,53 @@ void CheckBulletDamage(EntityManager& registry) {
                 enemyTransform.pos.y + enemyTransform.height / 2,
                 enemyTransform.pos.z + enemyTransform.depth / 2);
             if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
-				bulletToRemove.push_back(bulletId);
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                Vec3 enemyDirection = Normalize3D(enemyVel);
+                enemyVel = enemyDirection * (-bulletKnockback); // Apply knockback
                 enemyHealth.currentHealth -= bulletDamage;
+                ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 5, Vec3{ 1.0f, 1.0f, 0.0f }, 150.0f);
                 if (enemyHealth.currentHealth <= 0) {
                     ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
-                    blockToRemove.push_back(enemyId);
+                    EnemyToRemove.push_back({ enemyId, registry.getEntityVersion(enemyId) });
                 }
+                if (bullet.explosionRadius > 0.0f) {
+                    // 创建爆炸特效
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+
+                    // 查找爆炸范围内的所有敌人
+                    View<EnemyTag, Transform3D, Health> allEnemies(registry);
+                    for (EntityID otherId : allEnemies) {
+                        auto& otherT = allEnemies.get<Transform3D>(otherId);
+                        float dist = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (dist <= bullet.explosionRadius) {
+                            auto& hp = allEnemies.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage;
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                EnemyToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
+                            }
+                        }
+
+                    }
+                }
+                break; // Bullet can hit only one enemy
             }
         }
     }
-    for (EntityID id : bulletToRemove) {
-        registry.destroyEntity(id);
-	}
-    for (EntityID id : blockToRemove) {
-        registry.destroyEntity(id);
-	}
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
+    }
+    for (Entity& e : EnemyToRemove) {
+        *playerScore += 100;
+        registry.destroyEntity(e);
+    }
 }
 
 void CheckWolfEatSheep(EntityManager& registry) {
     View<WolfTag, Transform3D> wolfView(registry);
     View<SheepTag, Transform3D> sheepView(registry);
-    static std::vector<EntityID> sheepToRemove;
+    static std::vector<Entity> sheepToRemove;
     sheepToRemove.clear();
     for (EntityID wolfId : wolfView) {
         auto& wolfTransform = wolfView.get<Transform3D>(wolfId);
@@ -529,18 +654,190 @@ void CheckWolfEatSheep(EntityManager& registry) {
                 sheepTransform.pos.y + sheepTransform.height / 2,
                 sheepTransform.pos.z + sheepTransform.depth / 2);
             if (gCollision->AABB3D(wolfMin, wolfMax, colliderMin, colliderMax)) {
-				sheepToRemove.push_back(sheepId);
+                sheepToRemove.push_back({ sheepId, registry.getEntityVersion(sheepId) });
             }
         }
     }
-    for (EntityID id : sheepToRemove) {
-        registry.destroyEntity(id);
-	}
+    for (const Entity& e : sheepToRemove) {
+        registry.destroyEntity(e);
+    }
 }
-void CollisionSystem::Update(EntityManager& registry) {
-    CheckPlayer3DCollisions(registry);
-	//CheckPhysics3DCollisions(registry);
+
+void CheckWolfHeartsPlayer(EntityManager& registry) {
+    View<WolfTag, Transform3D> wolfView(registry);
+    View<PlayerTag, Transform3D, Health> playerView(registry);
+    /* static std::vector<Entity> playersToRemove;
+     playersToRemove.clear();*/
+    for (EntityID wolfId : wolfView) {
+        auto& wolfTransform = wolfView.get<Transform3D>(wolfId);
+        Vec3 wolfPos = wolfTransform.pos;
+        Vec3 wolfMin(wolfPos.x - wolfTransform.width / 2,
+            wolfPos.y - wolfTransform.height / 2,
+            wolfPos.z - wolfTransform.depth / 2);
+        Vec3 wolfMax(wolfPos.x + wolfTransform.width / 2,
+            wolfPos.y + wolfTransform.height / 2,
+            wolfPos.z + wolfTransform.depth / 2);
+        for (EntityID playerId : playerView) {
+            auto& playerTransform = playerView.get<Transform3D>(playerId);
+            auto& playerHealth = playerView.get<Health>(playerId);
+            Vec3 colliderMin(playerTransform.pos.x - playerTransform.width / 2,
+                playerTransform.pos.y - playerTransform.height / 2,
+                playerTransform.pos.z - playerTransform.depth / 2);
+            Vec3 colliderMax(playerTransform.pos.x + playerTransform.width / 2,
+                playerTransform.pos.y + playerTransform.height / 2,
+                playerTransform.pos.z + playerTransform.depth / 2);
+            if (gCollision->AABB3D(wolfMin, wolfMax, colliderMin, colliderMax)) {
+                playerHealth.currentHealth -= 10;
+                Vec3 dir = Normalize3D(playerTransform.pos - wolfTransform.pos);
+                const float knockbackImpulse = 20.0f;
+                auto& playerVel = playerView.get<Velocity3D>(playerId).vel;
+                playerVel = dir * knockbackImpulse;
+            }
+        }
+    }
+
+}
+
+void CheckBulletHitMap1(EntityManager& registry) {
+    View<Bullet, Transform3D> bulletView(registry);
+    View<Collider3D, Transform3D, MapBlockTag> colliderView(registry);
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+    for (EntityID bulletId : bulletView) {
+        auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
+        auto& bullet = bulletView.get<Bullet>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+        Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
+            bulletPos.y - bulletTransform.height / 2,
+            bulletPos.z - bulletTransform.depth / 2);
+        Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
+            bulletPos.y + bulletTransform.height / 2,
+            bulletPos.z + bulletTransform.depth / 2);
+        for (EntityID colliderId : colliderView) {
+            auto& colliderTransform = colliderView.get<Transform3D>(colliderId);
+            Vec3 colliderMin(colliderTransform.pos.x - colliderTransform.width / 2,
+                colliderTransform.pos.y - colliderTransform.height / 2,
+                colliderTransform.pos.z - colliderTransform.depth / 2);
+            Vec3 colliderMax(colliderTransform.pos.x + colliderTransform.width / 2,
+                colliderTransform.pos.y + colliderTransform.height / 2,
+                colliderTransform.pos.z + colliderTransform.depth / 2);
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+                if (bullet.explosionRadius > 0.0f) {
+                    // 创建爆炸特效
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+                    View<EnemyTag, Transform3D, Health> allEnemies(registry);
+                    for (EntityID otherId : allEnemies) {
+                        auto& otherT = allEnemies.get<Transform3D>(otherId);
+                        float dist = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (dist <= bullet.explosionRadius) {
+                            auto& hp = allEnemies.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage;
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                bulletToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
+                            }
+                        }
+
+                    }
+                }
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                break; // Bullet can hit only one collider
+            }
+        }
+    }
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
+    }
+}
+
+void CheckEnemyBulletCollision(EntityManager& registry, const GameConfig& config) {
+    View<Bullet, EnemyBulletTag, Transform3D> enemyBulletView(registry);
+    // Get all potential targets (players and sheep)
+    std::vector<Transform3D> targetTransform;
+    std::vector<bool> isPlayerTarget;  // Track if target is player (true) or sheep (false)
+    std::vector<EntityID> targetsEntityID;
+    // Add all players as potential targets
+    View<PlayerTag, Transform3D> playerView(registry);
+    for (auto id : playerView) {
+        targetTransform.push_back(playerView.get<Transform3D>(id));
+        isPlayerTarget.push_back(true);
+        targetsEntityID.push_back(id);
+        break; // Only target the first player found
+    }
+
+    // Add all sheep as potential targets
+    View<SheepTag, Transform3D> sheepView(registry);
+    for (auto id : sheepView) {
+        targetTransform.push_back(sheepView.get<Transform3D>(id));
+        isPlayerTarget.push_back(false);
+        targetsEntityID.push_back(id);
+    }
+    static std::vector<Entity> TargetToRemove;
+    TargetToRemove.clear();
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+    static std::vector<Vec3> wolfToAdd;
+    wolfToAdd.clear();
+    for (EntityID bulletId : enemyBulletView) {
+        auto& bulletTransform = enemyBulletView.get<Transform3D>(bulletId);
+        auto& bullet = enemyBulletView.get<Bullet>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+        Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
+            bulletPos.y - bulletTransform.height / 2,
+            bulletPos.z - bulletTransform.depth / 2);
+        Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
+            bulletPos.y + bulletTransform.height / 2,
+            bulletPos.z + bulletTransform.depth / 2);
+        for (size_t i = 0; i < targetTransform.size(); i++) {
+            Vec3 targetPos = targetTransform[i].pos;
+            Vec3 targetMin(targetPos.x - targetTransform[i].width / 2,
+                targetPos.y - targetTransform[i].height / 2,
+                targetPos.z - targetTransform[i].depth / 2);
+            Vec3 targetMax(targetPos.x + targetTransform[i].width / 2,
+                targetPos.y + targetTransform[i].height / 2,
+                targetPos.z + targetTransform[i].depth / 2);
+            if (gCollision->AABB3D(bulletMin, bulletMax, targetMin, targetMax)) {
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                if (isPlayerTarget[i]) {
+                    // Handle player hit
+                    auto& playerHealth = playerView.get<Health>(targetsEntityID[i]);
+                    playerHealth.currentHealth -= bullet.damage;
+                    Vec3 dir = Normalize3D(playerView.get<Transform3D>(targetsEntityID[i]).pos - bulletTransform.pos);
+                    auto& playerVel = playerView.get<Velocity3D>(targetsEntityID[i]).vel;
+                    playerVel = dir * bullet.knockback;
+                }
+                else {
+                    // Handle sheep hit
+                    Entity& sheepEntity = Entity{ targetsEntityID[i],registry.getEntityVersion(targetsEntityID[i]) };
+                    TargetToRemove.push_back(sheepEntity);
+                    if (enemyBulletView.has<MagicTag>(bulletId)) {
+                        wolfToAdd.push_back(targetPos);
+                        ParticleSystem::CreateExplosion(registry, targetPos, 20, Vec3{ 0.0f, 1.0f, 0.0f }, 150.0f);
+                    }
+
+                }
+                break;
+            }
+        }
+    }
+    for (Entity& e : TargetToRemove) {
+        registry.destroyEntity(e);
+    }
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
+    }
+    for (Vec3& pos : wolfToAdd) {
+        WolfSystem::InitWolfOfType(registry, pos.x, pos.z, WolfType::Basic, config);
+    }
+}
+void CollisionSystem::Update(EntityManager& registry, const GameConfig& config) {
+    //CheckBulletHitMap(registry);
+    //CheckPlayer3DCollisions(registry);
+    CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
-	CheckWolfEatSheep(registry);
+    CheckEnemyBulletCollision(registry, config);
+    CheckWolfEatSheep(registry);
+    CheckWolfHeartsPlayer(registry);
 }

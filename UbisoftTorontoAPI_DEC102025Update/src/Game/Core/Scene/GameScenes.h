@@ -1,8 +1,8 @@
 #pragma once
-#include "SceneManager.h"
-#include "../UI/UISystem.h"
-#include <memory>
+#include "../Game/Core/Scene/SceneManager.h"
+#include "../System/UI/UISystem.h"
 #include "../Game/Core/LevelSystem.h"
+#include <memory>
 
 // Forward declarations
 class EngineSystem;
@@ -13,13 +13,13 @@ struct Camera3D;
 class StartScene : public IScene {
 public:
     StartScene(EngineSystem* engine);
-    
+
     void OnEnter() override;
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
     std::string GetName() const override { return "StartScene"; }
-    
+
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
@@ -29,37 +29,44 @@ private:
 class PlayingScene : public IScene {
 public:
     PlayingScene(EngineSystem* engine);
-    
+
     void OnEnter() override;
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
+    void RenderBackground();  // Render background before 3D game content
     std::string GetName() const override { return "PlayingScene"; }
-    
+
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
     int m_lastScore;
     UIText* scoreText;
-
     UIText* roundText;
     UIText* timeText;
     UIText* sheepText;
+
+    // Entity count displays
+    UIText* totalEntityText;
+    UIText* bulletEntityText;
+    UIText* wolfEntityText;
+    UIText* sheepEntityText;
+    UIText* chunkEntityText;
 };
 
 // Game Over Scene
 class GameOverScene : public IScene {
 public:
     GameOverScene(EngineSystem* engine);
-    
+
     void OnEnter() override;
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
     std::string GetName() const override { return "GameOverScene"; }
-    
+
     void SetFinalScore(int score) { finalScore = score; }
-    
+
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
@@ -71,13 +78,13 @@ private:
 class SettingsScene : public IScene {
 public:
     SettingsScene(EngineSystem* engine);
-    
+
     void OnEnter() override;
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
     std::string GetName() const override { return "SettingsScene"; }
-    
+
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
@@ -88,30 +95,22 @@ private:
 class UpgradeScene : public IScene {
 public:
     UpgradeScene(EngineSystem* engine);
-    
+
     void OnEnter() override;
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
     std::string GetName() const override { return "UpgradeScene"; }
-    
+
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
     int selectedUpgrade;  // Currently selected upgrade (0-2)
-    
-    // Upgrade types available
-    enum class UpgradeType {
-        HealthBoost,
-        SpeedBoost,
-        JumpBoost,
-        GravityReduction,
-        BulletSpeed
-    };
-    
-    UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
-    /*void GenerateRandomUpgrades();
-    void ApplyUpgrade(UpgradeType type);
-    std::string GetUpgradeName(UpgradeType type);
-    std::string GetUpgradeDescription(UpgradeType type);*/
+    LevelSystem::UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
+
+    // UI element pointers
+    UIText* upgradeNames[3];
+    UIText* upgradeDescs[3];
+    UIText* leftBrackets[3];
+    UIText* rightBrackets[3];
 };

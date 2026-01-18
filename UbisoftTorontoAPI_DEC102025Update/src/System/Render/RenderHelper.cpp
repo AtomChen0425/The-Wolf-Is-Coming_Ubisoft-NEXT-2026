@@ -3,10 +3,6 @@
 #include "../../ContestAPI/app.h"
 #include "../System/Math/Math.h"
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 bool Project(float wx, float wy, float wz, const Camera3D& cam, float& outX, float& outY) {
 
     // Calculate relative position to camera
@@ -20,20 +16,20 @@ bool Project(float wx, float wy, float wz, const Camera3D& cam, float& outX, flo
 
     float rotatedX = rx * cosYaw + rz * sinYaw;
     float rotatedZ = -rx * sinYaw + rz * cosYaw;
-    
+
     // Then apply pitch rotation (rotate around X axis in camera space)
     float cosPitch = std::cos(cam.pitchAngle);
     float sinPitch = std::sin(cam.pitchAngle);
-    
+
     float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
     float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
 
     // Use pitch-adjusted coordinates for projection
     if (pitchedZ <= 1.0f) return false;
 
-    float fov = 600.0f;
-    float centerX = 1024.0f / 2.0f;
-    float centerY = 768.0f / 2.0f;
+    float fov = cam.fov;
+    float centerX = cam.screenWidth / 2.0f;
+    float centerY = cam.screenHeight / 2.0f;
 
     outX = rotatedX * (fov / pitchedZ) + centerX;
     outY = pitchedY * (fov / pitchedZ) + centerY;
@@ -54,11 +50,11 @@ static bool ProjectToScreenWithDepth(float wx, float wy, float wz, const Camera3
 
     const float rotatedX = rx * cosYaw + rz * sinYaw;
     const float rotatedZ = -rx * sinYaw + rz * cosYaw;
-    
+
     // Then apply pitch rotation (rotate around X axis in camera space)
     const float cosPitch = std::cos(cam.pitchAngle);
     const float sinPitch = std::sin(cam.pitchAngle);
-    
+
     const float pitchedY = ry * cosPitch - rotatedZ * sinPitch;
     const float pitchedZ = ry * sinPitch + rotatedZ * cosPitch;
 
@@ -66,16 +62,14 @@ static bool ProjectToScreenWithDepth(float wx, float wy, float wz, const Camera3
     const float nearZ = 1.0f;
     if (pitchedZ <= nearZ) return false;
 
-    // Match your existing "pixel space" projection
-    const float fov = 600.0f;
-    const float centerX = 1024.0f / 2.0f;
-    const float centerY = 768.0f / 2.0f;
+    const float fov = cam.fov;// 600.0f;
+    const float centerX = cam.screenWidth / 2.0f;
+    const float centerY = cam.screenHeight / 2.0f;
 
     outX = rotatedX * (fov / pitchedZ) + centerX;
     outY = pitchedY * (fov / pitchedZ) + centerY;
 
     // Depth: map pitchedZ into 0..1 for GL_LESS depth test.
-    // Smaller z => closer => smaller outZ (passes against larger values).
     const float farZ = 3000.0f; // tune to your world scale
     float zn = (pitchedZ - nearZ) / (farZ - nearZ);
     if (zn < 0.0f) zn = 0.0f;
@@ -126,57 +120,57 @@ void RenderHelper::DrawSphere(float centerX, float centerY, float centerZ, float
     // Segment count constraints for performance and quality balance
     const int MIN_SEGMENTS = 4;
     const int MAX_SEGMENTS = 32;
-    
+
     // Clamp segments to reasonable values
     if (segments < MIN_SEGMENTS) segments = MIN_SEGMENTS;
     if (segments > MAX_SEGMENTS) segments = MAX_SEGMENTS;
-    
+
     const int latSegments = segments;
     const int lonSegments = segments * 2;
-    
+
     // Generate sphere vertices using spherical coordinates
     // We'll render the sphere as a series of triangle strips
     for (int lat = 0; lat < latSegments; ++lat) {
-        float theta1 = static_cast<float>(lat) * M_PI / latSegments;
-        float theta2 = static_cast<float>(lat + 1) * M_PI / latSegments;
-        
+        float theta1 = static_cast<float>(lat) * PI / latSegments;
+        float theta2 = static_cast<float>(lat + 1) * PI / latSegments;
+
         for (int lon = 0; lon < lonSegments; ++lon) {
-            float phi1 = static_cast<float>(lon) * 2.0f * M_PI / lonSegments;
-            float phi2 = static_cast<float>(lon + 1) * 2.0f * M_PI / lonSegments;
-            
+            float phi1 = static_cast<float>(lon) * 2.0f * PI / lonSegments;
+            float phi2 = static_cast<float>(lon + 1) * 2.0f * PI / lonSegments;
+
             // Calculate the four vertices of this quad
             // v1: (lat, lon)
             float x1 = centerX + radius * std::sin(theta1) * std::cos(phi1);
             float y1 = centerY + radius * std::cos(theta1);
             float z1 = centerZ + radius * std::sin(theta1) * std::sin(phi1);
-            
+
             // v2: (lat+1, lon)
             float x2 = centerX + radius * std::sin(theta2) * std::cos(phi1);
             float y2 = centerY + radius * std::cos(theta2);
             float z2 = centerZ + radius * std::sin(theta2) * std::sin(phi1);
-            
+
             // v3: (lat+1, lon+1)
             float x3 = centerX + radius * std::sin(theta2) * std::cos(phi2);
             float y3 = centerY + radius * std::cos(theta2);
             float z3 = centerZ + radius * std::sin(theta2) * std::sin(phi2);
-            
+
             // v4: (lat, lon+1)
             float x4 = centerX + radius * std::sin(theta1) * std::cos(phi2);
             float y4 = centerY + radius * std::cos(theta1);
             float z4 = centerZ + radius * std::sin(theta1) * std::sin(phi2);
-            
+
             // Add shading based on latitude for better depth perception
             float shading1 = 0.5f + 0.5f * std::cos(theta1);
             float shading2 = 0.5f + 0.5f * std::cos(theta2);
-            
+
             float r1 = r * shading1;
             float g1 = g * shading1;
             float b1 = b * shading1;
-            
+
             float r2 = r * shading2;
             float g2 = g * shading2;
             float b2 = b * shading2;
-            
+
             // Draw two triangles to form a quad
             // Triangle 1: v1, v2, v3
             App::DrawTriangle(
@@ -188,7 +182,7 @@ void RenderHelper::DrawSphere(float centerX, float centerY, float centerZ, float
                 r2, g2, b2,
                 false
             );
-            
+
             // Triangle 2: v1, v3, v4
             App::DrawTriangle(
                 x1, y1, z1, 1.0f,
@@ -223,7 +217,8 @@ void RenderHelper::RenderCube_inNDC(const Transform3D& t, const Camera3D& camera
     };
 
     // Project to NDC + depth
-    float x[8], y[8], z[8], w[8];
+    //float x[8], y[8], z[8], w[8];
+    float x[8] = { 0 }, y[8] = { 0 }, z[8] = { 0 }, w[8] = { 0 };
     bool ok[8];
     for (int i = 0; i < 8; ++i) {
         ok[i] = ProjectToScreenWithDepth(corners[i].x, corners[i].y, corners[i].z, camera,
@@ -250,7 +245,7 @@ void RenderHelper::RenderCube_inNDC(const Transform3D& t, const Camera3D& camera
         {t.r * 0.9f, t.g * 0.9f, t.b * 0.9f}
     };
 
-    // Optional: basic back-face culling based on geometric normal in world space
+    // basic back-face culling based on geometric normal in world space
     for (int f = 0; f < 6; ++f)
     {
         const int v0 = faces[f][0];
@@ -261,19 +256,16 @@ void RenderHelper::RenderCube_inNDC(const Transform3D& t, const Camera3D& camera
         if (!ok[v0] && !ok[v1] && !ok[v2] && !ok[v3]) continue;
 
         // Normal from (v0->v1) x (v0->v2)
-        const Vec3 e1(corners[v1].x - corners[v0].x, corners[v1].y - corners[v0].y, corners[v1].z - corners[v0].z);
-        const Vec3 e2(corners[v2].x - corners[v0].x, corners[v2].y - corners[v0].y, corners[v2].z - corners[v0].z);
+        const Vec3 e1 = corners[v1] - corners[v0];
+        const Vec3 e2 = corners[v2] - corners[v0];
         const Vec3 n = Cross3(e1, e2);
 
         // Face center
-        const Vec3 c(
-            (corners[v0].x + corners[v1].x + corners[v2].x + corners[v3].x) * 0.25f,
-            (corners[v0].y + corners[v1].y + corners[v2].y + corners[v3].y) * 0.25f,
-            (corners[v0].z + corners[v1].z + corners[v2].z + corners[v3].z) * 0.25f);
+        const Vec3 c = (corners[v0] + corners[v1] + corners[v2] + corners[v3]) * 0.25f;
 
         // Vector to camera
         const Vec3 toCam(camera.x - c.x, camera.y - c.y, camera.z - c.z);
-		const float dot = Dot3(toCam, n);
+        const float dot = Dot3(toCam, n);
         if (dot >= 0.0f) continue;
 
         const float r = faceColors[f][0];

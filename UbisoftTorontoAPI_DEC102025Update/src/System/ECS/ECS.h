@@ -6,13 +6,10 @@
 #include <cassert>
 #include <type_traits>
 
-// ==========================================
-// 1. 基础类型定义
-// ==========================================
 using EntityID = uint64_t;
 using EntityVersion = uint64_t;
-constexpr std::size_t MAX_ENTITY = 2048;
-constexpr uint64_t NULL_INDEX = static_cast<uint64_t>(-1); // 用于标记无效索引
+constexpr std::size_t MAX_ENTITY = 1 << 20;
+constexpr uint64_t NULL_INDEX = static_cast<uint64_t>(-1); 
 
 struct Entity {
     EntityID id;
@@ -20,7 +17,7 @@ struct Entity {
 };
 
 // ==========================================
-// 2. 组件池接口与实现 (Sparse Set)
+// Sparse Set
 // ==========================================
 class IComponentPool {
 public:
@@ -33,7 +30,7 @@ public:
 
 template<typename T>
 class ComponentPool : public IComponentPool {
-public: // 公开 denseData 以便 View 使用
+public:
     std::vector<T> denseData;
     std::vector<EntityID> denseToEntity;
     std::vector<uint64_t> sparseIndices;
@@ -43,13 +40,11 @@ public:
         if (id >= sparseIndices.size()) {
             sparseIndices.resize(id + 1, NULL_INDEX);
         }
-        // 如果已存在，直接更新
         if (sparseIndices[id] != NULL_INDEX) {
             denseData[sparseIndices[id]] = component;
             return;
         }
 
-        // 新增：Sparse Set 标准插入流程
         sparseIndices[id] = static_cast<uint64_t>(denseData.size());
         denseData.push_back(component);
         denseToEntity.push_back(id);
@@ -67,16 +62,16 @@ public:
             return;
         }
 
-        // Swap-and-Pop 删除逻辑
+        // Swap-and-Pop
         uint64_t removedIndex = sparseIndices[id];
         uint64_t lastIndex = static_cast<uint64_t>(denseData.size() - 1);
 
         if (removedIndex != lastIndex) {
-            // 将最后一个元素搬到被删除的位置
+			// move the last element to the removed spot
             EntityID lastEntity = denseToEntity[lastIndex];
-            denseData[removedIndex] = denseData[lastIndex]; // 移动组件数据
-            denseToEntity[removedIndex] = lastEntity;       // 更新反向映射
-            sparseIndices[lastEntity] = removedIndex;       // 更新稀疏索引
+            denseData[removedIndex] = denseData[lastIndex]; 
+            denseToEntity[removedIndex] = lastEntity;       
+            sparseIndices[lastEntity] = removedIndex;       
         }
 
         denseData.pop_back();
@@ -100,16 +95,14 @@ public:
 };
 
 // ==========================================
-// 3. 实体管理器 (Registry)
+// 3.Registry
 // ==========================================
 class EntityManager {
     EntityID nextEntityID = 0;
     std::vector<EntityVersion> entityVersions;
-    std::vector<EntityID> freeIndices; // 回收站 ID
+	std::vector<EntityID> freeIndices; // store freed entity IDs for reuse
     std::bitset<MAX_ENTITY> aliveEntities;
-    std::vector<uint64_t> entityMasks; // 存储每个实体的组件位掩码
-
-    // 核心修复：索引是 ComponentTypeID，而不是 EntityID
+	std::vector<uint64_t> entityMasks; // store component bitmask for each entity
     std::vector<std::unique_ptr<IComponentPool>> m_componentPools;
 private:
     static std::size_t getUniqueTypeID() {
@@ -125,15 +118,12 @@ public:
         }
         else {
             id = nextEntityID++;
-            // 扩容检查
             if (id >= entityVersions.size()) {
                 entityVersions.resize(id + 1, 0);
                 entityMasks.resize(id + 1, 0);
             }
         }
-
         aliveEntities.set(id);
-        // 复用 ID 时版本号不重置，而是继续增加，这里假设 destroy 时已增加
         return { id, entityVersions[id] };
     }
 
@@ -143,19 +133,14 @@ public:
 
         std::size_t typeId = getComponentTypeID<T>();
 
-        // 确保 componentPools 足够大
         if (typeId >= m_componentPools.size()) {
             m_componentPools.resize(typeId + 1);
         }
-        // 延迟创建池子
         if (!m_componentPools[typeId]) {
             m_componentPools[typeId] = std::make_unique<ComponentPool<T>>();
         }
-
-        // 添加数据
         static_cast<ComponentPool<T>*>(m_componentPools[typeId].get())->add(e.id, component);
 
-        // 更新位掩码
         entityMasks[e.id] |= (1ULL << typeId);
     }
 
@@ -181,12 +166,12 @@ public:
         entityMasks[e.id] &= ~(1ULL << typeId);
     }
 
-    void destroyEntity(EntityID eID) {
-		Entity e{ eID, getEntityVersion(eID) };
+    void destroyEntity(Entity e) {
+        
         if (!isValid(e)) return;
 
         uint64_t mask = entityMasks[e.id];
-
+		// Remove all components
         for (std::size_t typeId = 0; typeId < m_componentPools.size(); ++typeId) {
             if ((mask & (1ULL << typeId)) && m_componentPools[typeId]) {
                 m_componentPools[typeId]->removeIfExists(e.id);
@@ -195,15 +180,14 @@ public:
 
         aliveEntities.reset(e.id);
         entityMasks[e.id] = 0;
-        entityVersions[e.id]++; 
-        freeIndices.push_back(e.id); 
+        entityVersions[e.id]++;
+        freeIndices.push_back(e.id);
     }
 
     bool isValid(Entity e) {
         return e.id < nextEntityID && aliveEntities.test(e.id) && entityVersions[e.id] == e.version;
     }
 
-    // 获取内部数据供 View 使用
     uint64_t getEntityMask(EntityID id) { return entityMasks[id]; }
 
     template<typename T>
@@ -215,38 +199,35 @@ public:
 
     template<typename T>
     static std::size_t getComponentTypeID() {
-        // 对于每一个 T，这个静态变量只会初始化一次
-        // 但它获取的值来自于全局唯一的 getUniqueTypeID()
         static std::size_t typeID = getUniqueTypeID();
         return typeID;
     }
 
     EntityVersion getEntityVersion(EntityID id) const {
-        // 实际工程中可以加一个 assert(id < entityVersions.size());
         return entityVersions[id];
+    }
+    std::size_t getAliveEntitiesCount() const {
+        return aliveEntities.count();
     }
 };
 
 // ==========================================
-// 4. 视图 (View) 与 延迟迭代器
+// 4. View
 // ==========================================
 template<typename... Components>
 class View {
     EntityManager& manager;
-    IComponentPool* leaderPool = nullptr; // 最短的池子，作为遍历基准
-    std::vector<EntityID>* leaderIndices = nullptr; // 指向 denseToEntity 的指针
+	IComponentPool* leaderPool = nullptr; // the pool with the least entities
+	std::vector<EntityID>* leaderIndices = nullptr; // pointer to the denseToEntity of the leader pool
     uint64_t targetMask;
 
 public:
     View(EntityManager& m) : manager(m) {
         targetMask = 0;
-        // 折叠表达式计算目标掩码
         ((targetMask |= (1ULL << EntityManager::getComponentTypeID<Components>())), ...);
 
-        // 寻找最短的池子 (Leader Optimization)
         std::size_t minSize = static_cast<std::size_t>(-1);
 
-        // Lambda 用于检查并更新最小池子
         auto checkPool = [&](auto* pool) {
             if (pool && pool->Size() < minSize) {
                 minSize = pool->Size();
@@ -255,32 +236,30 @@ public:
             }
             };
 
-        // 对每个组件类型执行检查
         (checkPool(manager.getPool<Components>()), ...);
     }
 
     struct Iterator {
         EntityManager& manager;
-        const std::vector<EntityID>* indices; // 引用 Leader 的密集数组
+        const std::vector<EntityID>* indices; //  
         uint64_t mask;
-        size_t index; // 当前在 dense 数组中的下标
+		size_t index; // index in the dense array
 
         Iterator(EntityManager& m, const std::vector<EntityID>* idxs, uint64_t mk, size_t i)
             : manager(m), indices(idxs), mask(mk), index(i) {
-            // 构造时立即跳到第一个有效元素
             skipInvalid();
         }
 
-        // 核心跳跃逻辑：Lazy Iteration
+        // Lazy Iteration
         void skipInvalid() {
             if (!indices) return;
             while (index < indices->size()) {
                 EntityID id = (*indices)[index];
-                // 检查位掩码是否完全匹配
+				// Check if entity matches the mask
                 if ((manager.getEntityMask(id) & mask) == mask) {
-                    return; // 找到了！
+                    return; 
                 }
-                index++; // 不匹配，跳过
+                index++; 
             }
         }
 
@@ -309,16 +288,15 @@ public:
         return Iterator(manager, leaderIndices, targetMask, leaderIndices->size());
     }
 
-    // 辅助函数：在遍历中方便地获取组件
     template<typename T>
     T& get(EntityID id) {
-        // 这里我们假设迭代器出来的 ID 肯定是有效的，所以可以直接构造 Entity 去查
-        // 或者为了极致性能，View 初始化时就保存 componentPools 的指针，这里直接数组访问
         return *manager.getComponent<T>(Entity{ id, manager.getEntityVersion(id) });
     }
-};
+    template<typename T>
+    bool has(EntityID id) {
+        uint64_t bit = 1ULL << EntityManager::getComponentTypeID<T>();
+        return (manager.getEntityMask(id) & bit) != 0;
+    }
 
-// 辅助：给 EntityManager 加一个创建 View 的接口
-// (由于 View 是模板类，通常需要放在 EntityManager 定义之后，
-// 或者将 View 定义在 EntityManager 内部)
-// 这里我们假设用户手动创建 View view(manager);
+
+};

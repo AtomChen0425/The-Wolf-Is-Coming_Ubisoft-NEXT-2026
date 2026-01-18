@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 struct Vec3
 {
 	Vec3()
@@ -69,6 +70,13 @@ struct Vec3
 			y * rhs,
 			z * rhs);
 	}
+	Vec3 operator/(float rhs) const
+	{
+		return Vec3(
+			x / rhs,
+			y / rhs,
+			z / rhs);
+	}
 
 	Vec3 operator*=(float rhs)
 	{
@@ -92,4 +100,15 @@ static Vec3 Cross3(const Vec3& a, const Vec3& b)
 static float Dot3(const Vec3& a, const Vec3& b)
 {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+static Vec3 Normalize3D(const Vec3& v) {
+	float len = std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	if (len < 0.0001f) return Vec3(0.0f, 0.0f, 0.0f);
+	return Vec3(v.x / len, v.y / len, v.z / len);
+}
+static float Distance3D(const Vec3& a, const Vec3& b) {
+	float dx = a.x - b.x;
+	float dy = a.y - b.y;
+	float dz = a.z - b.z;
+	return std::sqrt(dx * dx + dy * dy + dz * dz);
 }

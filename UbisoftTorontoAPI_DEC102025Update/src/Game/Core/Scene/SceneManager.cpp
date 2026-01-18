@@ -12,16 +12,16 @@ void SceneManager::SwitchToScene(const std::string& name) {
         std::cerr << "Scene '" << name << "' not found!" << std::endl;
         return;
     }
-    
+
     // Exit current scene if one is active
     if (currentScene) {
         currentScene->OnExit();
     }
-    
+
     // Switch to new scene
     currentScene = it->second.get();
     currentSceneName = name;
-    
+
     // Enter the new scene
     if (currentScene) {
         currentScene->OnEnter();
