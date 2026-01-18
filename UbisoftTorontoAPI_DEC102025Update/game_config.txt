@@ -124,6 +124,14 @@ wolfSniperChaseForce=300
 wolfSniperDetectionRange=400
 wolfSniperSize=20
 
+# Wolf stats - Magic
+wolfMagicHealth=100
+wolfMagicSpeed=100
+wolfMagicChaseForce=300
+wolfMagicDetectionRange=400
+wolfMagicSize=20
+
+
 # Wolf stats - Tank
 wolfTankHealth=300
 wolfTankSpeed=100
@@ -154,9 +162,18 @@ wolfHunterJumpMaxDistance=200
 wolfSniperGunDamage=8
 wolfSniperGunFireRate=500
 wolfSniperGunProjectileSpeed=600
-wolfSniperGunProjectileSize=5
+wolfSniperGunProjectileSize=10
 wolfSniperGunProjectileLife=2000
 wolfSniperGunKnockback=150
+
+# Wolf weapon - Magic Wand
+wolfMagicWandDamage=10
+wolfMagicWandFireRate=300
+wolfMagicWandProjectileSpeed=400
+wolfMagicWandProjectileSize=12
+wolfMagicWandProjectileLife=8500
+wolfMagicWandKnockback=100
+
 
 # Player weapon - Machine Gun
 playerMachineGunDamage=10

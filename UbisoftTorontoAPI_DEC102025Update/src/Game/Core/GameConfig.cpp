@@ -134,7 +134,14 @@ GameConfig::GameConfig() {
     Bind("wolfSniperSpeed", wolfSniperSpeed, 150.0f);
     Bind("wolfSniperChaseForce", wolfSniperChaseForce, 300.0f);
     Bind("wolfSniperDetectionRange", wolfSniperDetectionRange, 400.0f);
-    Bind("wolfSniperSize", wolfSniperSize, 20.0f);
+    Bind("wolfSniperSize", wolfSniperSize, 20.0f);\
+
+    Header("Wolf Stats - Magic");
+    Bind("wolfMagicHealth", wolfMagicHealth, 100);
+    Bind("wolfMagicSpeed", wolfMagicSpeed, 100.0f);
+    Bind("wolfMagicChaseForce", wolfMagicChaseForce, 300.0f);
+    Bind("wolfMagicDetectionRange", wolfMagicDetectionRange, 400.0f);
+    Bind("wolfMagicSize", wolfMagicSize, 20.0f);
 
     Header("Wolf Stats - Tank");
     Bind("wolfTankHealth", wolfTankHealth, 300);
@@ -172,6 +179,14 @@ GameConfig::GameConfig() {
     Bind("wolfSniperGunProjectileSize", wolfSniperGunProjectileSize, 5.0f);
     Bind("wolfSniperGunProjectileLife", wolfSniperGunProjectileLife, 2000.0f);
     Bind("wolfSniperGunKnockback", wolfSniperGunKnockback, 150.0f);
+
+    Header("Wolf Weapon - Magic Wand");
+    Bind("wolfMagicWandDamage", wolfMagicWandDamage, 10.0f);
+    Bind("wolfMagicWandFireRate", wolfMagicWandFireRate, 300.0f);
+    Bind("wolfMagicWandProjectileSpeed", wolfMagicWandProjectileSpeed, 400.0f);
+    Bind("wolfMagicWandProjectileSize", wolfMagicWandProjectileSize, 6.0f);
+    Bind("wolfMagicWandProjectileLife", wolfMagicWandProjectileLife, 2500.0f);
+    Bind("wolfMagicWandKnockback", wolfMagicWandKnockback, 100.0f);
 
     Header("Player Weapon - Machine Gun");
     Bind("playerMachineGunDamage", playerMachineGunDamage, 10.0f);

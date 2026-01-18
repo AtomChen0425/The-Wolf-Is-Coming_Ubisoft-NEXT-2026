@@ -2,8 +2,7 @@
 #include <string>
 #include <unordered_map>
 // Game configuration loaded from file
-class GameConfig {
-public:
+struct GameConfig {
     float gravity;
     float jumpVelocity;
     float forwardSpeed;
