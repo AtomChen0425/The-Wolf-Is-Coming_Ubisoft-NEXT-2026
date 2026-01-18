@@ -199,6 +199,55 @@ void GameConfig::LoadDefaults() {
     // Sheep spawn settings
     sheepSpawnRadius = 100.0f;
     sheepInitialCount = 10;
+    sheepSpawnYPosition = 30.0f;
+    sheepMoveSpeed = 50.0f;
+    sheepSpawnOffsetMin = -100.0f;
+    sheepSpawnOffsetMax = 100.0f;
+    sheepSize = 15.0f;
+    sheepColorR = 0.9f;
+    sheepColorG = 0.9f;
+    sheepColorB = 0.9f;
+    sheepSpriteScale = 0.3f;
+    sheepAnimationSpeed = 1.0f / 15.0f;
+    
+    // Sheep Boids behavior
+    sheepViewRadius = 70.0f;
+    sheepMaxSpeed = 60.0f;
+    sheepMaxForce = 0.6f;
+    sheepSeparationWeight = 1.5f;
+    sheepAlignmentWeight = 1.0f;
+    sheepCohesionWeight = 1.0f;
+    sheepTargetWeight = 0.5f;
+    sheepFearWeight = 4.0f;
+    sheepEnemyDetectRange = 150.0f;
+    
+    // Sheep shooting
+    sheepWeaponArcAngle = 1.5f * 3.14159265f;
+    sheepWeaponSpawnRadius = 10.0f;
+    
+    // Sheep targeting
+    sheepTargetFarDistance = 60.0f;
+    sheepTargetNearDistance = 30.0f;
+    
+    // Sheep physics
+    sheepVelocityDamping = 0.98f;
+    sheepSeparationSizeMultiplier = 0.55f;
+    sheepSeparationRepulsionStrength = 2.0f;
+    
+    // Optimization
+    spatialGridCellSize = 80.0f;
+    
+    // Enemy AI
+    maxBulletDistance = 5000.0f;
+    
+    // Particle trails
+    sheepBulletTrailEmissionRate = 50.0f;
+    sheepBulletTrailMinSize = 0.0f;
+    sheepBulletTrailMaxSize = 150.0f;
+    sheepBulletTrailLife = 3.0f;
+    sheepBulletTrailColorR = 1.0f;
+    sheepBulletTrailColorG = 0.5f;
+    sheepBulletTrailColorB = 0.0f;
 }
 
 bool GameConfig::LoadFromFile(const std::string& filename) {

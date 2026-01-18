@@ -218,6 +218,55 @@ struct GameConfig {
     // Sheep spawn settings
     float sheepSpawnYPosition = 30.0f;
     float sheepMoveSpeed = 50.0f;
+    float sheepSpawnOffsetMin = -100.0f;
+    float sheepSpawnOffsetMax = 100.0f;
+    float sheepSize = 15.0f;
+    float sheepColorR = 0.9f;
+    float sheepColorG = 0.9f;
+    float sheepColorB = 0.9f;
+    float sheepSpriteScale = 0.3f;
+    float sheepAnimationSpeed = 1.0f / 15.0f;
+    
+    // Sheep Boids behavior parameters (SheepComponent defaults)
+    float sheepViewRadius = 70.0f;
+    float sheepMaxSpeed = 60.0f;
+    float sheepMaxForce = 0.6f;
+    float sheepSeparationWeight = 1.5f;
+    float sheepAlignmentWeight = 1.0f;
+    float sheepCohesionWeight = 1.0f;
+    float sheepTargetWeight = 0.5f;
+    float sheepFearWeight = 4.0f;
+    float sheepEnemyDetectRange = 150.0f;
+    
+    // Sheep shooting parameters
+    float sheepWeaponArcAngle = 1.5f * 3.14159265f;  // Total arc for spreading weapons
+    float sheepWeaponSpawnRadius = 10.0f;  // Radius for weapon spawn circle
+    
+    // Sheep targeting parameters
+    float sheepTargetFarDistance = 60.0f;   // Distance at which sheep move toward player
+    float sheepTargetNearDistance = 30.0f;  // Distance at which sheep move away from player
+    
+    // Sheep velocity damping
+    float sheepVelocityDamping = 0.98f;
+    
+    // Sheep separation parameters
+    float sheepSeparationSizeMultiplier = 0.55f;  // Minimum safe distance multiplier
+    float sheepSeparationRepulsionStrength = 2.0f;  // Repulsion strength for very close neighbors
+    
+    // Spatial grid optimization
+    float spatialGridCellSize = 80.0f;  // Cell size for spatial grid optimization
+    
+    // Enemy AI parameters
+    float maxBulletDistance = 5000.0f;  // Maximum distance bullets can travel from origin
+    
+    // Particle trail parameters (for sheep bullets)
+    float sheepBulletTrailEmissionRate = 50.0f;
+    float sheepBulletTrailMinSize = 0.0f;
+    float sheepBulletTrailMaxSize = 150.0f;
+    float sheepBulletTrailLife = 3.0f;
+    float sheepBulletTrailColorR = 1.0f;
+    float sheepBulletTrailColorG = 0.5f;
+    float sheepBulletTrailColorB = 0.0f;
     
     // Load config from file (returns true if successful)
     bool LoadFromFile(const std::string& filename);
