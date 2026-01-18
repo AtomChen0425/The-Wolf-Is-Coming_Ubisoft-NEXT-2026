@@ -139,31 +139,31 @@ namespace LevelSystem {
                 if (type == UpgradeType::PlayerMachineGun) {
                     weapon.type = WeaponType::MachineGun;
                     weapon.name = "Machine Gun";
-                    weapon.damage = 10.0f;
-                    weapon.fireRate = 50.0f;  // Fast fire rate
+                    weapon.damage = config.playerMachineGunDamage;
+                    weapon.fireRate = config.playerMachineGunFireRate;
                     weapon.currentCooldown = 0.0f;
-                    weapon.projectileSpeed = 500.0f;
-                    weapon.projectileSize = 5.0f;
-                    weapon.projectileLife = 2000.0f;
-                    weapon.explosionRadius = 0.0f;
-					weapon.knockback = 100.0f;
-                    weapon.r = 1.0f;
-                    weapon.g = 1.0f;
-                    weapon.b = 0.0f;
+                    weapon.projectileSpeed = config.playerMachineGunProjectileSpeed;
+                    weapon.projectileSize = config.playerMachineGunProjectileSize;
+                    weapon.projectileLife = config.playerMachineGunProjectileLife;
+                    weapon.explosionRadius = config.playerMachineGunExplosionRadius;
+					weapon.knockback = config.playerMachineGunKnockback;
+                    weapon.r = config.playerMachineGunColorR;
+                    weapon.g = config.playerMachineGunColorG;
+                    weapon.b = config.playerMachineGunColorB;
                 } else {  // PlayerCannon
                     weapon.type = WeaponType::Cannon;
                     weapon.name = "Cannon";
-                    weapon.damage = 50.0f;
-                    weapon.fireRate = 1000.0f;  // Slow fire rate
+                    weapon.damage = config.playerCannonDamage;
+                    weapon.fireRate = config.playerCannonFireRate;
                     weapon.currentCooldown = 0.0f;
-                    weapon.projectileSpeed = 300.0f;
-                    weapon.projectileSize = 15.0f;
-                    weapon.projectileLife = 3000.0f;
-                    weapon.explosionRadius = 50.0f;
-                    weapon.knockback = 500.0f;
-                    weapon.r = 1.0f;
-                    weapon.g = 0.5f;
-                    weapon.b = 0.0f;
+                    weapon.projectileSpeed = config.playerCannonProjectileSpeed;
+                    weapon.projectileSize = config.playerCannonProjectileSize;
+                    weapon.projectileLife = config.playerCannonProjectileLife;
+                    weapon.explosionRadius = config.playerCannonExplosionRadius;
+                    weapon.knockback = config.playerCannonKnockback;
+                    weapon.r = config.playerCannonColorR;
+                    weapon.g = config.playerCannonColorG;
+                    weapon.b = config.playerCannonColorB;
                 }
                 inventory.weapons.push_back(weapon);
                 break;
@@ -179,31 +179,31 @@ namespace LevelSystem {
             if (type == UpgradeType::SheepMachineGun) {
                 weapon.type = WeaponType::MachineGun;
                 weapon.name = "Sheep MG";
-                weapon.damage = 5.0f;
-                weapon.fireRate = 50.0f;
+                weapon.damage = config.sheepMachineGunDamage;
+                weapon.fireRate = config.sheepMachineGunFireRate;
                 weapon.currentCooldown = 0.0f;
-                weapon.projectileSpeed = 400.0f;
-                weapon.projectileSize = 3.0f;
-                weapon.projectileLife = 2000.0f;
-                weapon.explosionRadius = 0.0f;
-				weapon.knockback = 50.0f;
-                weapon.r = 0.5f;
-                weapon.g = 1.0f;
-                weapon.b = 0.5f;
+                weapon.projectileSpeed = config.sheepMachineGunProjectileSpeed;
+                weapon.projectileSize = config.sheepMachineGunProjectileSize;
+                weapon.projectileLife = config.sheepMachineGunProjectileLife;
+                weapon.explosionRadius = config.sheepMachineGunExplosionRadius;
+				weapon.knockback = config.sheepMachineGunKnockback;
+                weapon.r = config.sheepMachineGunColorR;
+                weapon.g = config.sheepMachineGunColorG;
+                weapon.b = config.sheepMachineGunColorB;
             } else {  // SheepCannon
                 weapon.type = WeaponType::Cannon;
                 weapon.name = "Sheep Cannon";
-                weapon.damage = 30.0f;
-                weapon.fireRate = 1000.0f;
+                weapon.damage = config.sheepCannonDamage;
+                weapon.fireRate = config.sheepCannonFireRate;
                 weapon.currentCooldown = 0.0f;
-                weapon.projectileSpeed = 250.0f;
-                weapon.projectileSize = 10.0f;
-                weapon.projectileLife = 3000.0f;
-                weapon.explosionRadius = 50.0f;
-				weapon.knockback = 300.0f;
-                weapon.r = 0.5f;
-                weapon.g = 1.0f;
-                weapon.b = 1.0f;
+                weapon.projectileSpeed = config.sheepCannonProjectileSpeed;
+                weapon.projectileSize = config.sheepCannonProjectileSize;
+                weapon.projectileLife = config.sheepCannonProjectileLife;
+                weapon.explosionRadius = config.sheepCannonExplosionRadius;
+				weapon.knockback = config.sheepCannonKnockback;
+                weapon.r = config.sheepCannonColorR;
+                weapon.g = config.sheepCannonColorG;
+                weapon.b = config.sheepCannonColorB;
             }
 
             // Add weapon to 10% of sheep

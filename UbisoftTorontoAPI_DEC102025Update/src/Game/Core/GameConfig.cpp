@@ -93,6 +93,112 @@ void GameConfig::LoadDefaults() {
     jumpUpgradeAmount = 100.0f;
     gravityUpgradeAmount = -100.0f;
     bulletSpeedUpgradeAmount = 100.0f;
+    
+    // Wolf stats - Basic
+    wolfBasicHealth = 100.0f;
+    wolfBasicSpeed = 300.0f;
+    wolfBasicChaseForce = 500.0f;
+    wolfBasicDetectionRange = 300.0f;
+    wolfBasicSize = 20.0f;
+    
+    // Wolf stats - Sniper
+    wolfSniperHealth = 100.0f;
+    wolfSniperSpeed = 150.0f;
+    wolfSniperChaseForce = 300.0f;
+    wolfSniperDetectionRange = 400.0f;
+    wolfSniperSize = 20.0f;
+    
+    // Wolf stats - Tank
+    wolfTankHealth = 300.0f;
+    wolfTankSpeed = 100.0f;
+    wolfTankChaseForce = 400.0f;
+    wolfTankDetectionRange = 250.0f;
+    wolfTankSize = 30.0f;
+    
+    // Wolf stats - Fast
+    wolfFastHealth = 60.0f;
+    wolfFastSpeed = 500.0f;
+    wolfFastChaseForce = 600.0f;
+    wolfFastDetectionRange = 350.0f;
+    wolfFastSize = 15.0f;
+    
+    // Wolf stats - Hunter
+    wolfHunterHealth = 80.0f;
+    wolfHunterSpeed = 450.0f;
+    wolfHunterChaseForce = 550.0f;
+    wolfHunterDetectionRange = 300.0f;
+    wolfHunterSize = 20.0f;
+    wolfHunterJumpCooldown = 3.0f;
+    wolfHunterJumpVelocity = 350.0f;
+    wolfHunterJumpBoost = 200.0f;
+    wolfHunterJumpMinDistance = 80.0f;
+    wolfHunterJumpMaxDistance = 200.0f;
+    
+    // Wolf weapon - Sniper gun
+    wolfSniperGunDamage = 8.0f;
+    wolfSniperGunFireRate = 500.0f;
+    wolfSniperGunProjectileSpeed = 600.0f;
+    wolfSniperGunProjectileSize = 5.0f;
+    wolfSniperGunProjectileLife = 2000.0f;
+    wolfSniperGunKnockback = 150.0f;
+    
+    // Player weapon - Machine Gun
+    playerMachineGunDamage = 10.0f;
+    playerMachineGunFireRate = 50.0f;
+    playerMachineGunProjectileSpeed = 500.0f;
+    playerMachineGunProjectileSize = 5.0f;
+    playerMachineGunProjectileLife = 2000.0f;
+    playerMachineGunExplosionRadius = 0.0f;
+    playerMachineGunKnockback = 100.0f;
+    playerMachineGunColorR = 1.0f;
+    playerMachineGunColorG = 1.0f;
+    playerMachineGunColorB = 0.0f;
+    
+    // Player weapon - Cannon
+    playerCannonDamage = 50.0f;
+    playerCannonFireRate = 1000.0f;
+    playerCannonProjectileSpeed = 300.0f;
+    playerCannonProjectileSize = 15.0f;
+    playerCannonProjectileLife = 3000.0f;
+    playerCannonExplosionRadius = 50.0f;
+    playerCannonKnockback = 500.0f;
+    playerCannonColorR = 1.0f;
+    playerCannonColorG = 0.5f;
+    playerCannonColorB = 0.0f;
+    
+    // Sheep weapon - Machine Gun
+    sheepMachineGunDamage = 5.0f;
+    sheepMachineGunFireRate = 50.0f;
+    sheepMachineGunProjectileSpeed = 400.0f;
+    sheepMachineGunProjectileSize = 3.0f;
+    sheepMachineGunProjectileLife = 2000.0f;
+    sheepMachineGunExplosionRadius = 0.0f;
+    sheepMachineGunKnockback = 50.0f;
+    sheepMachineGunColorR = 0.5f;
+    sheepMachineGunColorG = 1.0f;
+    sheepMachineGunColorB = 0.5f;
+    
+    // Sheep weapon - Cannon
+    sheepCannonDamage = 30.0f;
+    sheepCannonFireRate = 1000.0f;
+    sheepCannonProjectileSpeed = 250.0f;
+    sheepCannonProjectileSize = 10.0f;
+    sheepCannonProjectileLife = 3000.0f;
+    sheepCannonExplosionRadius = 50.0f;
+    sheepCannonKnockback = 300.0f;
+    sheepCannonColorR = 0.5f;
+    sheepCannonColorG = 1.0f;
+    sheepCannonColorB = 1.0f;
+    
+    // Wolf spawn settings
+    wolfSpawnMinX = -200.0f;
+    wolfSpawnMaxX = 200.0f;
+    wolfSpawnMinZ = -50.0f;
+    wolfSpawnMaxZ = -30.0f;
+    
+    // Sheep spawn settings
+    sheepSpawnRadius = 100.0f;
+    sheepInitialCount = 10;
 }
 
 bool GameConfig::LoadFromFile(const std::string& filename) {
