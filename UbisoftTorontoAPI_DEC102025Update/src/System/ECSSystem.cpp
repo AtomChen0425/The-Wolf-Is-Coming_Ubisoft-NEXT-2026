@@ -145,7 +145,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
     if (gameState == GameState::Playing) {
         
         // Update level system (track time and round progression)
-        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs,generationTimers, *registry);
+        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs, generationTimers, *registry, config);
         
         // Check if all sheep are dead (game over condition)
         if (LevelSystem::CheckGameOver(*registry)) {
@@ -203,14 +203,14 @@ void EngineSystem::Update(const float deltaTimeMs) {
   //          GenerateSystem::GenerateWolfOfType(*registry, WolfType::Hunter);
   //          hunterWolfSpawnTimer = 0.0f;
   //      }
-        
+
         WolfSystem::Update(*registry, deltaTimeMs);
 
         
         
         MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
-        CollisionSystem::Update(*registry);
+        CollisionSystem::Update(*registry, config);
         PhysicsSystem::Update(*registry, deltaTimeMs);
 		RenderSystem::Update(*registry, deltaTimeMs);
         

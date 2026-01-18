@@ -223,7 +223,8 @@ void RenderHelper::RenderCube_inNDC(const Transform3D& t, const Camera3D& camera
     };
 
     // Project to NDC + depth
-    float x[8], y[8], z[8], w[8];
+    //float x[8], y[8], z[8], w[8];
+    float x[8] = { 0 }, y[8] = { 0 }, z[8] = { 0 }, w[8] = { 0 };
     bool ok[8];
     for (int i = 0; i < 8; ++i) {
         ok[i] = ProjectToScreenWithDepth(corners[i].x, corners[i].y, corners[i].z, camera,

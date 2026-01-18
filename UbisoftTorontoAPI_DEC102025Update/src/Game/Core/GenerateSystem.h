@@ -23,6 +23,6 @@ namespace GenerateSystem
 	void CreateTestEnemyWithAI(EntityManager& registry, float x, float y, float z, bool enableMovement, bool enableShooting);
 	
 	// Wolf generation functions
-	void GenerateWolf(EntityManager& registry);  // Generate basic wolf (backward compatibility)
-	void GenerateWolfOfType(EntityManager& registry, WolfType type);  // Generate specific wolf type
+	void GenerateWolf(EntityManager& registry, const GameConfig& config);  // Generate basic wolf (backward compatibility)
+	void GenerateWolfOfType(EntityManager& registry, WolfType type, const GameConfig& config);  // Generate specific wolf type
 };

@@ -752,7 +752,7 @@ void CheckBulletHitMap1(EntityManager& registry) {
     }
 }
 
-void CheckEnemyBulletCollision(EntityManager& registry) {
+void CheckEnemyBulletCollision(EntityManager& registry, const GameConfig& config) {
     View<Bullet, EnemyBulletTag, Transform3D> enemyBulletView(registry);
     // Get all potential targets (players and sheep)
     std::vector<Transform3D> targetTransform;
@@ -828,16 +828,16 @@ void CheckEnemyBulletCollision(EntityManager& registry) {
         registry.destroyEntity(e);
     }
     for (Vec3& pos : wolfToAdd) {
-        WolfSystem::InitWolfOfType(registry, pos.x, pos.z, WolfType::Basic);
+        WolfSystem::InitWolfOfType(registry, pos.x, pos.z, WolfType::Basic, config);
     }
 }
-void CollisionSystem::Update(EntityManager& registry) {
+void CollisionSystem::Update(EntityManager& registry, const GameConfig& config) {
     //CheckBulletHitMap(registry);
     //CheckPlayer3DCollisions(registry);
 	CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
-    CheckEnemyBulletCollision(registry);
+    CheckEnemyBulletCollision(registry, config);
 	CheckWolfEatSheep(registry);
     CheckWolfHeartsPlayer(registry);    
 }

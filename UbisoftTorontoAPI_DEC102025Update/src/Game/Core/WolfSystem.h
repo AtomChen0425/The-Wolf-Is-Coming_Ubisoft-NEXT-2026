@@ -11,5 +11,5 @@ namespace WolfSystem {
     void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type, const GameConfig& config);
 
     // Update wolf behavior each frame (should be called from EngineSystem::Update)
-    void Update(EntityManager& registry, float dtMs, const GameConfig& config);
+    void Update(EntityManager& registry, float dtMs);
 }

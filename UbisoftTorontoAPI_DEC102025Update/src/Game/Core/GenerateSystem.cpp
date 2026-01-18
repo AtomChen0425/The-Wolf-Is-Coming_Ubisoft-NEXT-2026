@@ -608,12 +608,12 @@ void GenerateSystem::ChunkGenerationSystem(EntityManager& registry, float player
     // Despawn distant chunks
     DespawnDistantChunks(registry, playerX, playerZ, loadedChunks, config);
 }
-void GenerateSystem::GenerateWolf(EntityManager& registry) {
+void GenerateSystem::GenerateWolf(EntityManager& registry, const GameConfig& config) {
     // Generate basic wolf type for backward compatibility
-    GenerateWolfOfType(registry, WolfType::Basic);
+    GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic, config);
 }
 
-void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type) {
+void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type, const GameConfig& config) {
     // Find player position to spawn wolf around them
     View<PlayerTag, Transform3D> playerView(registry);
     Vec3 playerPos;
@@ -643,5 +643,5 @@ void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type) 
     };
 
     // Use WolfSystem to create wolf of specific type
-    WolfSystem::InitWolfOfType(registry, spawnPos.x, spawnPos.z, type);
+    WolfSystem::InitWolfOfType(registry, spawnPos.x, spawnPos.z, type, config);
 }

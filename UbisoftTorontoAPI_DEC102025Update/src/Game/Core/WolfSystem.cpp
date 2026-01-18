@@ -295,14 +295,14 @@ namespace WolfSystem {
         }
     }
 
-    void InitWolves(EntityManager& registry, float startX, float startZ, int count) {
+    void InitWolves(EntityManager& registry, float startX, float startZ, int count, const GameConfig& config) {
         for (int i = 0; i < count; i++) {
             // Random starting position within a range
             float offsetX = (rand() % 300 - 150.0f);
             float offsetZ = (rand() % 300 - 150.0f);
             
             // Create basic type wolves
-            InitWolfOfType(registry, startX + offsetX, startZ + offsetZ, WolfType::Basic);
+            InitWolfOfType(registry, startX + offsetX, startZ + offsetZ, WolfType::Basic, config);
         }
     }
 

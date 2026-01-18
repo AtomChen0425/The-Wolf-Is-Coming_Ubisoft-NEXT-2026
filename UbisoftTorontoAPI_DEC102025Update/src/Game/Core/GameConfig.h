@@ -151,8 +151,8 @@ struct GameConfig {
     float wolfHunterJumpCooldown = 3.0f;
     float wolfHunterJumpVelocity = 350.0f;
     float wolfHunterJumpBoost = 200.0f;
-    float wolfHunterJumpMinDist = 80.0f;
-    float wolfHunterJumpMaxDist = 200.0f;
+    float wolfHunterJumpMinDistance = 80.0f;
+    float wolfHunterJumpMaxDistance = 200.0f;
     
     // Wolf stats - Magic
     int wolfMagicHealth = 100;
@@ -183,7 +183,11 @@ struct GameConfig {
     float playerMachineGunProjectileSpeed = 500.0f;
     float playerMachineGunProjectileSize = 5.0f;
     float playerMachineGunProjectileLife = 2000.0f;
+    float playerMachineGunExplosionRadius = 0.0f;
     float playerMachineGunKnockback = 100.0f;
+    float playerMachineGunColorR = 1.0f;
+    float playerMachineGunColorG = 1.0f;
+    float playerMachineGunColorB = 0.0f;
     
     // Player weapons - Cannon
     float playerCannonDamage = 50.0f;
@@ -193,6 +197,9 @@ struct GameConfig {
     float playerCannonProjectileLife = 3000.0f;
     float playerCannonExplosionRadius = 50.0f;
     float playerCannonKnockback = 500.0f;
+    float playerCannonColorR = 1.0f;
+    float playerCannonColorG = 0.5f;
+    float playerCannonColorB = 0.0f;
     
     // Sheep weapons - Machine Gun
     float sheepMachineGunDamage = 5.0f;
@@ -200,7 +207,11 @@ struct GameConfig {
     float sheepMachineGunProjectileSpeed = 400.0f;
     float sheepMachineGunProjectileSize = 3.0f;
     float sheepMachineGunProjectileLife = 2000.0f;
+    float sheepMachineGunExplosionRadius = 0.0f;
     float sheepMachineGunKnockback = 50.0f;
+    float sheepMachineGunColorR = 0.5f;
+    float sheepMachineGunColorG = 1.0f;
+    float sheepMachineGunColorB = 0.5f;
     
     // Sheep weapons - Cannon
     float sheepCannonDamage = 30.0f;
@@ -210,12 +221,19 @@ struct GameConfig {
     float sheepCannonProjectileLife = 2500.0f;
     float sheepCannonExplosionRadius = 30.0f;
     float sheepCannonKnockback = 200.0f;
-    
+    float sheepCannonColorR = 0.5f;
+    float sheepCannonColorG = 1.0f;
+    float sheepCannonColorB = 1.0f;
     // Wolf spawn settings
     float wolfSpawnRadius = 1700.0f;
     float wolfSpawnYPosition = 20.0f;
-    
+    float wolfSpawnMinX = -200.0f;
+    float wolfSpawnMaxX = 200.0f;
+    float wolfSpawnMinZ = -50.0f;
+    float wolfSpawnMaxZ = -30.0f;
     // Sheep spawn settings
+    float sheepSpawnRadius = 100.0f;
+    float sheepInitialCount = 10;
     float sheepSpawnYPosition = 30.0f;
     float sheepMoveSpeed = 50.0f;
     float sheepSpawnOffsetMin = -100.0f;

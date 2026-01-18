@@ -1,6 +1,6 @@
 #pragma once
 #include "GameLevelData.h"
-#include "GameConfig.h"
+#include "../Game/Core/GameConfig.h"
 #include "../../System/ECS/ECS.h"
 #include "ECSSystem.h"
 
@@ -27,7 +27,7 @@ namespace LevelSystem {
     
     // Update level timer and check for round completion
     // Returns true if the round just completed (for triggering upgrade scene)
-    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry);
+    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry, const GameConfig& config);
     
     // Check if game should end (all sheep dead)
     // Returns true if game over condition is met

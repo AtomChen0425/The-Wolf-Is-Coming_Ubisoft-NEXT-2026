@@ -1,0 +1,104 @@
+# Game Configuration File
+# Player Physics
+gravity=-980
+jumpVelocity=400
+forwardSpeed=200
+strafeSpeed=300
+acceleration=2000
+damping=8
+rotationSpeed=2
+
+# Camera Controls
+mouseSensitivity=0.005
+maxPitch=0.4
+minPitch=-0.3
+
+# Map Generation
+blockSize=100
+renderDistance=1000
+deleteDistance=1000
+roadWidth=5
+wallHeight=100
+
+# Map Generation Probabilities
+normalFloorChance=0.6
+obstacleChance=0.15
+scorePointChance=0.15
+upgradePointChance=0.05
+gapChance=0.1
+gapFloorChance=0.3
+
+# Chunk Generation
+chunkSize=5
+chunkRenderRadius=3
+
+# Block Heights
+floorHeight=30
+tallBlockHeight=50
+scorePointHeight=30
+
+# Bullet Physics
+bulletSpeed=600
+
+# Player Spawn
+playerSpawnX=0
+playerSpawnY=0
+playerSpawnZ=50
+
+# Rendering
+fov=600
+nearZ=1
+farZ=3000
+
+# Colors (RGB values, 0.0 to 1.0)
+# Player Color
+playerColorR=1.0
+playerColorG=0.0
+playerColorB=0.0
+
+# Bullet Color
+bulletColorR=0.5
+bulletColorG=0.0
+bulletColorB=0.5
+
+# Floor Colors (Alternating)
+floorColor1R=0.2
+floorColor1G=0.6
+floorColor1B=0.2
+floorColor2R=0.3
+floorColor2G=0.8
+floorColor2B=0.3
+
+# Wall Color
+wallColorR=0.6
+wallColorG=0.3
+wallColorB=0.1
+
+# Tall Block Color
+tallBlockColorR=0.1
+tallBlockColorG=0.3
+tallBlockColorB=0.9
+
+# Score Point Color
+scorePointColorR=1.0
+scorePointColorG=1.0
+scorePointColorB=0.0
+
+# Upgrade Point Color
+upgradePointColorR=1.0
+upgradePointColorG=0.5
+upgradePointColorB=0.0
+
+# Upgrade Values
+healthUpgradeAmount=20
+speedUpgradeAmount=50
+jumpUpgradeAmount=100
+gravityUpgradeAmount=-100
+bulletSpeedUpgradeAmount=100
+
+roundDurationMs = 10000.0
+baseWolfSpawnIntervalMs = 2000.0
+wolfSpawnReductionPerRound = 200.0
+minWolfSpawnIntervalMs = 500.0
+sheepAddedPerUpgrade = 10
+sheepSpawnOffsetZ = 100.0

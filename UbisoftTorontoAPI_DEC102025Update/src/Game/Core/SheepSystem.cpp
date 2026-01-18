@@ -269,7 +269,6 @@ namespace SheepSystem {
 
             int neighborCount = 0;
 
-            // --- �����ھ� ---
             neighbors.clear();
             grid.Query(pos.x, pos.z, neighbors);
 
@@ -286,8 +285,6 @@ namespace SheepSystem {
                 if (distSq < params.viewRadius * params.viewRadius && distSq > 0.0001f) {
                     float dist = std::sqrt(distSq);
 
-                    // 1. Separation: Զ���ھ�
-                    // Ȩ�������˥�� (Խ������Խ��)
                     // Enhanced: stronger repulsion for very close neighbors
                     float mySheepSize = t.width;
                     float otherSheepSize = ot.width;
@@ -303,11 +300,11 @@ namespace SheepSystem {
                         forceSep.z += (dz / dist) / dist;
                     }
 
-                    // 2. Alignment: ģ���ھ��ٶ�
+                    // 2. Alignment: 
                     forceAli.x += ov.vel.x;
                     forceAli.z += ov.vel.z;
 
-                    // 3. Cohesion: ��¼�ھ�λ��
+                    // 3. Cohesion: 
                     forceCoh.x += ot.pos.x;
                     forceCoh.z += ot.pos.z;
 
@@ -316,48 +313,48 @@ namespace SheepSystem {
             }
 
             if (neighborCount > 0) {
-                // Alignment ƽ����
+                // Alignment 
                 forceAli.x /= neighborCount;
                 forceAli.z /= neighborCount;
                 forceAli = Norm(forceAli);
 
-                // Cohesion ƽ����������
+                // Cohesion
                 forceCoh.x /= neighborCount;
                 forceCoh.z /= neighborCount;
-                // Cohesion �����ڡ���ȥ���ĵ㡱�������� -> (Center - CurrentPos)
+                // Cohesion 
                 forceCoh.x -= pos.x;
                 forceCoh.z -= pos.z;
                 forceCoh = Norm(forceCoh);
 
-                // Separation �Ѿ����ۼӵĹ�һ��������������� count
+                // Separation 
             }
 
-            // 4. Target: �������
+            // 4. Target: 
             if (hasPlayer) {
                 float dx = targetPos.x - pos.x;
                 float dz = targetPos.z - pos.z;
                 float distToTarget = std::sqrt(dx * dx + dz * dz);
 
-                // ��������Զ������������
-                if (distToTarget > 60.0f) { // ����һ�����룬�������������
+                // 
+                if (distToTarget > 60.0f) { // 
                     forceTar = { dx, 0, dz };
                     forceTar = Norm(forceTar);
                 }
                 else if (distToTarget < 30.0f) {
-                    // ��̫������΢�ÿ�һ��
+                    // 
                     forceTar = { -dx, 0, -dz };
                     forceTar = Norm(forceTar);
                 }
             }
 
-            // 5. Fear: ��ܵ���
+            // 5. Fear
             for (const auto& enemyPos : enemies) {
                 float dx = pos.x - enemyPos.x;
                 float dz = pos.z - enemyPos.z;
                 float distSq = dx * dx + dz * dz;
 
                 if (distSq < params.enemyDetectRange * params.enemyDetectRange) {
-                    // �����޴�ķ������
+                    // 
                     Vec3 fleeDir = { dx, 0, dz };
                     fleeDir = Norm(fleeDir);
                     forceFear.x += fleeDir.x;
@@ -365,7 +362,7 @@ namespace SheepSystem {
                 }
             }
 
-            // --- ���ĺϳ� ---
+            // ---  ---
             Vec3 totalForce = { 0,0,0 };
             totalForce.x = forceSep.x * params.separationWeight +
                 forceAli.x * params.alignmentWeight +
@@ -379,29 +376,28 @@ namespace SheepSystem {
                 forceTar.z * params.targetWeight +
                 forceFear.z * params.fearWeight;
 
-            // ����ת���� (Steering Force)
+            // 
             Limit(totalForce, params.maxForce);
 
-            // --- Ӧ������ ---
+            // 
             // Vel += Force * dt
             vel.x += totalForce.x * dt;
             vel.z += totalForce.z * dt;
 
-            // ��������ٶ�
+            //
             Limit(vel, params.maxSpeed);
 
-            // �򵥵����� (��ֹ��Զ����)
+            // 
             vel.x *= 0.98f;
             vel.z *= 0.98f;
 
-            // --- д����� ---
-            // ע�⣺����ֻ�޸� X �� Z��Y ���� PhysicsSystem ��������
+            //
             v.vel.x = vel.x;
             v.vel.z = vel.z;
 
-            // �򵥵ĳ������ (��ģ�������ƶ�����)
+            // 
             if (Mag(vel) > 1.0f) {
-                // ������� Rotation ���������������� Yaw
+               
             }
         }
     }

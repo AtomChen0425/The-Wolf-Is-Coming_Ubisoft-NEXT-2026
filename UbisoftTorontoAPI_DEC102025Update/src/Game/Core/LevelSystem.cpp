@@ -9,39 +9,39 @@
 
 namespace LevelSystem {
 
-    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry) {
+    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry, const GameConfig& config) {
         // Update timers
         levelData.totalGameTimeMs += deltaTimeMs;
         levelData.currentRoundTimeMs += deltaTimeMs;
         // Spawn different wolf types at different intervals
         // Basic wolves (use existing spawn interval from level data)
         if (generationTimers.gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
-            GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic, config);
             generationTimers.gSpawnTimerMs = 0.0f;
         }
 
         // Sniper wolves (slower spawn rate)
         if (generationTimers.sniperWolfSpawnTimer >= levelData.sniperWolfSpawnIntervalMs && levelData.currentRound > 3) {
-            GenerateSystem::GenerateWolfOfType(registry, WolfType::Sniper);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Sniper, config);
             generationTimers.sniperWolfSpawnTimer = 0.0f;
         }
 
         // Tank wolves (slowest spawn rate)
         if (generationTimers.tankWolfSpawnTimer >= levelData.tankWolfSpawnIntervalMs && levelData.currentRound > 5) {
-            GenerateSystem::GenerateWolfOfType(registry, WolfType::Tank);
-            GenerateSystem::GenerateWolfOfType(registry, WolfType::Magic);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Tank, config);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Magic, config);
             generationTimers.tankWolfSpawnTimer = 0.0f;
         }
 
         // Fast wolves (faster spawn rate)
         if (generationTimers.fastWolfSpawnTimer >= levelData.fastWolfSpawnIntervalMs && levelData.currentRound > 9) {
-            GenerateSystem::GenerateWolfOfType(registry, WolfType::Fast);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Fast, config);
             generationTimers.fastWolfSpawnTimer = 0.0f;
         }
 
         // Hunter wolves (moderate spawn rate)
         if (generationTimers.hunterWolfSpawnTimer >= levelData.hunterWolfSpawnIntervalMs && levelData.currentRound > 12) {
-            GenerateSystem::GenerateWolfOfType(registry, WolfType::Hunter);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Hunter, config);
             generationTimers.hunterWolfSpawnTimer = 0.0f;
         }
         // Check if round is complete
