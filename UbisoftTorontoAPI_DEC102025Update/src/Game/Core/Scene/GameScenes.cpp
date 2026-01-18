@@ -156,8 +156,9 @@ void PlayingScene::Update(float deltaTimeMs) {
     }
 }
 
-void PlayingScene::Render() {
+void PlayingScene::RenderBackground() {
     // TODO: Render animated background for gameplay
+    // This method should be called BEFORE the 3D game systems render
     // Uncomment the code below once you add your animated background sprite sheet
     // 
     // Example: Animated background with 8 frames at 10 FPS
@@ -171,10 +172,12 @@ void PlayingScene::Render() {
     //     bgSprite->SetFrame(currentFrame);
     //     bgSprite->Draw();
     // }
-    
-    // Render HUD elements like score on top of background
-    uiManager.Render();
+}
 
+void PlayingScene::Render() {
+    // Only render UI elements on top of everything
+    // Background should be rendered before 3D game content via RenderBackground()
+    uiManager.Render();
 }
 
 // GameOverScene Implementation

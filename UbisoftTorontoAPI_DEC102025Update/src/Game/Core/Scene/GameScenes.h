@@ -34,6 +34,7 @@ public:
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
+    void RenderBackground();  // Render background before 3D game content
     std::string GetName() const override { return "PlayingScene"; }
     
 private:
