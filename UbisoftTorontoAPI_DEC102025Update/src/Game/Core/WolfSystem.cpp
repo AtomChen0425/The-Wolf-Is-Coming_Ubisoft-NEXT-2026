@@ -41,7 +41,6 @@ void WolfShoot(EntityManager& registry, float dt, Vec3& targetPosition) {
         const float radius = 10.0f; // 圆的半径
 
         float currentYaw = std::atan2(bulletDirection.x, bulletDirection.z);
-        //float currentYaw = playerTag.rotationYaw;
         float startAngle = currentYaw - (totalArc / 2.0f);
 
         float angleStep = (weaponCount > 1) ? (totalArc / (weaponCount - 1)) : 0.0f;
@@ -59,7 +58,6 @@ void WolfShoot(EntityManager& registry, float dt, Vec3& targetPosition) {
                 std::cos(theta) * radius
             };
 
-            // 最终生成位置
             Vec3 bulletPosition = wolfPos + circleOffset;
             //Vec3 bulletPosition = sheepPos + bulletDirection * 2.0f; // Spawn bullet slightly in front of player
             // Create bullet entity
@@ -114,7 +112,19 @@ namespace WolfSystem {
                 pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
                 pSprite->SetScale(0.3f);
                 break;
-                
+            case WolfType::Magic:
+                // Has Magic wand, slower movement
+                maxSpeed = 150.0f;
+                chaseForce = 100.0f;
+                r = 0.9f; g = 0.3f; b = 0.5f;  
+                size = 18.0f;
+                pSprite = App::CreateSprite("data/TestData/Wolf4.png", 2, 1);
+                pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
+                pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
+                pSprite->SetScale(0.3f);
+                break;
             case WolfType::Tank:
                 // High health, very slow
                 maxHealth = 300;
@@ -205,6 +215,24 @@ namespace WolfSystem {
             inventory.weapons.push_back(gun);
             registry.addComponent(wolf, inventory);
         }
+        if (type == WolfType::Magic) {
+            WeaponInventory inventory;
+            Weapon wand;
+            wand.type = WeaponType::MagicWand;
+            wand.name = "Magic Wand";
+            wand.damage = 12.0f;
+            wand.fireRate = 800.0f;
+            wand.currentCooldown = 0.0f;
+            wand.projectileSpeed = 600.0f;
+            wand.projectileSize = 12.0f;
+            wand.projectileLife = 7000.0f;
+            wand.explosionRadius = 0.0f;
+            wand.r = 0.7f;
+            wand.g = 0.0f;
+            wand.b = 0.5f;
+            inventory.weapons.push_back(wand);
+            registry.addComponent(wolf, inventory);
+        }
     }
 
     void InitWolves(EntityManager& registry, float startX, float startZ, int count) {
@@ -270,6 +298,10 @@ namespace WolfSystem {
             Vec3 pos = t.pos;
             Vec3 vel = v.vel;
 
+            // Update jump cooldown
+            if (params.jumpCooldown > 0.0f) {
+                params.jumpCooldown -= dt;
+            }
             // Find nearest target
             float nearestDistSq = std::numeric_limits<float>::max();
             Vec3 nearestTarget = pos;
@@ -342,6 +374,33 @@ namespace WolfSystem {
                 }
             }
 
+            // Hunter wolf jumping logic
+            if (params.canJump && params.jumpCooldown <= 0.0f) {
+                // Check if wolf is on ground (y position close to ground level)
+                bool isOnGround = (pos.y <= 25.0f);  // Ground level + small tolerance
+
+                if (isOnGround && foundTarget) {
+                    // Jump conditions:
+                    // 1. Target is at medium distance (not too close, not too far)
+                    // 2. Moving toward target (chasing)
+                    float jumpMinDist = 80.0f;   // Don't jump if too close
+                    float jumpMaxDist = 2000.0f;  // Don't jump if too far
+
+                    if (nearestDist >= jumpMinDist && nearestDist <= jumpMaxDist) {
+                        // Apply upward velocity for jump
+                        vel.y = 450.0f;  // Jump velocity (matches player-like jump)
+
+                        // Also add forward momentum in chase direction
+                        Vec3 jumpDir = WolfNorm({ nearestTarget.x - pos.x, 0, nearestTarget.z - pos.z });
+                        vel.x += jumpDir.x * 200.0f;  // Extra forward boost during jump
+                        vel.z += jumpDir.z * 200.0f;
+
+                        // Set cooldown (3 seconds = 3 * 100 / 100 = 3.0)
+                        params.jumpCooldown = 3.0f;
+                    }
+                }
+            }
+
             // Apply force to velocity
             vel.x += chaseForce.x * dt;
             vel.z += chaseForce.z * dt;
@@ -357,6 +416,7 @@ namespace WolfSystem {
 
             // Update velocity component
             v.vel.x = vel.x;
+            v.vel.y = vel.y;
             v.vel.z = vel.z;
 
             // Simple rotation toward movement direction (optional, for visual feedback)

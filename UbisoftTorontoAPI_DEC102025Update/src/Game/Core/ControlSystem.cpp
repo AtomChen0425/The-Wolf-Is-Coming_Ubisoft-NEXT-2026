@@ -21,6 +21,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
     View<PlayerTag, Transform3D, Velocity3D> view(registry);
     for (EntityID id : view) {
         auto& playerTag = view.get<PlayerTag>(id);
+        auto& physicsTag = view.get<PhysicsTag>(id);
         auto& playerTransform = view.get<Transform3D>(id);
         auto& vel = view.get<Velocity3D>(id).vel;
         Vec3& pos = playerTransform.pos;
@@ -120,7 +121,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
 
 
         // 3. Handle jump input (only when on ground - collision system sets this flag)
-        if (App::IsKeyPressed(App::KEY_SPACE) && playerTag.isOnGround) {
+        if (App::IsKeyPressed(App::KEY_SPACE) && physicsTag.isOnGround) {
             vel.y = jumpVelocity;
         }
 

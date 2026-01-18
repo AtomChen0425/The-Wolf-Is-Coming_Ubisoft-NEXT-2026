@@ -201,18 +201,18 @@ struct ChunkTag {
 
 struct SheepTag {};
 
-// Boids ��Ϊ���� (�����ڲ�ͬ�������)
+// Boids
 struct SheepComponent {
-    float separationWeight = 6.0f; // ����Ȩ�� (���ص�) - ����һ����⴩ģ
-    float alignmentWeight = 1.0f; // ����Ȩ�� (˳��)
-    float cohesionWeight = 1.0f; // ����Ȩ�� (����)
-    float targetWeight = 1.2f; // ����Ȩ�� (��������)
-    float fearWeight = 8.0f; // �־�Ȩ�� (�����) - ���ȼ����
+    float separationWeight = 6.0f; //
+    float alignmentWeight = 1.0f; // 
+    float cohesionWeight = 1.0f; //
+    float targetWeight = 1.2f; // 
+    float fearWeight = 8.0f; //
 
-    float viewRadius = 60.0f;      // �ھӸ�֪�뾶
-    float enemyDetectRange = 150.0f; // ���˼��뾶
-    float maxSpeed = 190.0f;        // ����ٶ�
-    float maxForce = 50.0f;       // ת�������
+    float viewRadius = 60.0f;      //
+    float enemyDetectRange = 150.0f; // 
+    float maxSpeed = 190.0f;        // 
+    float maxForce = 50.0f;       // 
 };
 
 struct WolfTag {};
@@ -223,7 +223,8 @@ enum class WolfType {
     Sniper,         // Has gun, moves slow, normal health
     Tank,           // High health, slow movement
     Fast,           // Fast movement, can jump
-    Hunter          // Fast with jumping ability
+    Hunter,          // Fast with jumping ability
+	Magic           // Uses magic projectiles
 };
 
 // Wolf behavior component - wolves chase nearest player or sheep
@@ -242,7 +243,8 @@ struct WolfComponent {
 enum class WeaponType {
     Pistol,
     MachineGun, 
-    Cannon      
+    Cannon,
+    MagicWand
 };
 
 struct Weapon {

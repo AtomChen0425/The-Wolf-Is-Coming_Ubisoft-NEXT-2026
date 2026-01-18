@@ -402,12 +402,12 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
     }
 
     // B. 检测阶段：遍历所有动态实体
-    View<PhysicsTag, SheepTag, Transform3D, Velocity3D> entityView(registry);
+    View<PhysicsTag, Transform3D, Velocity3D> entityView(registry);
 
     // 用于缓存查询结果的 vector，避免在循环内反复分配内存
     static std::vector<EntityID> nearbyColliders;
 
-    // O(N): 遍历所有羊
+    // O(N): 遍历所有物理实体
     for (EntityID entityId : entityView) {
         auto& physicsTag = entityView.get<PhysicsTag>(entityId);
         auto& entityTransform = entityView.get<Transform3D>(entityId);
@@ -453,7 +453,6 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
             Vec3 colliderMax(transform.pos.x + transform.width / 2,
                 transform.pos.y + transform.height / 2,
                 transform.pos.z + transform.depth / 2);
-
             // AABB 检测
             if (gCollision->AABB3D(entityMin, entityMax, colliderMin, colliderMax)) {
                 // ... 你的原有逻辑保持不变 ...
@@ -491,7 +490,6 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
                         vel.y = 0.0f;
                     }
                 }
-
                 // 更新 AABB 以便下一次检测准确
                 entityMin = Vec3(pos.x - entityTransform.width / 2,
                     pos.y - entityTransform.height / 2,
@@ -787,8 +785,8 @@ void CheckEnemyBulletCollision(EntityManager& registry) {
 }
 void CollisionSystem::Update(EntityManager& registry) {
     //CheckBulletHitMap(registry);
-    CheckPlayer3DCollisions(registry);
-	//CheckPhysics3DCollisions(registry);
+    //CheckPlayer3DCollisions(registry);
+	CheckPhysics3DCollisions(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
     CheckEnemyBulletCollision(registry);

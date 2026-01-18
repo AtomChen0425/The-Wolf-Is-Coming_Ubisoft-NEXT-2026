@@ -1,5 +1,4 @@
-﻿  CollisionSystem.cpp
-D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Component\Component.h(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
-  (compiling source file '../../src/Game/Core/CollisionSystem.cpp')
-  
+﻿  ControlSystem.cpp
+  WolfSystem.cpp
+  Generating Code...
   Game.vcxproj -> D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\Game.exe
