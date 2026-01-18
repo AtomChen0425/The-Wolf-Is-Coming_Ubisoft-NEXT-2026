@@ -157,7 +157,22 @@ void PlayingScene::Update(float deltaTimeMs) {
 }
 
 void PlayingScene::Render() {
-    // Optional: Render HUD elements like score
+    // TODO: Render animated background for gameplay
+    // Uncomment the code below once you add your animated background sprite sheet
+    // 
+    // Example: Animated background with 8 frames at 10 FPS
+    // static CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/playing_background_anim.png", 8, 1);
+    // static float animTime = 0.0f;
+    // animTime += 0.016f; // Assume ~60 FPS, use deltaTime for accuracy
+    // int currentFrame = static_cast<int>(animTime * 10.0f) % 8; // 10 FPS animation
+    // if (bgSprite) {
+    //     bgSprite->SetPosition(512.0f, 384.0f);  // Center of 1024x768 screen
+    //     bgSprite->SetScale(1.0f);
+    //     bgSprite->SetFrame(currentFrame);
+    //     bgSprite->Draw();
+    // }
+    
+    // Render HUD elements like score on top of background
     uiManager.Render();
 
 }
