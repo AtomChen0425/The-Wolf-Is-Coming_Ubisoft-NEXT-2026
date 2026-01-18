@@ -82,7 +82,7 @@ namespace WolfSystem {
         float r = 0.4f, g = 0.2f, b = 0.1f;  // Color
         int maxHealth = 100;
         float chaseForce = 200.0f;
-        float maxSpeed = 100.0f;
+        float maxSpeed = 150.0f;
         float detectionRange = 400.0f;
         bool canJump = false;
         CSimpleSprite* pSprite;

@@ -29,19 +29,15 @@ void StartScene::OnExit() {
 }
 
 void StartScene::Update(float deltaTimeMs) {
-    // No game logic updates on start screen
-    // Scene transition is handled by EngineSystem
+
 }
 
 void StartScene::Render() {
-    // TODO: Load and render custom background image
-    // Placeholder path: "./Assets/Textures/start_background.png"
-    // You can replace this with your custom background image
-    // Example code (uncomment and implement when ready):
-    // CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/start_background.png", 1, 1);
-    // bgSprite->SetPosition(512.0f, 384.0f);  // Center of screen (1024x768)
-    // bgSprite->SetScale(1.0f);
-    // bgSprite->Draw();
+
+     CSimpleSprite* bgSprite = App::CreateSprite("data/TestData/SettingBackground.png", 1, 1);
+     bgSprite->SetPosition(512.0f, 384.0f);  
+     bgSprite->SetScale(1.0f);
+     bgSprite->Draw();
     
     uiManager.Render();
 }
@@ -275,14 +271,11 @@ void SettingsScene::Update(float deltaTimeMs) {
 }
 
 void SettingsScene::Render() {
-    // TODO: Load and render custom background image
-    // Placeholder path: "./Assets/Textures/settings_background.png"
-    // You can replace this with your custom background image
-    // Example code (uncomment and implement when ready):
-    // CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/settings_background.png", 1, 1);
-    // bgSprite->SetPosition(512.0f, 384.0f);  // Center of screen (1024x768)
-    // bgSprite->SetScale(1.0f);
-    // bgSprite->Draw();
+
+     CSimpleSprite* bgSprite = App::CreateSprite("data/TestData/SettingBackground.png", 1, 1);
+     bgSprite->SetPosition(512.0f, 384.0f);  
+     bgSprite->SetScale(1.0f);
+     bgSprite->Draw();
     
     // Render options with highlighting
     float mouseColor = (selectedOption == 0) ? 1.0f : 0.5f;
@@ -343,21 +336,21 @@ void UpgradeScene::OnEnter() {
         
         // Selection brackets (initially hidden for non-selected items)
         float bracketAlpha = (i == selectedUpgrade) ? 1.0f : 0.0f;
-        leftBrackets[i] = uiManager.AddText("[", xPos - 100, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
-        rightBrackets[i] = uiManager.AddText("]", xPos + 80, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
+        leftBrackets[i] = uiManager.AddText("[", xPos - 130, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
+        rightBrackets[i] = uiManager.AddText("]", xPos + 100, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
         
         // Upgrade name
         float brightness = (i == selectedUpgrade) ? 1.0f : 0.5f;
         std::string optionText = LevelSystem::GetUpgradeName(upgradeOptions[i]);
-        upgradeNames[i] = uiManager.AddText(optionText, xPos - 60, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
+        upgradeNames[i] = uiManager.AddText(optionText, xPos - 80, yPos - 40, brightness, brightness, 0.0f, UIAlignment::MiddleCenter);
         
         // Description
         std::string descText = LevelSystem::GetUpgradeDescription(upgradeOptions[i], engineSystem->GetGameConfig());
-        upgradeDescs[i] = uiManager.AddText(descText, xPos - 80, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
+        upgradeDescs[i] = uiManager.AddText(descText, xPos - 90, yPos + 10, 0.7f * brightness, 0.7f * brightness, 0.7f * brightness, UIAlignment::MiddleCenter);
     }
     
     // Instructions
-    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -180, 150, 0.7f, 0.7f, 0.7f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -90, 150, 0.2f, 0.2f, 0.2f, UIAlignment::MiddleCenter);
 }
 
 void UpgradeScene::OnExit() {
@@ -459,14 +452,10 @@ void UpgradeScene::Update(float deltaTimeMs) {
 }
 
 void UpgradeScene::Render() {
-    // TODO: Load and render custom background image
-    // Placeholder path: "./Assets/Textures/upgrade_background.png"
-    // You can replace this with your custom background image
-    // Example code (uncomment and implement when ready):
-    // CSimpleSprite* bgSprite = App::CreateSprite("./Assets/Textures/upgrade_background.png", 1, 1);
-    // bgSprite->SetPosition(512.0f, 384.0f);  // Center of screen (1024x768)
-    // bgSprite->SetScale(1.0f);
-    // bgSprite->Draw();
+     CSimpleSprite* bgSprite = App::CreateSprite("data/TestData/SettingBackground.png", 1, 1);
+     bgSprite->SetPosition(512.0f, 384.0f);  
+     bgSprite->SetScale(1.0f);
+     bgSprite->Draw();
     
     uiManager.Render();
 }
