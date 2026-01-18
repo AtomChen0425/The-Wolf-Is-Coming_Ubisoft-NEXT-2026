@@ -114,6 +114,111 @@ struct GameConfig {
     float fastWolfSpawnIntervalMs = 5000.0f;     // Fast wolves spawn every 5 seconds
     float hunterWolfSpawnIntervalMs = 10000.0f;  // Hunter wolves spawn every 10 seconds
     
+    // Wolf stats - Basic
+    int wolfBasicHealth = 100;
+    float wolfBasicSpeed = 200.0f;
+    float wolfBasicChaseForce = 300.0f;
+    float wolfBasicDetectionRange = 400.0f;
+    float wolfBasicSize = 20.0f;
+    
+    // Wolf stats - Sniper
+    int wolfSniperHealth = 100;
+    float wolfSniperSpeed = 150.0f;
+    float wolfSniperChaseForce = 100.0f;
+    float wolfSniperDetectionRange = 400.0f;
+    float wolfSniperSize = 18.0f;
+    
+    // Wolf stats - Tank
+    int wolfTankHealth = 300;
+    float wolfTankSpeed = 100.0f;
+    float wolfTankChaseForce = 150.0f;
+    float wolfTankDetectionRange = 400.0f;
+    float wolfTankSize = 30.0f;
+    
+    // Wolf stats - Fast
+    int wolfFastHealth = 60;
+    float wolfFastSpeed = 500.0f;
+    float wolfFastChaseForce = 300.0f;
+    float wolfFastDetectionRange = 400.0f;
+    float wolfFastSize = 15.0f;
+    
+    // Wolf stats - Hunter
+    int wolfHunterHealth = 80;
+    float wolfHunterSpeed = 450.0f;
+    float wolfHunterChaseForce = 280.0f;
+    float wolfHunterDetectionRange = 400.0f;
+    float wolfHunterSize = 18.0f;
+    float wolfHunterJumpCooldown = 3.0f;
+    float wolfHunterJumpVelocity = 350.0f;
+    float wolfHunterJumpBoost = 200.0f;
+    float wolfHunterJumpMinDist = 80.0f;
+    float wolfHunterJumpMaxDist = 200.0f;
+    
+    // Wolf stats - Magic
+    int wolfMagicHealth = 100;
+    float wolfMagicSpeed = 150.0f;
+    float wolfMagicChaseForce = 100.0f;
+    float wolfMagicDetectionRange = 400.0f;
+    float wolfMagicSize = 18.0f;
+    
+    // Wolf weapons - Sniper gun
+    float wolfSniperGunDamage = 8.0f;
+    float wolfSniperGunFireRate = 70.0f;
+    float wolfSniperGunProjectileSpeed = 1000.0f;
+    float wolfSniperGunProjectileSize = 10.0f;
+    float wolfSniperGunProjectileLife = 8000.0f;
+    float wolfSniperGunKnockback = 10.0f;
+    
+    // Wolf weapons - Magic wand
+    float wolfMagicWandDamage = 12.0f;
+    float wolfMagicWandFireRate = 80.0f;
+    float wolfMagicWandProjectileSpeed = 600.0f;
+    float wolfMagicWandProjectileSize = 12.0f;
+    float wolfMagicWandProjectileLife = 7000.0f;
+    float wolfMagicWandKnockback = 15.0f;
+    
+    // Player weapons - Machine Gun
+    float playerMachineGunDamage = 10.0f;
+    float playerMachineGunFireRate = 50.0f;
+    float playerMachineGunProjectileSpeed = 500.0f;
+    float playerMachineGunProjectileSize = 5.0f;
+    float playerMachineGunProjectileLife = 2000.0f;
+    float playerMachineGunKnockback = 100.0f;
+    
+    // Player weapons - Cannon
+    float playerCannonDamage = 50.0f;
+    float playerCannonFireRate = 1000.0f;
+    float playerCannonProjectileSpeed = 300.0f;
+    float playerCannonProjectileSize = 15.0f;
+    float playerCannonProjectileLife = 3000.0f;
+    float playerCannonExplosionRadius = 50.0f;
+    float playerCannonKnockback = 500.0f;
+    
+    // Sheep weapons - Machine Gun
+    float sheepMachineGunDamage = 5.0f;
+    float sheepMachineGunFireRate = 50.0f;
+    float sheepMachineGunProjectileSpeed = 400.0f;
+    float sheepMachineGunProjectileSize = 3.0f;
+    float sheepMachineGunProjectileLife = 2000.0f;
+    float sheepMachineGunKnockback = 50.0f;
+    
+    // Sheep weapons - Cannon
+    float sheepCannonDamage = 30.0f;
+    float sheepCannonFireRate = 1000.0f;
+    float sheepCannonProjectileSpeed = 250.0f;
+    float sheepCannonProjectileSize = 10.0f;
+    float sheepCannonProjectileLife = 2500.0f;
+    float sheepCannonExplosionRadius = 30.0f;
+    float sheepCannonKnockback = 200.0f;
+    
+    // Wolf spawn settings
+    float wolfSpawnRadius = 1700.0f;
+    float wolfSpawnYPosition = 20.0f;
+    
+    // Sheep spawn settings
+    float sheepSpawnYPosition = 30.0f;
+    float sheepMoveSpeed = 50.0f;
+    
     // Load config from file (returns true if successful)
     bool LoadFromFile(const std::string& filename);
     

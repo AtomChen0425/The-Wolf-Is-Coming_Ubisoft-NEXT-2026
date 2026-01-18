@@ -38,7 +38,7 @@ void WolfShoot(EntityManager& registry, float dt, Vec3& targetPosition) {
         size_t weaponCount = inventory.weapons.size();
 
         const float totalArc = 1.5f * 3.14159265f;
-        const float radius = 10.0f; // Բ�İ뾶
+        const float radius = 10.0f; // Բ�İ뾶
 
         float currentYaw = std::atan2(bulletDirection.x, bulletDirection.z);
         float startAngle = currentYaw - (totalArc / 2.0f);
@@ -84,7 +84,7 @@ void WolfShootByID(WeaponInventory& inventory, Transform3D& wolfTransform, float
         size_t weaponCount = inventory.weapons.size();
 
         const float totalArc = 1.5f * 3.14159265f;
-        const float radius = 10.0f; // Բ�İ뾶
+        const float radius = 10.0f; // Բ�İ뾶
 
         float currentYaw = std::atan2(bulletDirection.x, bulletDirection.z);
         float startAngle = currentYaw - (totalArc / 2.0f);
@@ -125,23 +125,23 @@ void WolfShootByID(WeaponInventory& inventory, Transform3D& wolfTransform, float
 
 namespace WolfSystem {
 
-    void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type) {
+    void InitWolfOfType(EntityManager& registry, float x, float z, WolfType type, const GameConfig& config) {
         Entity wolf = registry.createEntity();
         
         // Base stats that will be modified by type
-        float size = 20.0f;
+        float size = config.wolfBasicSize;
         float r = 0.4f, g = 0.2f, b = 0.1f;  // Color
-        int maxHealth = 100;
-        float chaseForce = 300.0f;
-        float maxSpeed = 200.0f;
-        float detectionRange = 400.0f;
+        int maxHealth = config.wolfBasicHealth;
+        float chaseForce = config.wolfBasicChaseForce;
+        float maxSpeed = config.wolfBasicSpeed;
+        float detectionRange = config.wolfBasicDetectionRange;
         bool canJump = false;
         CSimpleSprite* pSprite = nullptr;
         const float animationSpeed = 1.0f / 10.0f;
         // Configure stats based on wolf type
         switch (type) {
             case WolfType::Basic:
-                // Standard stats (already set above)
+                // Standard stats (already set above from config)
                 pSprite = App::CreateSprite("data/TestData/Wolf5.png", 2, 1);
                 
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
@@ -153,10 +153,12 @@ namespace WolfSystem {
                 
             case WolfType::Sniper:
                 // Has gun, slower movement
-                maxSpeed = 150.0f;
-                chaseForce = 100.0f;
+                maxSpeed = config.wolfSniperSpeed;
+                chaseForce = config.wolfSniperChaseForce;
+                maxHealth = config.wolfSniperHealth;
+                detectionRange = config.wolfSniperDetectionRange;
                 r = 0.5f; g = 0.3f; b = 0.5f;  // Purple tint
-                size = 18.0f;
+                size = config.wolfSniperSize;
                 pSprite = App::CreateSprite("data/TestData/Wolf4.png", 2, 1);
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
@@ -166,10 +168,12 @@ namespace WolfSystem {
                 break;
             case WolfType::Magic:
                 // Has Magic wand, slower movement
-                maxSpeed = 150.0f;
-                chaseForce = 100.0f;
+                maxSpeed = config.wolfMagicSpeed;
+                chaseForce = config.wolfMagicChaseForce;
+                maxHealth = config.wolfMagicHealth;
+                detectionRange = config.wolfMagicDetectionRange;
                 r = 0.9f; g = 0.3f; b = 0.5f;  
-                size = 18.0f;
+                size = config.wolfMagicSize;
                 pSprite = App::CreateSprite("data/TestData/WolfMagic.png", 2, 1);
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
@@ -179,11 +183,12 @@ namespace WolfSystem {
                 break;
             case WolfType::Tank:
                 // High health, very slow
-                maxHealth = 300;
-                maxSpeed = 100.0f;
-                chaseForce = 150.0f;
+                maxHealth = config.wolfTankHealth;
+                maxSpeed = config.wolfTankSpeed;
+                chaseForce = config.wolfTankChaseForce;
+                detectionRange = config.wolfTankDetectionRange;
                 r = 0.6f; g = 0.1f; b = 0.1f;  // Dark red
-                size = 30.0f;
+                size = config.wolfTankSize;
                 pSprite = App::CreateSprite("data/TestData/WolfBig.png", 2, 1);
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
@@ -194,11 +199,12 @@ namespace WolfSystem {
                 
             case WolfType::Fast:
                 // Fast movement
-                maxSpeed = 500.0f;
-                chaseForce = 300.0f;
-                maxHealth = 60;
+                maxSpeed = config.wolfFastSpeed;
+                chaseForce = config.wolfFastChaseForce;
+                maxHealth = config.wolfFastHealth;
+                detectionRange = config.wolfFastDetectionRange;
                 r = 0.2f; g = 0.6f; b = 0.2f;  // Green tint
-                size = 15.0f;
+                size = config.wolfFastSize;
                 pSprite = App::CreateSprite("data/TestData/Wolf3.png", 2, 1);
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
@@ -209,12 +215,13 @@ namespace WolfSystem {
                 
             case WolfType::Hunter:
                 // Fast with jumping
-                maxSpeed = 450.0f;
-                chaseForce = 280.0f;
-                maxHealth = 80;
+                maxSpeed = config.wolfHunterSpeed;
+                chaseForce = config.wolfHunterChaseForce;
+                maxHealth = config.wolfHunterHealth;
+                detectionRange = config.wolfHunterDetectionRange;
                 canJump = true;
                 r = 0.3f; g = 0.4f; b = 0.6f;  // Blue tint
-                size = 18.0f;
+                size = config.wolfHunterSize;
                 pSprite = App::CreateSprite("data/TestData/Wolf2.png", 2, 1);
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
@@ -227,7 +234,7 @@ namespace WolfSystem {
         registry.addComponent(wolf, SpriteComponent{ pSprite, 0 });
         // Add components
         registry.addComponent(wolf, Transform3D{
-            Vec3{x, 40.0f, z},
+            Vec3{x, config.wolfSpawnYPosition, z},
             size, size, size,
             r, g, b
         });
@@ -253,14 +260,14 @@ namespace WolfSystem {
             Weapon gun;
             gun.type = WeaponType::MachineGun;
             gun.name = "Wolf Gun";
-            gun.damage = 8.0f;
-            gun.fireRate = 70.0f;
+            gun.damage = config.wolfSniperGunDamage;
+            gun.fireRate = config.wolfSniperGunFireRate;
             gun.currentCooldown = 0.0f;
-            gun.projectileSpeed = 1000.0f;
-            gun.projectileSize = 10.0f;
-            gun.projectileLife = 8000.0f;
+            gun.projectileSpeed = config.wolfSniperGunProjectileSpeed;
+            gun.projectileSize = config.wolfSniperGunProjectileSize;
+            gun.projectileLife = config.wolfSniperGunProjectileLife;
             gun.explosionRadius = 0.0f;
-			gun.knockback = 10.0f;
+			gun.knockback = config.wolfSniperGunKnockback;
             gun.r = 1.0f;
             gun.g = 0.0f;
             gun.b = 0.0f;
@@ -272,12 +279,12 @@ namespace WolfSystem {
             Weapon wand;
             wand.type = WeaponType::MagicWand;
             wand.name = "Magic Wand";
-            wand.damage = 12.0f;
-            wand.fireRate = 80.0f;
+            wand.damage = config.wolfMagicWandDamage;
+            wand.fireRate = config.wolfMagicWandFireRate;
             wand.currentCooldown = 0.0f;
-            wand.projectileSpeed = 600.0f;
-            wand.projectileSize = 12.0f;
-            wand.projectileLife = 7000.0f;
+            wand.projectileSpeed = config.wolfMagicWandProjectileSpeed;
+            wand.projectileSize = config.wolfMagicWandProjectileSize;
+            wand.projectileLife = config.wolfMagicWandProjectileLife;
             wand.explosionRadius = 0.0f;
             wand.knockback = 10.0f;
             wand.r = 0.7f;
