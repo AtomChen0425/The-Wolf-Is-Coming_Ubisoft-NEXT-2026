@@ -1,8 +1,12 @@
 ﻿  GameScenes.cpp
   CameraSystem.cpp
+  CollisionSystem.cpp
   ControlSystem.cpp
+  GameConfig.cpp
+  GenerateSystem.cpp
   LevelSystem.cpp
   RenderSystem.cpp
+  WolfSystem.cpp
   GameTest.cpp
   ECSSystem.cpp
   RenderHelper.cpp
