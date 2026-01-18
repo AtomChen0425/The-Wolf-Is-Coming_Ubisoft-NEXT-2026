@@ -1,14 +1,5 @@
-﻿  GameScenes.cpp
-  CameraSystem.cpp
-  CollisionSystem.cpp
-  ControlSystem.cpp
-  GameConfig.cpp
+﻿  CollisionSystem.cpp
   GenerateSystem.cpp
-  LevelSystem.cpp
-  RenderSystem.cpp
-  WolfSystem.cpp
-  GameTest.cpp
-  ECSSystem.cpp
-  RenderHelper.cpp
+  MovementSystem.cpp
   Generating Code...
   Game.vcxproj -> D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\Game.exe

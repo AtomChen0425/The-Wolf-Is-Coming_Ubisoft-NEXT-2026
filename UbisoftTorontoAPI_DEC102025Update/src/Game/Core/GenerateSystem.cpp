@@ -2,6 +2,7 @@
 #include "../../System/Component/Component.h"
 #include "Core/WolfSystem.h"
 #include "../../ContestAPI/app.h"
+#include "CollisionSystem.h"
 #include <set>
 #include <utility>
 #include <cmath>
@@ -384,7 +385,7 @@ void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ) {
     // Calculate world position for this chunk
     float chunkWorldX = chunkX * chunkWorldSize;
     float chunkWorldZ = chunkZ * chunkWorldSize;
-
+    std::vector<EntityID> blockEntities;
     for (int localZ = 0; localZ < chunkSize; localZ++) {
         for (int localX = 0; localX < chunkSize; localX++) {
             float blockX = chunkWorldX + localX * blockSize;
@@ -417,8 +418,10 @@ void GenerateChunk(EntityManager& registry, int chunkX, int chunkZ) {
                 blockSize, floorHeight, blockSize,
                 true, false  // isFloor, not wall
                 });
+            blockEntities.push_back(floor.id);
         }
     }
+	CollisionSystem::OnMapGenerated(registry, blockEntities);
 }
 
 void DespawnDistantChunks(EntityManager& registry, float playerX, float playerZ, std::set<std::pair<int, int>>& loadedChunks) {

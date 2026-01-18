@@ -4,4 +4,5 @@
 namespace CollisionSystem
 {
 	void Update(EntityManager& registry);
+	void OnMapGenerated(EntityManager& registry, const std::vector<EntityID>& newBlocks);
 };

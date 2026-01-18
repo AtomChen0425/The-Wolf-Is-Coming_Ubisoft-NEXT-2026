@@ -24,22 +24,9 @@ struct CollisionGrid {
     }
 
     void Insert(EntityID id, const Transform3D& t) {
-        float minX = t.pos.x - t.width / 2.0f;
-        float maxX = t.pos.x + t.width / 2.0f;
-        float minZ = t.pos.z - t.depth / 2.0f;
-        float maxZ = t.pos.z + t.depth / 2.0f;
-
-        int startX = static_cast<int>(std::floor((minX + 100000.0f) / cellSize));
-        int endX = static_cast<int>(std::floor((maxX + 100000.0f) / cellSize));
-        int startZ = static_cast<int>(std::floor((minZ + 100000.0f) / cellSize));
-        int endZ = static_cast<int>(std::floor((maxZ + 100000.0f) / cellSize));
-
-        for (int x = startX; x <= endX; x++) {
-            for (int z = startZ; z <= endZ; z++) {
-                int key = x * 73856093 ^ z * 19349663;
-                grid[key].push_back(id);
-            }
-        }
+        float x = t.pos.x;
+		float z = t.pos.z;
+		grid[GetKey(x, z)].push_back(id);
     }
 
     void GetPotentialColliders(float x, float z, std::vector<EntityID>& outList) {
@@ -57,7 +44,16 @@ struct CollisionGrid {
         }
     }
 };
+static CollisionGrid colGrid(120.0f);
+void CollisionSystem::OnMapGenerated(EntityManager& registry, const std::vector<EntityID>& newBlocks)
+{
+    View<Collider3D, Transform3D> colliderView(registry);
 
+    for (EntityID id : colliderView) {
+        auto& t = colliderView.get<Transform3D>(id);
+        colGrid.Insert(id, t);
+    }
+}
 void CheckBulletHitMap(EntityManager& registry) {
     View<Bullet, Transform3D> bulletView(registry);
     View<Collider3D, Transform3D, MapBlockTag> colliderView(registry);
@@ -284,7 +280,7 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
     }
 }
 //void CheckPhysics3DCollisions(EntityManager& registry) {
-//    View<PhysicsTag, SheepTag, Transform3D, Velocity3D> entityView(registry);
+//    View<PhysicsTag, Transform3D, Velocity3D> entityView(registry);
 //
 //    for (EntityID entityId : entityView) {
 //        auto& physicsTag = entityView.get<PhysicsTag>(entityId);
@@ -384,9 +380,9 @@ void CheckPlayer3DCollisions(EntityManager& registry) {
 //    }
 //}
 
-void CheckPhysics3DCollisions(EntityManager& registry) {
+void CheckPhysicsCollisionsWithMap(EntityManager& registry) {
 
-    static CollisionGrid colGrid(120.0f);
+    /*static CollisionGrid colGrid(120.0f);
     colGrid.Clear();
 
     View<Collider3D, Transform3D> colliderView(registry);
@@ -395,7 +391,7 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
     for (EntityID id : colliderView) {
         auto& t = colliderView.get<Transform3D>(id);
         colGrid.Insert(id, t);
-    }
+    }*/
 
 
     View<PhysicsTag, Transform3D, Velocity3D> entityView(registry);
@@ -408,10 +404,12 @@ void CheckPhysics3DCollisions(EntityManager& registry) {
         auto& entityTransform = entityView.get<Transform3D>(entityId);
         auto& vel = entityView.get<Velocity3D>(entityId).vel;
         Vec3& pos = entityTransform.pos;
-
+        if (vel.y > 0) {
+            physicsTag.isOnGround = false;
+            continue; 
+        }
         physicsTag.isOnGround = false;
 
-        // ΚµΜε AABB
         Vec3 entityMin(pos.x - entityTransform.width / 2,
             pos.y - entityTransform.height / 2,
             pos.z - entityTransform.depth / 2);
@@ -822,7 +820,8 @@ void CheckEnemyBulletCollision(EntityManager& registry) {
 void CollisionSystem::Update(EntityManager& registry) {
     //CheckBulletHitMap(registry);
     //CheckPlayer3DCollisions(registry);
-    CheckPhysics3DCollisions(registry);
+	//CheckPhysics3DCollisions(registry);
+    CheckPhysicsCollisionsWithMap(registry);
     CheckPlayerGetPoints(registry);
     CheckBulletDamage(registry);
     CheckEnemyBulletCollision(registry);

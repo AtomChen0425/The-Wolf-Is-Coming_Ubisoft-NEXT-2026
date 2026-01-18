@@ -229,15 +229,15 @@ sheepSpriteScale=0.3
 sheepAnimationSpeed=0.0666667
 
 # Sheep Boids behavior
-sheepViewRadius=70
-sheepMaxSpeed=160
-sheepMaxForce=40
-sheepSeparationWeight=1.5
+sheepViewRadius=170
+sheepMaxSpeed=300
+sheepMaxForce=140
+sheepSeparationWeight=2
 sheepAlignmentWeight=1
 sheepCohesionWeight=1
-sheepTargetWeight=0.5
+sheepTargetWeight=5
 sheepFearWeight=8
-sheepEnemyDetectRange=150
+sheepEnemyDetectRange=170
 
 # Sheep shooting
 sheepWeaponArcAngle=4.71239
