@@ -584,10 +584,7 @@ void CheckBulletDamage(EntityManager& registry) {
                     EnemyToRemove.push_back({ enemyId, registry.getEntityVersion(enemyId) });
                 }
                 if (bullet.explosionRadius > 0.0f) {
-                    // 创建爆炸特效
                     ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
-
-                    // 查找爆炸范围内的所有敌人
                     View<EnemyTag, Transform3D, Health> allEnemies(registry);
                     for (EntityID otherId : allEnemies) {
                         auto& otherT = allEnemies.get<Transform3D>(otherId);
@@ -616,7 +613,128 @@ void CheckBulletDamage(EntityManager& registry) {
         registry.destroyEntity(e);
     }
 }
+void CheckBulletDamageByGrid(EntityManager& registry) {
+    static std::vector<Entity> EnemyToRemove;
+    EnemyToRemove.clear();
+    static std::vector<Entity> bulletToRemove;
+    bulletToRemove.clear();
+    View<PlayerTag> playerView(registry);
+    int* playerScore = nullptr;
+    for (EntityID id : playerView) {
+        playerScore = &playerView.get<PlayerTag>(id).score;
+        break;
+    }
 
+    static CollisionGrid enemyGrid(100.0f);
+    enemyGrid.Clear();
+
+    View<Health, Transform3D, EnemyTag> enemyView(registry);
+
+    for (EntityID enemyId : enemyView) {
+        auto& t = enemyView.get<Transform3D>(enemyId);
+        enemyGrid.Insert(enemyId, t);
+    }
+
+    View<Bullet, Transform3D> bulletView(registry);
+
+    static std::vector<EntityID> nearbyEnemies;
+
+    for (EntityID bulletId : bulletView) {
+        auto& bullet = bulletView.get<Bullet>(bulletId);
+
+        if (!bullet.isPlayerBullet) {
+            continue;
+        }
+
+        auto& bulletTransform = bulletView.get<Transform3D>(bulletId);
+        Vec3 bulletPos = bulletTransform.pos;
+
+        Vec3 bulletMin(bulletPos.x - bulletTransform.width / 2,
+            bulletPos.y - bulletTransform.height / 2,
+            bulletPos.z - bulletTransform.depth / 2);
+        Vec3 bulletMax(bulletPos.x + bulletTransform.width / 2,
+            bulletPos.y + bulletTransform.height / 2,
+            bulletPos.z + bulletTransform.depth / 2);
+
+        nearbyEnemies.clear();
+        enemyGrid.GetPotentialColliders(bulletPos.x, bulletPos.z, nearbyEnemies);
+
+        bool bulletHit = false;
+
+        for (EntityID enemyId : nearbyEnemies) {
+
+            auto& enemyHealth = enemyView.get<Health>(enemyId);
+            auto& enemyTransform = enemyView.get<Transform3D>(enemyId);
+
+            Vec3 colliderMin(enemyTransform.pos.x - enemyTransform.width / 2,
+                enemyTransform.pos.y - enemyTransform.height / 2,
+                enemyTransform.pos.z - enemyTransform.depth / 2);
+            Vec3 colliderMax(enemyTransform.pos.x + enemyTransform.width / 2,
+                enemyTransform.pos.y + enemyTransform.height / 2,
+                enemyTransform.pos.z + enemyTransform.depth / 2);
+
+            if (gCollision->AABB3D(bulletMin, bulletMax, colliderMin, colliderMax)) {
+
+                bulletToRemove.push_back({ bulletId, registry.getEntityVersion(bulletId) });
+                bulletHit = true;
+
+                if (enemyView.has<Velocity3D>(enemyId)) {
+                    auto& enemyVel = enemyView.get<Velocity3D>(enemyId).vel;
+                    Vec3 enemyDirection = Normalize3D(enemyVel);
+                    enemyVel = enemyDirection * (-bullet.knockback);
+                }
+
+                enemyHealth.currentHealth -= bullet.damage;
+                ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 5, Vec3{ 1.0f, 1.0f, 0.0f }, 150.0f);
+
+                if (enemyHealth.currentHealth <= 0) {
+                    ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                    EnemyToRemove.push_back({ enemyId, registry.getEntityVersion(enemyId) });
+                }
+
+
+                if (bullet.explosionRadius > 0.0f) {
+                    ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
+
+                    static std::vector<EntityID> explosionVictims;
+                    explosionVictims.clear();
+
+                    enemyGrid.GetPotentialColliders(bulletPos.x, bulletPos.z, explosionVictims);
+
+                    for (EntityID otherId : explosionVictims) {
+
+                        auto& otherT = enemyView.get<Transform3D>(otherId);
+                        float dist = Distance3D(otherT.pos, bulletTransform.pos);
+
+                        if (dist <= bullet.explosionRadius) {
+                            auto& hp = enemyView.get<Health>(otherId);
+                            hp.currentHealth -= bullet.damage; 
+
+                            if (hp.currentHealth <= 0) {
+                                ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
+                                EnemyToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
+                            }
+                        }
+                    }
+                }
+
+                break; 
+            }
+        }
+    }
+
+    std::sort(EnemyToRemove.begin(), EnemyToRemove.end(), [](const Entity& a, const Entity& b) { return a.id < b.id; });
+    auto last = std::unique(EnemyToRemove.begin(), EnemyToRemove.end(), [](const Entity& a, const Entity& b) { return a.id == b.id; });
+    EnemyToRemove.erase(last, EnemyToRemove.end());
+
+    for (Entity& e : bulletToRemove) {
+        registry.destroyEntity(e);
+    }
+    for (Entity& e : EnemyToRemove) {
+        *playerScore += 100;
+        registry.destroyEntity(e);
+    }
+}
 void CheckWolfEatSheep(EntityManager& registry) {
     View<WolfTag, Transform3D> wolfView(registry);
     View<SheepTag, Transform3D> sheepView(registry);
@@ -823,7 +941,8 @@ void CollisionSystem::Update(EntityManager& registry) {
 	//CheckPhysics3DCollisions(registry);
     CheckPhysicsCollisionsWithMap(registry);
     CheckPlayerGetPoints(registry);
-    CheckBulletDamage(registry);
+    //CheckBulletDamage(registry);
+    CheckBulletDamageByGrid(registry);
     CheckEnemyBulletCollision(registry);
     CheckWolfEatSheep(registry);
     CheckWolfHeartsPlayer(registry);
