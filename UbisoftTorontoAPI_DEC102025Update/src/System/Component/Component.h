@@ -2,6 +2,7 @@
 #include "../../ContestAPI/SimpleSprite.h"
 #include "../Math/Vec2.h"
 #include "../Math/Vec3.h"
+#include "../Game/Core/GameConfig.h"
 #include <vector>
 
 enum {
@@ -172,16 +173,16 @@ struct SheepTag {};
 
 // Boids behavior component for sheep
 struct SheepComponent {
-    float separationWeight = 6.0f; // Weight for separation behavior
-    float alignmentWeight = 1.0f;   // Weight for alignment behavior
-    float cohesionWeight = 1.0f;    // Weight for cohesion behavior
-    float targetWeight = 1.2f;      // Weight for targeting behavior
-    float fearWeight = 8.0f;        // Weight for fear behavior
+    float separationWeight = config.sheepSeparationWeight; // Weight for separation behavior
+    float alignmentWeight = config.sheepAlignmentWeight;   // Weight for alignment behavior
+    float cohesionWeight = config.sheepCohesionWeight;    // Weight for cohesion behavior
+    float targetWeight = config.sheepTargetWeight;      // Weight for targeting behavior
+    float fearWeight = config.sheepFearWeight;        // Weight for fear behavior
 
-    float viewRadius = 60.0f;      // View radius for detecting other entities
-    float enemyDetectRange = 150.0f; // Range to detect enemies
-    float maxSpeed = 190.0f;        // Maximum speed
-    float maxForce = 50.0f;       // Maximum steering force
+    float viewRadius = config.sheepViewRadius;      // View radius for detecting other entities
+    float enemyDetectRange = config.sheepEnemyDetectRange; // Range to detect enemies
+    float maxSpeed = config.sheepMaxSpeed;        // Maximum speed
+    float maxForce = config.sheepMaxForce;       // Maximum steering force
 };
 
 struct WolfTag {};
@@ -232,7 +233,7 @@ struct Weapon {
 
     float r, g, b;
 
-    float knockback = 0.0f;
+    float knockback = 1.0f;
 };
 
 struct WeaponInventory {

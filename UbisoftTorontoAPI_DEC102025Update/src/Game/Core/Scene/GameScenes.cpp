@@ -47,7 +47,7 @@ PlayingScene::PlayingScene(EngineSystem* engine)
     : engineSystem(engine), m_lastScore(-1), scoreText(nullptr),
     roundText(nullptr), timeText(nullptr), sheepText(nullptr),
     totalEntityText(nullptr), bulletEntityText(nullptr),
-    wolfEntityText(nullptr), sheepEntityText(nullptr), chunkEntityText(nullptr) {
+    wolfEntityText(nullptr), sheepEntityText(nullptr), floorEntityText(nullptr) {
 }
 
 void PlayingScene::OnEnter() {
@@ -63,7 +63,7 @@ void PlayingScene::OnEnter() {
     bulletEntityText = uiManager.AddText("Bullets: 0", 100, 35, 0.7f, 0.7f, 1.0f, UIAlignment::TopRight);
     wolfEntityText = uiManager.AddText("Wolves: 0", 100, 60, 1.0f, 0.5f, 0.5f, UIAlignment::TopRight);
     sheepEntityText = uiManager.AddText("Sheep: 0", 100, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopRight);
-    chunkEntityText = uiManager.AddText("Chunks: 0", 100, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
+    floorEntityText = uiManager.AddText("Floors: 0", 100, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
 
     m_lastScore = -1;
 }
@@ -131,11 +131,11 @@ void PlayingScene::Update(float deltaTimeMs) {
         sheepEntityCount++;
     }
 
-    // Count map blocks/chunks
-    int chunkCount = 0;
-    View<MapBlockTag> chunkView(registry);
-    for (EntityID id : chunkView) {
-        chunkCount++;
+    // Count map blocks/floors
+    int floorCount = 0;
+    View<MapBlockTag> floorView(registry);
+    for (EntityID id : floorView) {
+        floorCount++;
     }
 
     // Update entity count displays
@@ -151,8 +151,8 @@ void PlayingScene::Update(float deltaTimeMs) {
     if (sheepEntityText) {
         sheepEntityText->SetText("Sheep: " + std::to_string(sheepEntityCount));
     }
-    if (chunkEntityText) {
-        chunkEntityText->SetText("Chunks: " + std::to_string(chunkCount));
+    if (floorEntityText) {
+        floorEntityText->SetText("Floors: " + std::to_string(floorCount));
     }
 }
 

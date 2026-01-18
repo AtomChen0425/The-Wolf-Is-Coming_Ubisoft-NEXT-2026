@@ -20,21 +20,11 @@
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)
 {
-    // Load game configuration from file
-    //if (!config.LoadFromFile("game_config.txt")) {
-    //    // If loading fails, save default config for next time
-    //    config.SaveToFile("game_config.txt");
-    //}
-
-    // Initialize level data with config values
     levelData.Initialize();
 
     InitializeScenes();
 }
 
-float Lerp(float a, float b, float t) {
-    return a + (b - a) * t;
-}
 
 void EngineSystem::SetGameState(GameState newState) {
     gameState = newState;
@@ -45,8 +35,7 @@ void EngineSystem::InitializeScenes() {
     sceneManager.RegisterScene("Playing", std::make_unique<PlayingScene>(this));
     sceneManager.RegisterScene("GameOver", std::make_unique<GameOverScene>(this));
     sceneManager.RegisterScene("Settings", std::make_unique<SettingsScene>(this));
-    sceneManager.RegisterScene("UpgradeScene", std::make_unique<UpgradeScene>(this));  // Add upgrade scene
-
+    sceneManager.RegisterScene("UpgradeScene", std::make_unique<UpgradeScene>(this));  
     // Start with the start screen
     sceneManager.SwitchToScene("StartScreen");
 }

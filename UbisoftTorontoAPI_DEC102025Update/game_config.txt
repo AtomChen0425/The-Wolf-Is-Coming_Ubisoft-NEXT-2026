@@ -99,7 +99,7 @@ bulletSpeedUpgradeAmount=100
 # Level/Round system parameters
 roundDurationMs=10000
 baseWolfSpawnIntervalMs=1000
-wolfSpawnReductionPerRound=200
+wolfSpawnReductionPerRound=100
 minWolfSpawnIntervalMs=1000
 sheepAddedPerUpgrade=10
 sheepSpawnOffsetZ=100
@@ -246,8 +246,8 @@ sheepSpriteScale=0.3
 sheepAnimationSpeed=0.0666667
 
 # Sheep Boids behavior
-sheepViewRadius=170
-sheepMaxSpeed=300
+sheepViewRadius=270
+sheepMaxSpeed=250
 sheepMaxForce=140
 sheepSeparationWeight=2
 sheepAlignmentWeight=1

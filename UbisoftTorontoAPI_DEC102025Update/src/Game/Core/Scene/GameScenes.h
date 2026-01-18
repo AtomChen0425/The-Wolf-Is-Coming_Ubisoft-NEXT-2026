@@ -51,7 +51,7 @@ private:
     UIText* bulletEntityText;
     UIText* wolfEntityText;
     UIText* sheepEntityText;
-    UIText* chunkEntityText;
+    UIText* floorEntityText;
 };
 
 // Game Over Scene
