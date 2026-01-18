@@ -626,12 +626,12 @@ void GenerateSystem::GenerateWolfOfType(EntityManager& registry, WolfType type) 
     }
     if (!foundPlayer) return;
 
-    constexpr float kRadius = 3000.0f;
+    constexpr float kRadius = 1700.0f;
     constexpr float kPi = 3.14159265358979323846f;
 
     // Random position around player in a circle
     float theta = RandRange(0.0f, 2.0f * kPi);
-    float r = sqrtf(Rand01()) * kRadius;
+    float r = sqrtf(RandRange(0.5f, 1.0f)) * kRadius;
 
     float dx = cosf(theta) * r;
     float dz = sinf(theta) * r;

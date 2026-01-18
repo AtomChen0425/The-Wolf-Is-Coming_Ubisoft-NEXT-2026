@@ -170,7 +170,7 @@ namespace WolfSystem {
                 chaseForce = 100.0f;
                 r = 0.9f; g = 0.3f; b = 0.5f;  
                 size = 18.0f;
-                pSprite = App::CreateSprite("data/TestData/Wolf4.png", 2, 1);
+                pSprite = App::CreateSprite("data/TestData/WolfMagic.png", 2, 1);
                 pSprite->CreateAnimation(ANIM_BACKWARDS, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_LEFT, animationSpeed, { 0,1 });
                 pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
@@ -227,7 +227,7 @@ namespace WolfSystem {
         registry.addComponent(wolf, SpriteComponent{ pSprite, 0 });
         // Add components
         registry.addComponent(wolf, Transform3D{
-            Vec3{x, 20.0f, z},
+            Vec3{x, 40.0f, z},
             size, size, size,
             r, g, b
         });

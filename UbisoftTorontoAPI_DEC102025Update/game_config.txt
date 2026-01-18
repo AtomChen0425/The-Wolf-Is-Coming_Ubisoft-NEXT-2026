@@ -97,8 +97,8 @@ gravityUpgradeAmount=-100
 bulletSpeedUpgradeAmount=100
 
 roundDurationMs = 10000.0
-baseWolfSpawnIntervalMs = 1000.0
+baseWolfSpawnIntervalMs = 2000.0
 wolfSpawnReductionPerRound = 200.0
-minWolfSpawnIntervalMs = 100.0
+minWolfSpawnIntervalMs = 500.0
 sheepAddedPerUpgrade = 10
 sheepSpawnOffsetZ = 100.0

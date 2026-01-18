@@ -195,7 +195,6 @@ void RenderPlayer3D(EntityManager& registry, Camera3D& camera) {
         //App::Print(50, 80, "Controls: WASD to move, SPACE to jump, Arrow keys to rotate", 1.0f, 1.0f, 0.0f);
     }
 }
-
 void RenderAnimal3D(EntityManager& registry, Camera3D& camera) {
     View<Transform3D, AnimalTag> view(registry);
 
@@ -280,7 +279,6 @@ void RenderSystem::Render(EntityManager& registry, Camera25D& camera) {
     RenderSystem25D(registry, camera);
 }
 void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
-    
     // Render map blocks (always cubes)
     RenderRoad3D(registry, camera);
     
@@ -288,12 +286,12 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     RenderBullets3D(registry, camera);
 
 	//Render Blocks3D(registry, camera);
-    RenderPlayer3D(registry, camera);
-    RenderAnimal3D(registry, camera);
+    /*RenderPlayer3D(registry, camera);
+    RenderAnimal3D(registry, camera);*/
     
     // To switch to sprite rendering,
     
-	//RenderSprite3D(registry, camera);
+	RenderSprite3D(registry, camera);
     
     // Render particles
 	RenderParticles(registry, camera);
