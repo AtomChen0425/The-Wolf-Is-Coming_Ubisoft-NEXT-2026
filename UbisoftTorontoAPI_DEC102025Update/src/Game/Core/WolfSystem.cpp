@@ -68,6 +68,7 @@ void WolfShoot(EntityManager& registry, float dt, Vec3& targetPosition) {
             registry.addComponent(bullet, Transform3D{ bulletPosition, weapon.projectileSize, weapon.projectileSize, weapon.projectileSize, weapon.r, weapon.g, weapon.b });
             registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
             registry.addComponent(bullet, EnemyBulletTag{}); // Enemy bullet
+            registry.addComponent(bullet, TrailEmitter{ 50.0f, 0.0f, 300.0f, 5.0f, 0.0f, 0.5f, 0.0f });
             weapon.currentCooldown = weapon.fireRate;
         }
     }
@@ -85,7 +86,7 @@ namespace WolfSystem {
         float maxSpeed = 150.0f;
         float detectionRange = 400.0f;
         bool canJump = false;
-        CSimpleSprite* pSprite;
+        CSimpleSprite* pSprite = nullptr;
         const float animationSpeed = 1.0f / 10.0f;
         // Configure stats based on wolf type
         switch (type) {
@@ -160,6 +161,7 @@ namespace WolfSystem {
                 pSprite->SetScale(0.3f);
                 break;
         }
+        size *= 1.5f;
         registry.addComponent(wolf, SpriteComponent{ pSprite, 0 });
         // Add components
         registry.addComponent(wolf, Transform3D{

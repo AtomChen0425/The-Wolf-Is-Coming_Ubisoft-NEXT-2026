@@ -556,6 +556,12 @@ void CheckBulletDamage(EntityManager& registry) {
     EnemyToRemove.clear();
     static std::vector<Entity> bulletToRemove;
     bulletToRemove.clear();
+	View<PlayerTag> playerView(registry);
+	int* playerScore = nullptr;
+    for (EntityID id : playerView) {
+        playerScore = &playerView.get<PlayerTag>(id).score;
+        break;
+	}
     View<Bullet, Transform3D> bulletView(registry);
     View<Health, Transform3D,EnemyTag> enemyView(registry);
     for (EntityID bulletId : bulletView) {
@@ -585,7 +591,7 @@ void CheckBulletDamage(EntityManager& registry) {
 				Vec3 enemyDirection = Normalize3D(enemyVel);
 				enemyVel =  enemyDirection * ( - bulletKnockback); // Apply knockback
                 enemyHealth.currentHealth -= bulletDamage;
-
+                ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 5, Vec3{ 1.0f, 1.0f, 0.0f }, 150.0f);
                 if (enemyHealth.currentHealth <= 0) {
                     ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
                     EnemyToRemove.push_back({ enemyId, registry.getEntityVersion(enemyId) });
@@ -619,6 +625,7 @@ void CheckBulletDamage(EntityManager& registry) {
         registry.destroyEntity(e);
 	}
     for (Entity& e : EnemyToRemove) {
+        *playerScore += 100;
         registry.destroyEntity(e);
 	}
 }

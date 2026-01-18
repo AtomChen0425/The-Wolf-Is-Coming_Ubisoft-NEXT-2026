@@ -57,11 +57,9 @@ void UpdateSpriteAnimation(EntityManager& registry, const float dt) {
                 }
 			}
             else {
-                // Idle animation or stop
-                if (spr.currentAnimID != -1) {
-                    spr.sprite->SetAnimation(-1, true); // Assuming -1 stops animation
+                    spr.sprite->SetAnimation(1, true); // Assuming -1 stops animation
                     spr.currentAnimID = -1;
-                }
+                
 			}
         }
     }

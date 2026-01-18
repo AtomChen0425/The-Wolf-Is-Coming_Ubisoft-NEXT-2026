@@ -26,16 +26,16 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
         Vec3& pos = playerTransform.pos;
         
         // Apply player stats upgrades if they have PlayerStats component
-        //if (view.has<PlayerStats>(id)) {
-        //    auto& stats = view.get<PlayerStats>(id);
-        //    forwardSpeed += stats.speedBonus;
-        //    strafeSpeed += stats.speedBonus;
-        //    jumpVelocity += stats.jumpBonus;
-        //    gravity += stats.gravityBonus;  // Note: gravityBonus is negative, so this reduces gravity
-        //    bulletSpeed += stats.bulletSpeedBonus;
-        //}
+        if (view.has<PlayerStats>(id)) {
+            auto& stats = view.get<PlayerStats>(id);
+            forwardSpeed += stats.speedBonus;
+            strafeSpeed += stats.speedBonus;
+            jumpVelocity += stats.jumpBonus;
+            gravity += stats.gravityBonus;  // Note: gravityBonus is negative, so this reduces gravity
+            bulletSpeed += stats.bulletSpeedBonus;
+        }
         
-        forwardSpeed += playerTag.score;
+        //forwardSpeed += playerTag.score;
         
         // === Camera Control Logic (moved from CameraSystem) ===
         if (settings.cameraControlMode == CameraControlMode::Mouse) {
