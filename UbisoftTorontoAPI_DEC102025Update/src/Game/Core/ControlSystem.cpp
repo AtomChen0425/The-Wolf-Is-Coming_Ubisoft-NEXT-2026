@@ -79,6 +79,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
 				playerTag.rotationPitch -= rotationSpeed * dtSec;
             }
         }
+        playerTag.rotationPitch = max(0.0f, playerTag.rotationPitch);
         // === End Camera Control Logic ===
         
         // 1. Handle horizontal input (forward/backward and strafe)

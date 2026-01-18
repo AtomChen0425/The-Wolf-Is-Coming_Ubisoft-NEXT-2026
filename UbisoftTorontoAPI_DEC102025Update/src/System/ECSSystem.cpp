@@ -12,6 +12,7 @@
 #include "../Game/Core/ParticleSystem.h"
 #include "../Game/Core/SheepSystem.h"
 #include "../Game/Core/WolfSystem.h"
+#include "../Game/Core/LevelSystem.h"
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 #include "Scene/GameScenes.h"
@@ -24,7 +25,7 @@ EngineSystem::EngineSystem()
         // If loading fails, save default config for next time
         config.SaveToFile("game_config.txt");
     }
-    
+    levelData.Reset();
     InitializeScenes();
 }
 
@@ -122,11 +123,26 @@ void EngineSystem::Update(const float deltaTimeMs) {
     // Playing state - normal game updates
     if (gameState == GameState::Playing) {
         // Check for R to reset even during gameplay
-        if (App::IsKeyPressed(App::KEY_R)) {
+        /*if (App::IsKeyPressed(App::KEY_R)) {
             ResetGame();
+            return;
+        }*/
+        // Update level system (track time and round progression)
+        bool roundComplete = LevelSystem::Update(levelData, deltaTimeMs);
+        
+        // Check if all sheep are dead (game over condition)
+        if (LevelSystem::CheckGameOver(*registry)) {
+            gameState = GameState::GameOver;
+            sceneManager.SwitchToScene("GameOver");
             return;
         }
         
+        //// If round is complete, go to upgrade scene
+        //if (roundComplete) {
+        //    sceneManager.SwitchToScene("UpgradeScene");
+        //    return;  // Don't continue game logic this frame
+        //}
+        // Update level system (track time and round progression)
         // Update player control (handles input and movement, and camera control)
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings, config);
         // Update enemy AI (movement, shooting, bullets)
@@ -135,14 +151,14 @@ void EngineSystem::Update(const float deltaTimeMs) {
         SheepSystem::Update(*registry, deltaTimeMs);
         // Check and resolve collisions (after movement is applied)
         // Update wolf behavior (wolves chase nearest player or sheep)
-        if (gSpawnTimerMs >= gSpawnIntervalMs) {
+        if (gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
             GenerateSystem::GenerateWolf(*registry);
             gSpawnTimerMs = 0.0f;
 		}
         WolfSystem::Update(*registry, deltaTimeMs);
 
         PhysicsSystem::Update(*registry, deltaTimeMs);
-        
+
         MovementSystem::Update(*registry, deltaTimeMs);
         ParticleSystem::Update(*registry, deltaTimeMs);
         CollisionSystem::Update(*registry);

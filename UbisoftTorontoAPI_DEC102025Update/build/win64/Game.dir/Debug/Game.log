@@ -1,11 +1,28 @@
-﻿  GameScenes.cpp
-D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Scene\GameScenes.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+﻿  Building Custom Rule D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/CMakeLists.txt
   CameraSystem.cpp
+  CollisionSystem.cpp
   ControlSystem.cpp
+  EnemyAISystem.cpp
+  GameConfig.cpp
   GenerateSystem.cpp
+  LevelSystem.cpp
+  MovementSystem.cpp
+D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.cpp(1,1): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  ParticleSystem.cpp
+  PhysicsSystem.cpp
   RenderSystem.cpp
+  SheepSystem.cpp
+  WolfSystem.cpp
   GameTest.cpp
   ECSSystem.cpp
+  Mat4.cpp
+  Vec2.cpp
+  Collision.cpp
   RenderHelper.cpp
+  GameScenes.cpp
+  Generating Code...
+  Compiling...
+  SceneManager.cpp
+  UISystem.cpp
   Generating Code...
   Game.vcxproj -> D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\Game.exe

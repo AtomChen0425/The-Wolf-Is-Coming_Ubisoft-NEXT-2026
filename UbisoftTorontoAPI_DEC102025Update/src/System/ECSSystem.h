@@ -5,6 +5,7 @@
 #include <memory>
 #include <set>
 #include <utility>
+#include "../Game/Core/GameLevelData.h"
 //#include <unordered_set>
 
 struct Camera25D {
@@ -84,6 +85,7 @@ public:
     Camera3D& GetCamera() { return camera; }
     GameSettings& GetSettings() { return settings; }
     GameConfig& GetGameConfig() { return config; }  // Renamed from GetConfig for clarity
+    GameLevelData& GetLevelData() { return levelData; }  // Access to level/round data
     
 private:
     std::unique_ptr<EntityManager> registry;
@@ -94,6 +96,6 @@ private:
     SceneManager sceneManager;
     GameSettings settings;
     GameConfig config;
-    
+    GameLevelData levelData;
     void InitializeScenes();
 };

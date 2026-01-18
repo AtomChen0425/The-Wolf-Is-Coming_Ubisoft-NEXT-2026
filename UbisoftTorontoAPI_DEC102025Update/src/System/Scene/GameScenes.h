@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "../UI/UISystem.h"
 #include <memory>
+#include "../Game/Core/LevelSystem.h"
 
 // Forward declarations
 class EngineSystem;
@@ -40,6 +41,10 @@ private:
     UIManager uiManager;
     int m_lastScore;
     UIText* scoreText;
+
+    UIText* roundText;
+    UIText* timeText;
+    UIText* sheepText;
 };
 
 // Game Over Scene
@@ -105,8 +110,8 @@ private:
     };
     
     UpgradeType upgradeOptions[3];  // 3 random upgrades to choose from
-    void GenerateRandomUpgrades();
+    /*void GenerateRandomUpgrades();
     void ApplyUpgrade(UpgradeType type);
     std::string GetUpgradeName(UpgradeType type);
-    std::string GetUpgradeDescription(UpgradeType type);
+    std::string GetUpgradeDescription(UpgradeType type);*/
 };
