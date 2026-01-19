@@ -34,14 +34,14 @@ public:
     void OnExit() override;
     void Update(float deltaTimeMs) override;
     void Render() override;
-    void RenderBackground();  // Render background before 3D game content
+    //void RenderBackground();  // Render background
     std::string GetName() const override { return "PlayingScene"; }
 
 private:
     EngineSystem* engineSystem;
     UIManager uiManager;
-    int m_lastScore;
-    UIText* scoreText;
+    int m_lastHealth;
+    UIText* healthText;
     UIText* roundText;
     UIText* timeText;
     UIText* sheepText;

@@ -15,13 +15,13 @@ void StartScene::OnEnter() {
     uiManager.Clear();
 
     // Title
-    uiManager.AddText("Save Sheep!", -70, 120, 1.0f, 0.0f, 0.0f, UIAlignment::MiddleCenter);
+    uiManager.AddText("The Wolf Is Coming!", -70, 120, 1.0f, 0.0f, 0.0f, UIAlignment::MiddleCenter);
 
     // Instructions
     uiManager.AddText("Press SPACE to Start", -100, -50, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Press S for Settings", -90, -10, 0.9f, 0.9f, 0.0f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Controls: WASD - Move, SPACE - Jump, Mouse - Look, Left Click - Shoot", -250, 40, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Press R anytime to Reset", -100, 80, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Controls: WASD Movement, SPACE : Jump, Mouse : Change View, Left-Click : Shoot", -300, 40, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
+    //uiManager.AddText("Press R anytime to Reset", -100, 80, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
 }
 
 void StartScene::OnExit() {
@@ -44,7 +44,7 @@ void StartScene::Render() {
 
 // PlayingScene Implementation
 PlayingScene::PlayingScene(EngineSystem* engine)
-    : engineSystem(engine), m_lastScore(-1), scoreText(nullptr),
+    : engineSystem(engine), m_lastHealth(-1), healthText(nullptr),
     roundText(nullptr), timeText(nullptr), sheepText(nullptr),
     totalEntityText(nullptr), bulletEntityText(nullptr),
     wolfEntityText(nullptr), sheepEntityText(nullptr), floorEntityText(nullptr) {
@@ -53,7 +53,7 @@ PlayingScene::PlayingScene(EngineSystem* engine)
 void PlayingScene::OnEnter() {
     uiManager.Clear();
     // Add UI elements
-    scoreText = uiManager.AddText("Health: 100", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
+    healthText = uiManager.AddText("Health: 100", 10, 10, 1.0f, 1.0f, 1.0f, UIAlignment::TopLeft);
     roundText = uiManager.AddText("Round: 1", 10, 35, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     timeText = uiManager.AddText("Time: 60s", 10, 60, 1.0f, 1.0f, 0.5f, UIAlignment::TopLeft);
     sheepText = uiManager.AddText("Sheep: 0", 10, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopLeft);
@@ -65,7 +65,7 @@ void PlayingScene::OnEnter() {
     sheepEntityText = uiManager.AddText("Sheep: 0", 100, 85, 0.5f, 1.0f, 0.5f, UIAlignment::TopRight);
     floorEntityText = uiManager.AddText("Floors: 0", 100, 110, 0.7f, 0.7f, 0.5f, UIAlignment::TopRight);
 
-    m_lastScore = -1;
+    m_lastHealth = -1;
 }
 
 void PlayingScene::OnExit() {
@@ -77,15 +77,15 @@ void PlayingScene::Update(float deltaTimeMs) {
     EntityManager& registry = engineSystem->GetRegistry();
     GameLevelData& levelData = engineSystem->GetLevelData();
 
-    // Update score display
+    // Update Health display
     View<PlayerTag> playerView(registry);
     for (EntityID id : playerView) {
         auto& player = playerView.get<Health>(id);
 
-        if (player.currentHealth != m_lastScore) {
-            m_lastScore = player.currentHealth;
-            if (scoreText) {
-                scoreText->SetText("Health: " + std::to_string(m_lastScore));
+        if (player.currentHealth != m_lastHealth) {
+            m_lastHealth = player.currentHealth;
+            if (healthText) {
+                healthText->SetText("Health: " + std::to_string(m_lastHealth));
             }
         }
     }
@@ -334,7 +334,7 @@ void UpgradeScene::OnEnter() {
         float xPos = startX + i * spacing;
         float yPos = -20.0f;
 
-        // Selection brackets (initially hidden for non-selected items)
+        // Selection brackets
         float bracketAlpha = (i == selectedUpgrade) ? 1.0f : 0.0f;
         leftBrackets[i] = uiManager.AddText("[", xPos - 130, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
         rightBrackets[i] = uiManager.AddText("]", xPos + 100, yPos - 40, bracketAlpha, bracketAlpha, 0.0f, UIAlignment::MiddleCenter);
@@ -350,7 +350,7 @@ void UpgradeScene::OnEnter() {
     }
 
     // Instructions
-    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -90, 150, 0.2f, 0.2f, 0.2f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Use LEFT/RIGHT to select, ENTER to confirm", -150, 150, 0.2f, 0.2f, 0.2f, UIAlignment::MiddleCenter);
 }
 
 void UpgradeScene::OnExit() {
@@ -439,7 +439,6 @@ void UpgradeScene::Update(float deltaTimeMs) {
         LevelSystem::ApplyUpgrade(engineSystem->GetRegistry(), upgradeOptions[selectedUpgrade]);
         // Advance to next round
         engineSystem->GetLevelData().NextRound();
-        // Clear UI before switching
         uiManager.Clear();
         // Return to playing scene
         engineSystem->GetSceneManager().SwitchToScene("Playing");

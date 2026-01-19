@@ -8,7 +8,6 @@
 #include "../Game/Core/CollisionSystem.h"
 #include "../Game/Core/CameraSystem.h"
 #include "../Game/Core/PhysicsSystem.h"
-#include "../Game/Core/EnemyAISystem.h"
 #include "../Game/Core/ParticleSystem.h"
 #include "../Game/Core/SheepSystem.h"
 #include "../Game/Core/WolfSystem.h"
@@ -237,6 +236,7 @@ void EngineSystem::Render() {
 
 void EngineSystem::Shutdown() {
     // Clean up resources
+    delete backgroundSprite;
     View<SpriteComponent> view(*registry);
     for (EntityID id : view) {
         auto& spr = view.get<SpriteComponent>(id);
