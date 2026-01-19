@@ -280,7 +280,7 @@ namespace SheepSystem {
                     // Enhanced: stronger repulsion for very close neighbors
                     float mySheepSize = t.width;
                     float otherSheepSize = ot.width;
-                    float minDist = (mySheepSize + otherSheepSize) * 0.55f;  // Minimum safe distance
+                    float minDist = (mySheepSize + otherSheepSize) * 0.7f;  // Minimum safe distance
 
                     if (dist < minDist) {
                         // Very close - strong repulsion to prevent overlap

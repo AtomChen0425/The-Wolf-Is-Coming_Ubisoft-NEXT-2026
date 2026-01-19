@@ -113,7 +113,7 @@ hunterWolfSpawnIntervalMs=10000
 # Wolf stats - Basic
 wolfBasicHealth=100
 wolfBasicSpeed=300
-wolfBasicChaseForce=500
+wolfBasicChaseForce=550
 wolfBasicDetectionRange=300
 wolfBasicSize=20
 
@@ -160,19 +160,19 @@ wolfHunterJumpMaxDistance=2000
 
 # Wolf weapon - Sniper gun
 wolfSniperGunDamage=8
-wolfSniperGunFireRate=500
+wolfSniperGunFireRate=50
 wolfSniperGunProjectileSpeed=600
 wolfSniperGunProjectileSize=10
-wolfSniperGunProjectileLife=2000
-wolfSniperGunKnockback=150
+wolfSniperGunProjectileLife=8000
+wolfSniperGunKnockback=15
 
 # Wolf weapon - Magic Wand
 wolfMagicWandDamage=10
-wolfMagicWandFireRate=300
+wolfMagicWandFireRate=30
 wolfMagicWandProjectileSpeed=400
 wolfMagicWandProjectileSize=12
 wolfMagicWandProjectileLife=8500
-wolfMagicWandKnockback=100
+wolfMagicWandKnockback=10
 
 
 # Player weapon - Machine Gun

@@ -234,7 +234,7 @@ namespace WolfSystem {
             pointsWorth += 45;
             break;
         }
-        size *= 2.0f;
+        size *= 1.5f;
         registry.addComponent(wolf, SpriteComponent{ pSprite, 0 });
         // Add components
         registry.addComponent(wolf, Transform3D{
@@ -444,7 +444,8 @@ namespace WolfSystem {
             // Hunter wolf jumping logic
             if (params.canJump && params.jumpCooldown <= 0.0f) {
                 // Check if wolf is on ground (y position close to ground level)
-                bool isOnGround = (pos.y <= 25.0f);  // Ground level + small tolerance
+                //bool isOnGround = (pos.y <= 25.0f);  
+				bool isOnGround = wolfView.get<PhysicsTag>(id).isOnGround;
 
                 if (isOnGround && foundTarget) {
 

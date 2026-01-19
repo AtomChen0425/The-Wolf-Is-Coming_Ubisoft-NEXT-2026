@@ -50,8 +50,7 @@ void UIText::Render() const {
     float screenX, screenY;
     GetScreenPosition(screenX, screenY);
 
-    void* renderFont = font ? font : GLUT_BITMAP_HELVETICA_18;
-    App::Print(screenX, screenY, text.c_str(), r, g, b, renderFont);
+    App::Print(screenX, screenY, text.c_str(), r, g, b);
 }
 
 // UIManager implementation

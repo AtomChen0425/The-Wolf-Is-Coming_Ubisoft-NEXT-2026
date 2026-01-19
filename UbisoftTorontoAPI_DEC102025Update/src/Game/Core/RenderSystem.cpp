@@ -270,8 +270,8 @@ void RenderSystem::Render(EntityManager& registry, Camera3D& camera) {
     RenderBullets3D(registry, camera);
 
     //Render Blocks3D(registry, camera);
-    /*RenderPlayer3D(registry, camera);
-    RenderAnimal3D(registry, camera);*/
+    //RenderPlayer3D(registry, camera);
+    //RenderAnimal3D(registry, camera);
 
     // To switch to sprite rendering,
 
@@ -427,7 +427,7 @@ void RenderSystem::RenderSpriteByPos(Transform3D& t, SpriteComponent& spr, Camer
     float perspectiveFactor = fov / pitchedZ;
     if (spriteNativeWidth > 0.0f) {
         float scale = (t.width / spriteNativeWidth) * perspectiveFactor * 3;
-		finalScreenY += spriteNativeHeight * 0.4f * scale; // Adjust Y to account for sprite height
+		finalScreenY += spriteNativeHeight * 0.2f * scale; // Adjust Y to account for sprite height
         spr.sprite->SetScale(scale);
     }
     // Shadow on ground (y = 0 in world space)

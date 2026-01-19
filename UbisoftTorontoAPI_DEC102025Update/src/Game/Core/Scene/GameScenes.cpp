@@ -15,12 +15,12 @@ void StartScene::OnEnter() {
     uiManager.Clear();
 
     // Title
-    uiManager.AddText("Save Sheeps!", -80, -100, 1.0f, 1.0f, 1.0f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Save Sheep!", -70, 120, 1.0f, 0.0f, 0.0f, UIAlignment::MiddleCenter);
 
     // Instructions
     uiManager.AddText("Press SPACE to Start", -100, -50, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
     uiManager.AddText("Press S for Settings", -90, -10, 0.9f, 0.9f, 0.0f, UIAlignment::MiddleCenter);
-    uiManager.AddText("Controls: WASD - Move, SPACE - Jump", -150, 40, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Controls: WASD - Move, SPACE - Jump, Mouse - Look, Left Click - Shoot", -250, 40, 0.8f, 0.8f, 0.8f, UIAlignment::MiddleCenter);
     uiManager.AddText("Press R anytime to Reset", -100, 80, 0.6f, 0.6f, 0.6f, UIAlignment::MiddleCenter);
 }
 
