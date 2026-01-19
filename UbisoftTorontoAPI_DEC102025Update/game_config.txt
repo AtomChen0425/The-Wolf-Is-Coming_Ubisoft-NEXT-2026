@@ -133,21 +133,21 @@ wolfMagicSize=20
 
 
 # Wolf stats - Tank
-wolfTankHealth=300
+wolfTankHealth=600
 wolfTankSpeed=100
 wolfTankChaseForce=400
 wolfTankDetectionRange=250
 wolfTankSize=30
 
 # Wolf stats - Fast
-wolfFastHealth=60
+wolfFastHealth=70
 wolfFastSpeed=500
 wolfFastChaseForce=600
 wolfFastDetectionRange=350
 wolfFastSize=15
 
 # Wolf stats - Hunter
-wolfHunterHealth=80
+wolfHunterHealth=100
 wolfHunterSpeed=450
 wolfHunterChaseForce=550
 wolfHunterDetectionRange=300
