@@ -73,7 +73,7 @@ void EngineSystem::InitializeGame() {
 
     // Generate initial chunks around spawn point using chunk-based system
     GenerateSystem::ChunkGenerationSystem(*registry, config.playerSpawnX, config.playerSpawnZ, loadedChunks);
-    SheepSystem::InitSheep(*registry, config.playerSpawnX, config.playerSpawnZ + 200.0f, 50);
+    SheepSystem::InitSheep(*registry, config.playerSpawnX, config.playerSpawnZ + 200.0f, config.sheepInitialCount);
 
     //WolfSystem::InitWolves(*registry, config.playerSpawnX + 300.0f, config.playerSpawnZ + 400.0f, 5);
 }

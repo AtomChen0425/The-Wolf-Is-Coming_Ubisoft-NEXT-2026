@@ -234,7 +234,6 @@ struct GameConfig {
     float sheepSpawnRadius;
     int sheepInitialCount;
     float sheepSpawnYPosition;
-    float sheepMoveSpeed;
     float sheepSpawnOffsetMin;
     float sheepSpawnOffsetMax;
     float sheepSize;

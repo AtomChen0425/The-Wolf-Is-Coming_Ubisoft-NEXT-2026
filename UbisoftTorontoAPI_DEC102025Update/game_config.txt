@@ -98,7 +98,7 @@ bulletSpeedUpgradeAmount=100
 
 # Level/Round system parameters
 roundDurationMs=10000
-baseWolfSpawnIntervalMs=1000
+baseWolfSpawnIntervalMs=1500
 wolfSpawnReductionPerRound=100
 minWolfSpawnIntervalMs=1000
 sheepAddedPerUpgrade=10
@@ -177,7 +177,7 @@ wolfMagicWandKnockback=10
 
 # Player weapon - Machine Gun
 playerMachineGunDamage=10
-playerMachineGunFireRate=50
+playerMachineGunFireRate=70
 playerMachineGunProjectileSpeed=500
 playerMachineGunProjectileSize=5
 playerMachineGunProjectileLife=2000
@@ -201,7 +201,7 @@ playerCannonColorB=0
 
 # Sheep weapon - Machine Gun
 sheepMachineGunDamage=5
-sheepMachineGunFireRate=50
+sheepMachineGunFireRate=70
 sheepMachineGunProjectileSpeed=400
 sheepMachineGunProjectileSize=3
 sheepMachineGunProjectileLife=2000
@@ -233,9 +233,8 @@ wolfSpawnMaxZ=-30
 
 # Sheep spawn settings
 sheepSpawnRadius=100
-sheepInitialCount=10
+sheepInitialCount=30
 sheepSpawnYPosition=30
-sheepMoveSpeed=50
 sheepSpawnOffsetMin=-100
 sheepSpawnOffsetMax=100
 sheepSize=15

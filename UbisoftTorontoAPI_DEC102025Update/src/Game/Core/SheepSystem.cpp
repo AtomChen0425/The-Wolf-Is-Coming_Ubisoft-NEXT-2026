@@ -183,27 +183,27 @@ namespace SheepSystem {
 
             registry.addComponent(sheep, Transform3D{
                 Vec3{startX + offsetX, 30.0f, startZ + offsetZ},
-                15.0f, 15.0f, 15.0f, // 
-                0.9f, 0.9f, 0.9f     // 
+                15.0f, 15.0f, 15.0f, 
+                0.9f, 0.9f, 0.9f     
                 });
             registry.addComponent(sheep, Velocity3D{ Vec3{0,0,0} });
             registry.addComponent(sheep, SheepTag{});
-            registry.addComponent(sheep, SheepComponent{}); // 
-            registry.addComponent(sheep, PhysicsTag{ true }); //
+            registry.addComponent(sheep, SheepComponent{}); 
+            registry.addComponent(sheep, PhysicsTag{ true }); 
             registry.addComponent(sheep, AnimalTag{});
             WeaponInventory inventory;
             registry.addComponent(sheep, inventory);
 
             CSimpleSprite* pSprite2 = App::CreateSprite("data/TestData/Sheep1.png", 2, 1);
 
-            // 
+            
             const float speed = 1.0f / 15.0f;
             pSprite2->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1 });
             pSprite2->CreateAnimation(ANIM_LEFT, speed, { 0,1 });
             pSprite2->CreateAnimation(ANIM_RIGHT, speed, { 0,1 });
             pSprite2->CreateAnimation(ANIM_FORWARDS, speed, { 0,1 });
             pSprite2->SetScale(0.3f);
-            // 
+           
 
 
             registry.addComponent(sheep, SpriteComponent{ pSprite2, 0 });
@@ -280,7 +280,7 @@ namespace SheepSystem {
                     // Enhanced: stronger repulsion for very close neighbors
                     float mySheepSize = t.width;
                     float otherSheepSize = ot.width;
-                    float minDist = (mySheepSize + otherSheepSize) * 0.7f;  // Minimum safe distance
+                    float minDist = (mySheepSize + otherSheepSize) * 0.9f;  // Minimum safe distance
 
                     if (dist < minDist) {
                         // Very close - strong repulsion to prevent overlap

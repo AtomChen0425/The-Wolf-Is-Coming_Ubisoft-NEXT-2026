@@ -251,7 +251,6 @@ GameConfig::GameConfig() {
     Bind("sheepSpawnRadius", sheepSpawnRadius, 100.0f);
     Bind("sheepInitialCount", sheepInitialCount, 10); // int
     Bind("sheepSpawnYPosition", sheepSpawnYPosition, 30.0f);
-    Bind("sheepMoveSpeed", sheepMoveSpeed, 50.0f);
     Bind("sheepSpawnOffsetMin", sheepSpawnOffsetMin, -100.0f);
     Bind("sheepSpawnOffsetMax", sheepSpawnOffsetMax, 100.0f);
     Bind("sheepSize", sheepSize, 15.0f);
