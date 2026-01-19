@@ -1,4 +1,4 @@
-# Install script for directory: D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update
+# Install script for directory: D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -35,7 +35,7 @@ endif()
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/install_local_manifest.txt"
+  file(WRITE "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -51,6 +51,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

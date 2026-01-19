@@ -36,19 +36,7 @@ events:
     found: "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeCCompilerId.c.in"
     search_context:
       ENV{PATH}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
+        - "D:\\Coding\\anaconda\\condabin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
         - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
@@ -88,18 +76,6 @@ events:
         - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
         - "C:\\Program Files\\Mozilla Firefox"
         - "C:\\Users\\Atom\\.dotnet\\tools"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/UbiTorContestAPI"
-      ENV{INCLUDE}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\include"
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\atlmfc\\include"
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Auxiliary\\VS\\include"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt"
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Auxiliary\\VS\\UnitTest\\include"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\winrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\cppwinrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um"
   -
     kind: "message-v1"
     backtrace:
@@ -110,15 +86,15 @@ events:
     message: |
       Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
       Compiler:  
-      Build flags: /DWIN32;/D_WINDOWS
+      Build flags: 
       Id flags:  
       
       The output was:
       0
       适用于 .NET Framework MSBuild 版本 17.14.23+b0019275e
-      生成启动时间为 2026/1/18 10:48:06。
+      生成启动时间为 2026/1/19 11:56:01。
       
-      节点 1 上的项目“D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)。
+      节点 1 上的项目“D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)。
       PrepareForBuild:
         正在创建目录“Debug\\”。
         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
@@ -131,7 +107,7 @@ events:
         CMakeCCompilerId.c
       Link:
         D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
-        CompilerIdC.vcxproj -> D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.exe
+        CompilerIdC.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.exe
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
         :VCEnd
@@ -139,13 +115,13 @@ events:
       FinalizeBuildStatus:
         正在删除文件“Debug\\CompilerIdC.tlog\\unsuccessfulbuild”。
         正在对“Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate”执行 Touch 任务。
-      已完成生成项目“D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)的操作。
+      已完成生成项目“D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdC\\CompilerIdC.vcxproj”(默认目标)的操作。
       
       已成功生成。
           0 个警告
           0 个错误
       
-      已用时间 00:00:00.61
+      已用时间 00:00:00.58
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -153,7 +129,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
       
       The C compiler identification is MSVC, found in:
-        D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/4.2.1/CompilerIdC/CompilerIdC.exe
+        D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/4.2.1/CompilerIdC/CompilerIdC.exe
       
   -
     kind: "find-v1"
@@ -178,17 +154,7 @@ events:
       - "link"
     candidate_directories:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/"
+      - "D:/Coding/anaconda/condabin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
@@ -232,19 +198,7 @@ events:
     found: "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
     search_context:
       ENV{PATH}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
+        - "D:\\Coding\\anaconda\\condabin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
         - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
@@ -284,7 +238,6 @@ events:
         - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
         - "C:\\Program Files\\Mozilla Firefox"
         - "C:\\Users\\Atom\\.dotnet\\tools"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/UbiTorContestAPI"
   -
     kind: "find-v1"
     backtrace:
@@ -308,17 +261,7 @@ events:
       - "lld-link"
     candidate_directories:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/"
+      - "D:/Coding/anaconda/condabin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
@@ -361,39 +304,9 @@ events:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/lld-link"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/lld-link"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.com"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.exe"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/lld-link"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.com"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.exe"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/lld-link"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/lld-link.com"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/lld-link.exe"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/lld-link"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/lld-link"
+      - "D:/Coding/anaconda/condabin/lld-link.com"
+      - "D:/Coding/anaconda/condabin/lld-link.exe"
+      - "D:/Coding/anaconda/condabin/lld-link"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/lld-link.com"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/lld-link.exe"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/lld-link"
@@ -511,19 +424,7 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
+        - "D:\\Coding\\anaconda\\condabin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
         - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
@@ -563,7 +464,111 @@ events:
         - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
         - "C:\\Program Files\\Mozilla Firefox"
         - "C:\\Users\\Atom\\.dotnet\\tools"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/UbiTorContestAPI"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "D:/Coding/anaconda/condabin/"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
+      - "D:/PC_Tool/RealCUDA/bin/"
+      - "D:/PC_Tool/RealCUDA/libnvvp/"
+      - "C:/windows/System32/"
+      - "C:/windows/"
+      - "C:/windows/System32/wbem/"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/windows/System32/OpenSSH/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/"
+      - "D:/PC_Tool/Bandizip/"
+      - "D:/Coding/anaconda/"
+      - "D:/Coding/anaconda/Scripts/"
+      - "D:/Coding/anaconda/Library/bin/"
+      - "D:/PC_Tool/Git/cmd/"
+      - "D:/Coding/nodeJs/"
+      - "D:/PC_Tool/texlive/2023/bin/windows/"
+      - "C:/Program Files/dotnet/"
+      - "D:/PC_Tool/TortoiseGit/bin/"
+      - "D:/PC_Tool/Matlab/runtime/win64/"
+      - "D:/PC_Tool/Matlab/bin/"
+      - "D:/PC_Tool/Matlab/polyspace/bin/"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/"
+      - "D:/Coding/Microsoft VS Code/bin/"
+      - "C:/Users/Atom/AppData/Roaming/npm/"
+      - "C:/Users/Atom/AppData/Local/Pandoc/"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/"
+      - "D:/Coding/PyCharm 2023.2.1/bin/"
+      - "C:/Program Files/Mozilla Firefox/"
+      - "C:/Users/Atom/.dotnet/tools/"
+    searched_directories:
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "D:\\Coding\\anaconda\\condabin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
+        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "D:\\PC_Tool\\RealCUDA\\bin"
+        - "D:\\PC_Tool\\RealCUDA\\libnvvp"
+        - "C:\\windows\\system32"
+        - "C:\\windows"
+        - "C:\\windows\\System32\\Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\windows\\System32\\OpenSSH\\"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\HP\\OMEN-Broadcast\\Common"
+        - "D:\\PC_Tool\\Bandizip\\"
+        - "D:\\Coding\\anaconda"
+        - "D:\\Coding\\anaconda\\Scripts"
+        - "D:\\Coding\\anaconda\\Library\\bin"
+        - "D:\\PC_Tool\\Git\\cmd"
+        - "D:\\Coding\\nodeJs\\"
+        - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
+        - "C:\\Program Files\\dotnet\\"
+        - "D:\\PC_Tool\\TortoiseGit\\bin"
+        - "D:\\PC_Tool\\Matlab\\runtime\\win64"
+        - "D:\\PC_Tool\\Matlab\\bin"
+        - "D:\\PC_Tool\\Matlab\\polyspace\\bin"
+        - "C:\\Program Files\\NVIDIA Corporation\\NVIDIA app\\NvDLISR"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2024.1.0\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\Atom\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "D:\\Coding\\Microsoft VS Code\\bin"
+        - "C:\\Users\\Atom\\AppData\\Roaming\\npm"
+        - "C:\\Users\\Atom\\AppData\\Local\\Pandoc\\"
+        - "D:\\Coding\\IntelliJ IDEA 2023.2.1\\bin"
+        - "D:\\Coding\\PyCharm 2023.2.1\\bin"
+        - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
+        - "C:\\Program Files\\Mozilla Firefox"
+        - "C:\\Users\\Atom\\.dotnet\\tools"
   -
     kind: "find-v1"
     backtrace:
@@ -585,17 +590,7 @@ events:
       - "mt"
     candidate_directories:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/"
+      - "D:/Coding/anaconda/condabin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
@@ -638,23 +633,127 @@ events:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.com"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.exe"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/mt.com"
-    found: "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/mt.exe"
+      - "D:/Coding/anaconda/condabin/mt.com"
+      - "D:/Coding/anaconda/condabin/mt.exe"
+      - "D:/Coding/anaconda/condabin/mt"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/mt.com"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/mt.exe"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/mt"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/mt.com"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/mt.exe"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/mt"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/mt.com"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/mt.exe"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/mt"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/mt.com"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/mt.exe"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/mt"
+      - "D:/PC_Tool/RealCUDA/bin/mt.com"
+      - "D:/PC_Tool/RealCUDA/bin/mt.exe"
+      - "D:/PC_Tool/RealCUDA/bin/mt"
+      - "D:/PC_Tool/RealCUDA/libnvvp/mt.com"
+      - "D:/PC_Tool/RealCUDA/libnvvp/mt.exe"
+      - "D:/PC_Tool/RealCUDA/libnvvp/mt"
+      - "C:/windows/System32/mt.com"
+      - "C:/windows/System32/mt.exe"
+      - "C:/windows/System32/mt"
+      - "C:/windows/mt.com"
+      - "C:/windows/mt.exe"
+      - "C:/windows/mt"
+      - "C:/windows/System32/wbem/mt.com"
+      - "C:/windows/System32/wbem/mt.exe"
+      - "C:/windows/System32/wbem/mt"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/mt.com"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/mt.exe"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/mt"
+      - "C:/windows/System32/OpenSSH/mt.com"
+      - "C:/windows/System32/OpenSSH/mt.exe"
+      - "C:/windows/System32/OpenSSH/mt"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/mt.com"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/mt.exe"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/mt"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/mt.com"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/mt.exe"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/mt"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/mt.com"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/mt.exe"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/mt"
+      - "D:/PC_Tool/Bandizip/mt.com"
+      - "D:/PC_Tool/Bandizip/mt.exe"
+      - "D:/PC_Tool/Bandizip/mt"
+      - "D:/Coding/anaconda/mt.com"
+      - "D:/Coding/anaconda/mt.exe"
+      - "D:/Coding/anaconda/mt"
+      - "D:/Coding/anaconda/Scripts/mt.com"
+      - "D:/Coding/anaconda/Scripts/mt.exe"
+      - "D:/Coding/anaconda/Scripts/mt"
+      - "D:/Coding/anaconda/Library/bin/mt.com"
+      - "D:/Coding/anaconda/Library/bin/mt.exe"
+      - "D:/Coding/anaconda/Library/bin/mt"
+      - "D:/PC_Tool/Git/cmd/mt.com"
+      - "D:/PC_Tool/Git/cmd/mt.exe"
+      - "D:/PC_Tool/Git/cmd/mt"
+      - "D:/Coding/nodeJs/mt.com"
+      - "D:/Coding/nodeJs/mt.exe"
+      - "D:/Coding/nodeJs/mt"
+      - "D:/PC_Tool/texlive/2023/bin/windows/mt.com"
+      - "D:/PC_Tool/texlive/2023/bin/windows/mt.exe"
+      - "D:/PC_Tool/texlive/2023/bin/windows/mt"
+      - "C:/Program Files/dotnet/mt.com"
+      - "C:/Program Files/dotnet/mt.exe"
+      - "C:/Program Files/dotnet/mt"
+      - "D:/PC_Tool/TortoiseGit/bin/mt.com"
+      - "D:/PC_Tool/TortoiseGit/bin/mt.exe"
+      - "D:/PC_Tool/TortoiseGit/bin/mt"
+      - "D:/PC_Tool/Matlab/runtime/win64/mt.com"
+      - "D:/PC_Tool/Matlab/runtime/win64/mt.exe"
+      - "D:/PC_Tool/Matlab/runtime/win64/mt"
+      - "D:/PC_Tool/Matlab/bin/mt.com"
+      - "D:/PC_Tool/Matlab/bin/mt.exe"
+      - "D:/PC_Tool/Matlab/bin/mt"
+      - "D:/PC_Tool/Matlab/polyspace/bin/mt.com"
+      - "D:/PC_Tool/Matlab/polyspace/bin/mt.exe"
+      - "D:/PC_Tool/Matlab/polyspace/bin/mt"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/mt.com"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/mt.exe"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/mt"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/mt.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/mt.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/mt"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/mt.com"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/mt.exe"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/mt"
+      - "C:/Program Files/CMake/bin/mt.com"
+      - "C:/Program Files/CMake/bin/mt.exe"
+      - "C:/Program Files/CMake/bin/mt"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/mt.com"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/mt.exe"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/mt"
+      - "D:/Coding/Microsoft VS Code/bin/mt.com"
+      - "D:/Coding/Microsoft VS Code/bin/mt.exe"
+      - "D:/Coding/Microsoft VS Code/bin/mt"
+      - "C:/Users/Atom/AppData/Roaming/npm/mt.com"
+      - "C:/Users/Atom/AppData/Roaming/npm/mt.exe"
+      - "C:/Users/Atom/AppData/Roaming/npm/mt"
+      - "C:/Users/Atom/AppData/Local/Pandoc/mt.com"
+      - "C:/Users/Atom/AppData/Local/Pandoc/mt.exe"
+      - "C:/Users/Atom/AppData/Local/Pandoc/mt"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/mt.com"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/mt.exe"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/mt"
+      - "D:/Coding/PyCharm 2023.2.1/bin/mt.com"
+      - "D:/Coding/PyCharm 2023.2.1/bin/mt.exe"
+      - "D:/Coding/PyCharm 2023.2.1/bin/mt"
+      - "C:/Program Files/Mozilla Firefox/mt.com"
+      - "C:/Program Files/Mozilla Firefox/mt.exe"
+      - "C:/Program Files/Mozilla Firefox/mt"
+      - "C:/Users/Atom/.dotnet/tools/mt.com"
+      - "C:/Users/Atom/.dotnet/tools/mt.exe"
+      - "C:/Users/Atom/.dotnet/tools/mt"
+    found: false
     search_context:
       ENV{PATH}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
+        - "D:\\Coding\\anaconda\\condabin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
         - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
@@ -694,7 +793,111 @@ events:
         - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
         - "C:\\Program Files\\Mozilla Firefox"
         - "C:\\Users\\Atom\\.dotnet\\tools"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/UbiTorContestAPI"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lib"
+    candidate_directories:
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "D:/Coding/anaconda/condabin/"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
+      - "D:/PC_Tool/RealCUDA/bin/"
+      - "D:/PC_Tool/RealCUDA/libnvvp/"
+      - "C:/windows/System32/"
+      - "C:/windows/"
+      - "C:/windows/System32/wbem/"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/windows/System32/OpenSSH/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/"
+      - "D:/PC_Tool/Bandizip/"
+      - "D:/Coding/anaconda/"
+      - "D:/Coding/anaconda/Scripts/"
+      - "D:/Coding/anaconda/Library/bin/"
+      - "D:/PC_Tool/Git/cmd/"
+      - "D:/Coding/nodeJs/"
+      - "D:/PC_Tool/texlive/2023/bin/windows/"
+      - "C:/Program Files/dotnet/"
+      - "D:/PC_Tool/TortoiseGit/bin/"
+      - "D:/PC_Tool/Matlab/runtime/win64/"
+      - "D:/PC_Tool/Matlab/bin/"
+      - "D:/PC_Tool/Matlab/polyspace/bin/"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/"
+      - "D:/Coding/Microsoft VS Code/bin/"
+      - "C:/Users/Atom/AppData/Roaming/npm/"
+      - "C:/Users/Atom/AppData/Local/Pandoc/"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/"
+      - "D:/Coding/PyCharm 2023.2.1/bin/"
+      - "C:/Program Files/Mozilla Firefox/"
+      - "C:/Users/Atom/.dotnet/tools/"
+    searched_directories:
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.com"
+    found: "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.exe"
+    search_context:
+      ENV{PATH}:
+        - "D:\\Coding\\anaconda\\condabin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
+        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "D:\\PC_Tool\\RealCUDA\\bin"
+        - "D:\\PC_Tool\\RealCUDA\\libnvvp"
+        - "C:\\windows\\system32"
+        - "C:\\windows"
+        - "C:\\windows\\System32\\Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\windows\\System32\\OpenSSH\\"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\HP\\OMEN-Broadcast\\Common"
+        - "D:\\PC_Tool\\Bandizip\\"
+        - "D:\\Coding\\anaconda"
+        - "D:\\Coding\\anaconda\\Scripts"
+        - "D:\\Coding\\anaconda\\Library\\bin"
+        - "D:\\PC_Tool\\Git\\cmd"
+        - "D:\\Coding\\nodeJs\\"
+        - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
+        - "C:\\Program Files\\dotnet\\"
+        - "D:\\PC_Tool\\TortoiseGit\\bin"
+        - "D:\\PC_Tool\\Matlab\\runtime\\win64"
+        - "D:\\PC_Tool\\Matlab\\bin"
+        - "D:\\PC_Tool\\Matlab\\polyspace\\bin"
+        - "C:\\Program Files\\NVIDIA Corporation\\NVIDIA app\\NvDLISR"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2024.1.0\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\Atom\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "D:\\Coding\\Microsoft VS Code\\bin"
+        - "C:\\Users\\Atom\\AppData\\Roaming\\npm"
+        - "C:\\Users\\Atom\\AppData\\Local\\Pandoc\\"
+        - "D:\\Coding\\IntelliJ IDEA 2023.2.1\\bin"
+        - "D:\\Coding\\PyCharm 2023.2.1\\bin"
+        - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
+        - "C:\\Program Files\\Mozilla Firefox"
+        - "C:\\Users\\Atom\\.dotnet\\tools"
   -
     kind: "find-v1"
     backtrace:
@@ -722,19 +925,7 @@ events:
     found: "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeCXXCompilerId.cpp.in"
     search_context:
       ENV{PATH}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
+        - "D:\\Coding\\anaconda\\condabin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
         - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
@@ -774,18 +965,6 @@ events:
         - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
         - "C:\\Program Files\\Mozilla Firefox"
         - "C:\\Users\\Atom\\.dotnet\\tools"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/UbiTorContestAPI"
-      ENV{INCLUDE}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\include"
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\atlmfc\\include"
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Auxiliary\\VS\\include"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt"
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Auxiliary\\VS\\UnitTest\\include"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\winrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\cppwinrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um"
   -
     kind: "message-v1"
     backtrace:
@@ -796,15 +975,15 @@ events:
     message: |
       Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
       Compiler:  
-      Build flags: /DWIN32;/D_WINDOWS;/EHsc
+      Build flags: 
       Id flags:  
       
       The output was:
       0
       适用于 .NET Framework MSBuild 版本 17.14.23+b0019275e
-      生成启动时间为 2026/1/18 10:48:07。
+      生成启动时间为 2026/1/19 11:56:02。
       
-      节点 1 上的项目“D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj”(默认目标)。
+      节点 1 上的项目“D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj”(默认目标)。
       PrepareForBuild:
         正在创建目录“Debug\\”。
         已启用结构化输出。编译器诊断的格式设置将反映错误层次结构。有关详细信息，请参阅 https://aka.ms/cpp/structured-output。
@@ -817,7 +996,7 @@ events:
         CMakeCXXCompilerId.cpp
       Link:
         D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
-        CompilerIdCXX.vcxproj -> D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.exe
+        CompilerIdCXX.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.exe
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
         :VCEnd
@@ -825,13 +1004,13 @@ events:
       FinalizeBuildStatus:
         正在删除文件“Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild”。
         正在对“Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate”执行 Touch 任务。
-      已完成生成项目“D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj”(默认目标)的操作。
+      已完成生成项目“D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\4.2.1\\CompilerIdCXX\\CompilerIdCXX.vcxproj”(默认目标)的操作。
       
       已成功生成。
           0 个警告
           0 个错误
       
-      已用时间 00:00:00.60
+      已用时间 00:00:00.53
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -839,7 +1018,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
       
       The CXX compiler identification is MSVC, found in:
-        D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/4.2.1/CompilerIdCXX/CompilerIdCXX.exe
+        D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/4.2.1/CompilerIdCXX/CompilerIdCXX.exe
       
   -
     kind: "find-v1"
@@ -864,17 +1043,7 @@ events:
       - "lld-link"
     candidate_directories:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/"
+      - "D:/Coding/anaconda/condabin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
@@ -917,39 +1086,9 @@ events:
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
       - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/lld-link.com"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/lld-link.exe"
-      - "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/Common7/Tools/lld-link"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/Common7/IDE/lld-link"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.com"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.exe"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/lld-link"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.com"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.exe"
-      - "C:/windows/Microsoft.NET/Framework64/v4.0.30319/lld-link"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/lld-link.com"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/lld-link.exe"
-      - "C:/windows/Microsoft.NET/Framework/v4.0.30319/lld-link"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/lld-link.com"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/lld-link.exe"
-      - "D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/lld-link"
+      - "D:/Coding/anaconda/condabin/lld-link.com"
+      - "D:/Coding/anaconda/condabin/lld-link.exe"
+      - "D:/Coding/anaconda/condabin/lld-link"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/lld-link.com"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/lld-link.exe"
       - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/lld-link"
@@ -1067,19 +1206,278 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\tools"
-        - "D:\\PC_Tool\\VisualStudio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "D:\\PC_Tool\\VisualStudio\\MSBuild\\Current\\Bin"
-        - "C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\"
+        - "D:\\Coding\\anaconda\\condabin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
+        - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
+        - "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath"
+        - "D:\\PC_Tool\\RealCUDA\\bin"
+        - "D:\\PC_Tool\\RealCUDA\\libnvvp"
+        - "C:\\windows\\system32"
+        - "C:\\windows"
+        - "C:\\windows\\System32\\Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\windows\\System32\\OpenSSH\\"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\HP\\OMEN-Broadcast\\Common"
+        - "D:\\PC_Tool\\Bandizip\\"
+        - "D:\\Coding\\anaconda"
+        - "D:\\Coding\\anaconda\\Scripts"
+        - "D:\\Coding\\anaconda\\Library\\bin"
+        - "D:\\PC_Tool\\Git\\cmd"
+        - "D:\\Coding\\nodeJs\\"
+        - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
+        - "C:\\Program Files\\dotnet\\"
+        - "D:\\PC_Tool\\TortoiseGit\\bin"
+        - "D:\\PC_Tool\\Matlab\\runtime\\win64"
+        - "D:\\PC_Tool\\Matlab\\bin"
+        - "D:\\PC_Tool\\Matlab\\polyspace\\bin"
+        - "C:\\Program Files\\NVIDIA Corporation\\NVIDIA app\\NvDLISR"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2024.1.0\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\Atom\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "D:\\Coding\\Microsoft VS Code\\bin"
+        - "C:\\Users\\Atom\\AppData\\Roaming\\npm"
+        - "C:\\Users\\Atom\\AppData\\Local\\Pandoc\\"
+        - "D:\\Coding\\IntelliJ IDEA 2023.2.1\\bin"
+        - "D:\\Coding\\PyCharm 2023.2.1\\bin"
+        - "D:\\PC_Tool\\texlive\\2023\\bin\\windows"
+        - "C:\\Program Files\\Mozilla Firefox"
+        - "C:\\Users\\Atom\\.dotnet\\tools"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeDetermineRCCompiler.cmake:40 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/Platform/Windows-MSVC.cmake:580 (enable_language)"
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/Platform/Windows-MSVC.cmake:553 (__windows_compiler_msvc_enable_rc)"
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/Platform/Windows-MSVC-C.cmake:5 (__windows_compiler_msvc)"
+      - "C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeCInformation.cmake:48 (include)"
+      - "CMakeLists.txt:7 (project)"
+    mode: "program"
+    variable: "CMAKE_RC_COMPILER"
+    description: "RC compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "rc"
+    candidate_directories:
+      - "D:/Coding/anaconda/condabin/"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/"
+      - "D:/PC_Tool/RealCUDA/bin/"
+      - "D:/PC_Tool/RealCUDA/libnvvp/"
+      - "C:/windows/System32/"
+      - "C:/windows/"
+      - "C:/windows/System32/wbem/"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/windows/System32/OpenSSH/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/"
+      - "D:/PC_Tool/Bandizip/"
+      - "D:/Coding/anaconda/"
+      - "D:/Coding/anaconda/Scripts/"
+      - "D:/Coding/anaconda/Library/bin/"
+      - "D:/PC_Tool/Git/cmd/"
+      - "D:/Coding/nodeJs/"
+      - "D:/PC_Tool/texlive/2023/bin/windows/"
+      - "C:/Program Files/dotnet/"
+      - "D:/PC_Tool/TortoiseGit/bin/"
+      - "D:/PC_Tool/Matlab/runtime/win64/"
+      - "D:/PC_Tool/Matlab/bin/"
+      - "D:/PC_Tool/Matlab/polyspace/bin/"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/"
+      - "D:/Coding/Microsoft VS Code/bin/"
+      - "C:/Users/Atom/AppData/Roaming/npm/"
+      - "C:/Users/Atom/AppData/Local/Pandoc/"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/"
+      - "D:/Coding/PyCharm 2023.2.1/bin/"
+      - "C:/Program Files/Mozilla Firefox/"
+      - "C:/Users/Atom/.dotnet/tools/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/sbin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files (x86)/UbiTorContestAPI/bin/"
+      - "C:/Program Files (x86)/UbiTorContestAPI/sbin/"
+      - "C:/Program Files (x86)/UbiTorContestAPI/"
+    searched_directories:
+      - "D:/Coding/anaconda/condabin/rc.com"
+      - "D:/Coding/anaconda/condabin/rc.exe"
+      - "D:/Coding/anaconda/condabin/rc"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/rc.com"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/rc.exe"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/bin/rc"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/rc.com"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/rc.exe"
+      - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.4/libnvvp/rc"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/rc.com"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/rc.exe"
+      - "D:/PC_Tool/VisualStudio/VC/Tools/MSVC/14.38.33130/bin/HostX64/x64/rc"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/rc.com"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/rc.exe"
+      - "C:/Program Files/Common Files/Oracle/Java/javapath/rc"
+      - "D:/PC_Tool/RealCUDA/bin/rc.com"
+      - "D:/PC_Tool/RealCUDA/bin/rc.exe"
+      - "D:/PC_Tool/RealCUDA/bin/rc"
+      - "D:/PC_Tool/RealCUDA/libnvvp/rc.com"
+      - "D:/PC_Tool/RealCUDA/libnvvp/rc.exe"
+      - "D:/PC_Tool/RealCUDA/libnvvp/rc"
+      - "C:/windows/System32/rc.com"
+      - "C:/windows/System32/rc.exe"
+      - "C:/windows/System32/rc"
+      - "C:/windows/rc.com"
+      - "C:/windows/rc.exe"
+      - "C:/windows/rc"
+      - "C:/windows/System32/wbem/rc.com"
+      - "C:/windows/System32/wbem/rc.exe"
+      - "C:/windows/System32/wbem/rc"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/rc.com"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/rc.exe"
+      - "C:/windows/System32/WindowsPowerShell/v1.0/rc"
+      - "C:/windows/System32/OpenSSH/rc.com"
+      - "C:/windows/System32/OpenSSH/rc.exe"
+      - "C:/windows/System32/OpenSSH/rc"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/rc.com"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/rc.exe"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/rc"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/rc.com"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/rc.exe"
+      - "C:/Users/Administrator/AppData/Local/Microsoft/WindowsApps/rc"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/rc.com"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/rc.exe"
+      - "C:/Program Files/HP/OMEN-Broadcast/Common/rc"
+      - "D:/PC_Tool/Bandizip/rc.com"
+      - "D:/PC_Tool/Bandizip/rc.exe"
+      - "D:/PC_Tool/Bandizip/rc"
+      - "D:/Coding/anaconda/rc.com"
+      - "D:/Coding/anaconda/rc.exe"
+      - "D:/Coding/anaconda/rc"
+      - "D:/Coding/anaconda/Scripts/rc.com"
+      - "D:/Coding/anaconda/Scripts/rc.exe"
+      - "D:/Coding/anaconda/Scripts/rc"
+      - "D:/Coding/anaconda/Library/bin/rc.com"
+      - "D:/Coding/anaconda/Library/bin/rc.exe"
+      - "D:/Coding/anaconda/Library/bin/rc"
+      - "D:/PC_Tool/Git/cmd/rc.com"
+      - "D:/PC_Tool/Git/cmd/rc.exe"
+      - "D:/PC_Tool/Git/cmd/rc"
+      - "D:/Coding/nodeJs/rc.com"
+      - "D:/Coding/nodeJs/rc.exe"
+      - "D:/Coding/nodeJs/rc"
+      - "D:/PC_Tool/texlive/2023/bin/windows/rc.com"
+      - "D:/PC_Tool/texlive/2023/bin/windows/rc.exe"
+      - "D:/PC_Tool/texlive/2023/bin/windows/rc"
+      - "C:/Program Files/dotnet/rc.com"
+      - "C:/Program Files/dotnet/rc.exe"
+      - "C:/Program Files/dotnet/rc"
+      - "D:/PC_Tool/TortoiseGit/bin/rc.com"
+      - "D:/PC_Tool/TortoiseGit/bin/rc.exe"
+      - "D:/PC_Tool/TortoiseGit/bin/rc"
+      - "D:/PC_Tool/Matlab/runtime/win64/rc.com"
+      - "D:/PC_Tool/Matlab/runtime/win64/rc.exe"
+      - "D:/PC_Tool/Matlab/runtime/win64/rc"
+      - "D:/PC_Tool/Matlab/bin/rc.com"
+      - "D:/PC_Tool/Matlab/bin/rc.exe"
+      - "D:/PC_Tool/Matlab/bin/rc"
+      - "D:/PC_Tool/Matlab/polyspace/bin/rc.com"
+      - "D:/PC_Tool/Matlab/polyspace/bin/rc.exe"
+      - "D:/PC_Tool/Matlab/polyspace/bin/rc"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/rc.com"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/rc.exe"
+      - "C:/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR/rc"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/rc.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/rc.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/rc"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/rc.com"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/rc.exe"
+      - "C:/Program Files/NVIDIA Corporation/Nsight Compute 2024.1.0/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/rc.com"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/rc.exe"
+      - "C:/Users/Atom/AppData/Local/Microsoft/WindowsApps/rc"
+      - "D:/Coding/Microsoft VS Code/bin/rc.com"
+      - "D:/Coding/Microsoft VS Code/bin/rc.exe"
+      - "D:/Coding/Microsoft VS Code/bin/rc"
+      - "C:/Users/Atom/AppData/Roaming/npm/rc.com"
+      - "C:/Users/Atom/AppData/Roaming/npm/rc.exe"
+      - "C:/Users/Atom/AppData/Roaming/npm/rc"
+      - "C:/Users/Atom/AppData/Local/Pandoc/rc.com"
+      - "C:/Users/Atom/AppData/Local/Pandoc/rc.exe"
+      - "C:/Users/Atom/AppData/Local/Pandoc/rc"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/rc.com"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/rc.exe"
+      - "D:/Coding/IntelliJ IDEA 2023.2.1/bin/rc"
+      - "D:/Coding/PyCharm 2023.2.1/bin/rc.com"
+      - "D:/Coding/PyCharm 2023.2.1/bin/rc.exe"
+      - "D:/Coding/PyCharm 2023.2.1/bin/rc"
+      - "C:/Program Files/Mozilla Firefox/rc.com"
+      - "C:/Program Files/Mozilla Firefox/rc.exe"
+      - "C:/Program Files/Mozilla Firefox/rc"
+      - "C:/Users/Atom/.dotnet/tools/rc.com"
+      - "C:/Users/Atom/.dotnet/tools/rc.exe"
+      - "C:/Users/Atom/.dotnet/tools/rc"
+      - "C:/Program Files/bin/rc.com"
+      - "C:/Program Files/bin/rc.exe"
+      - "C:/Program Files/bin/rc"
+      - "C:/Program Files/sbin/rc.com"
+      - "C:/Program Files/sbin/rc.exe"
+      - "C:/Program Files/sbin/rc"
+      - "C:/Program Files/rc.com"
+      - "C:/Program Files/rc.exe"
+      - "C:/Program Files/rc"
+      - "C:/Program Files (x86)/bin/rc.com"
+      - "C:/Program Files (x86)/bin/rc.exe"
+      - "C:/Program Files (x86)/bin/rc"
+      - "C:/Program Files (x86)/sbin/rc.com"
+      - "C:/Program Files (x86)/sbin/rc.exe"
+      - "C:/Program Files (x86)/sbin/rc"
+      - "C:/Program Files (x86)/rc.com"
+      - "C:/Program Files (x86)/rc.exe"
+      - "C:/Program Files (x86)/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Program Files/CMake/sbin/rc.com"
+      - "C:/Program Files/CMake/sbin/rc.exe"
+      - "C:/Program Files/CMake/sbin/rc"
+      - "C:/Program Files/CMake/rc.com"
+      - "C:/Program Files/CMake/rc.exe"
+      - "C:/Program Files/CMake/rc"
+      - "C:/Program Files (x86)/UbiTorContestAPI/bin/rc.com"
+      - "C:/Program Files (x86)/UbiTorContestAPI/bin/rc.exe"
+      - "C:/Program Files (x86)/UbiTorContestAPI/bin/rc"
+      - "C:/Program Files (x86)/UbiTorContestAPI/sbin/rc.com"
+      - "C:/Program Files (x86)/UbiTorContestAPI/sbin/rc.exe"
+      - "C:/Program Files (x86)/UbiTorContestAPI/sbin/rc"
+      - "C:/Program Files (x86)/UbiTorContestAPI/rc.com"
+      - "C:/Program Files (x86)/UbiTorContestAPI/rc.exe"
+      - "C:/Program Files (x86)/UbiTorContestAPI/rc"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "D:\\Coding\\anaconda\\condabin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\bin"
         - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.4\\libnvvp"
         - "D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\HostX64\\x64"
@@ -1120,6 +1518,11 @@ events:
         - "C:\\Program Files\\Mozilla Firefox"
         - "C:\\Users\\Atom\\.dotnet\\tools"
       CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/UbiTorContestAPI"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/UbiTorContestAPI"
   -
     kind: "try_compile-v1"
     backtrace:
@@ -1129,8 +1532,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-ta38ec"
-      binary: "D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-ta38ec"
+      source: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-5l87wu"
+      binary: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-5l87wu"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Ob0 /Od"
@@ -1139,39 +1542,39 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-ta38ec'
+        Change Dir: 'D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-5l87wu'
         
-        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_c2722.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_a0f48.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.14.23+b0019275e
-        鐢熸垚鍚姩鏃堕棿涓?2026/1/18 10:48:08銆?
+        鐢熸垚鍚姩鏃堕棿涓?2026/1/19 11:56:03銆?
         
-        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-ta38ec\\cmTC_c2722.vcxproj鈥?榛樿鐩爣)銆?
+        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-5l87wu\\cmTC_a0f48.vcxproj鈥?榛樿鐩爣)銆?
         PrepareForBuild:
           宸插惎鐢ㄧ粨鏋勫寲杈撳嚭銆傜紪璇戝櫒璇婃柇鐨勬牸寮忚缃皢鍙嶆槧閿欒灞傛缁撴瀯銆傛湁鍏宠缁嗕俊鎭紝璇峰弬闃?https://aka.ms/cpp/structured-output銆?
-          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-ta38ec\\Debug\\鈥濄€?
-          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_c2722.dir\\Debug\\cmTC_c2722.tlog\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-5l87wu\\Debug\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_a0f48.dir\\Debug\\cmTC_a0f48.tlog\\鈥濄€?
         InitializeBuildStatus:
-          姝ｅ湪鍒涘缓鈥渃mTC_c2722.dir\\Debug\\cmTC_c2722.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
-          姝ｅ湪瀵光€渃mTC_c2722.dir\\Debug\\cmTC_c2722.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
+          姝ｅ湪鍒涘缓鈥渃mTC_a0f48.dir\\Debug\\cmTC_a0f48.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
+          姝ｅ湪瀵光€渃mTC_a0f48.dir\\Debug\\cmTC_a0f48.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
         ClCompile:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_c2722.dir\\Debug\\\\" /Fd"cmTC_c2722.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
-          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
-          Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_c2722.dir\\Debug\\\\" /Fd"cmTC_c2722.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_a0f48.dir\\Debug\\\\" /Fd"cmTC_a0f48.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
+          鐢ㄤ簬 x64 鐨?Microsoft (R) C/C++ 浼樺寲缂栬瘧鍣?19.44.35220 鐗?
+          鐗堟潈鎵€鏈?C) Microsoft Corporation銆備繚鐣欐墍鏈夋潈鍒┿€?
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_a0f48.dir\\Debug\\\\" /Fd"cmTC_a0f48.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-ta38ec\\Debug\\cmTC_c2722.exe" /INCREMENTAL /ILK:"cmTC_c2722.dir\\Debug\\cmTC_c2722.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-ta38ec/Debug/cmTC_c2722.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-ta38ec/Debug/cmTC_c2722.lib" /MACHINE:X64  /machine:x64 cmTC_c2722.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_c2722.vcxproj -> D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-ta38ec\\Debug\\cmTC_c2722.exe
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-5l87wu\\Debug\\cmTC_a0f48.exe" /INCREMENTAL /ILK:"cmTC_a0f48.dir\\Debug\\cmTC_a0f48.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-5l87wu/Debug/cmTC_a0f48.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-5l87wu/Debug/cmTC_a0f48.lib" /MACHINE:X64  /machine:x64 cmTC_a0f48.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_a0f48.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-5l87wu\\Debug\\cmTC_a0f48.exe
         FinalizeBuildStatus:
-          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_c2722.dir\\Debug\\cmTC_c2722.tlog\\unsuccessfulbuild鈥濄€?
-          姝ｅ湪瀵光€渃mTC_c2722.dir\\Debug\\cmTC_c2722.tlog\\cmTC_c2722.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
-        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-ta38ec\\cmTC_c2722.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
+          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_a0f48.dir\\Debug\\cmTC_a0f48.tlog\\unsuccessfulbuild鈥濄€?
+          姝ｅ湪瀵光€渃mTC_a0f48.dir\\Debug\\cmTC_a0f48.tlog\\cmTC_a0f48.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
+        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-5l87wu\\cmTC_a0f48.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
         
         宸叉垚鍔熺敓鎴愩€?
             0 涓鍛?
             0 涓敊璇?
         
-        宸茬敤鏃堕棿 00:00:00.68
+        宸茬敤鏃堕棿 00:00:00.80
         
       exitCode: 0
   -
@@ -1211,8 +1614,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-vrlu6p"
-      binary: "D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-vrlu6p"
+      source: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-wdp57g"
+      binary: "D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-wdp57g"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Ob0 /Od"
@@ -1222,39 +1625,39 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-vrlu6p'
+        Change Dir: 'D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-wdp57g'
         
-        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_6b4a6.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): D:/PC_Tool/VisualStudio/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_e476e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.14.23+b0019275e
-        鐢熸垚鍚姩鏃堕棿涓?2026/1/18 10:48:09銆?
+        鐢熸垚鍚姩鏃堕棿涓?2026/1/19 11:56:04銆?
         
-        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-vrlu6p\\cmTC_6b4a6.vcxproj鈥?榛樿鐩爣)銆?
+        鑺傜偣 1 涓婄殑椤圭洰鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-wdp57g\\cmTC_e476e.vcxproj鈥?榛樿鐩爣)銆?
         PrepareForBuild:
           宸插惎鐢ㄧ粨鏋勫寲杈撳嚭銆傜紪璇戝櫒璇婃柇鐨勬牸寮忚缃皢鍙嶆槧閿欒灞傛缁撴瀯銆傛湁鍏宠缁嗕俊鎭紝璇峰弬闃?https://aka.ms/cpp/structured-output銆?
-          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-vrlu6p\\Debug\\鈥濄€?
-          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_6b4a6.dir\\Debug\\cmTC_6b4a6.tlog\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-wdp57g\\Debug\\鈥濄€?
+          姝ｅ湪鍒涘缓鐩綍鈥渃mTC_e476e.dir\\Debug\\cmTC_e476e.tlog\\鈥濄€?
         InitializeBuildStatus:
-          姝ｅ湪鍒涘缓鈥渃mTC_6b4a6.dir\\Debug\\cmTC_6b4a6.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
-          姝ｅ湪瀵光€渃mTC_6b4a6.dir\\Debug\\cmTC_6b4a6.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
+          姝ｅ湪鍒涘缓鈥渃mTC_e476e.dir\\Debug\\cmTC_e476e.tlog\\unsuccessfulbuild鈥濓紝鍥犱负宸叉寚瀹氣€淎lwaysCreate鈥濄€?
+          姝ｅ湪瀵光€渃mTC_e476e.dir\\Debug\\cmTC_e476e.tlog\\unsuccessfulbuild鈥濇墽琛?Touch 浠诲姟銆?
         ClCompile:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_6b4a6.dir\\Debug\\\\" /Fd"cmTC_6b4a6.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
-          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35220 for x64
-          Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_6b4a6.dir\\Debug\\\\" /Fd"cmTC_6b4a6.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_e476e.dir\\Debug\\\\" /Fd"cmTC_e476e.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
+          鐢ㄤ簬 x64 鐨?Microsoft (R) C/C++ 浼樺寲缂栬瘧鍣?19.44.35220 鐗?
+          鐗堟潈鎵€鏈?C) Microsoft Corporation銆備繚鐣欐墍鏈夋潈鍒┿€?
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /std:c++17 /Fo"cmTC_e476e.dir\\Debug\\\\" /Fd"cmTC_e476e.dir\\Debug\\vc143.pdb" /external:W1 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-vrlu6p\\Debug\\cmTC_6b4a6.exe" /INCREMENTAL /ILK:"cmTC_6b4a6.dir\\Debug\\cmTC_6b4a6.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-vrlu6p/Debug/cmTC_6b4a6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-vrlu6p/Debug/cmTC_6b4a6.lib" /MACHINE:X64  /machine:x64 cmTC_6b4a6.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_6b4a6.vcxproj -> D:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-vrlu6p\\Debug\\cmTC_6b4a6.exe
+          D:\\PC_Tool\\VisualStudio\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-wdp57g\\Debug\\cmTC_e476e.exe" /INCREMENTAL /ILK:"cmTC_e476e.dir\\Debug\\cmTC_e476e.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-wdp57g/Debug/cmTC_e476e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/build/win64/CMakeFiles/CMakeScratch/TryCompile-wdp57g/Debug/cmTC_e476e.lib" /MACHINE:X64  /machine:x64 cmTC_e476e.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_e476e.vcxproj -> D:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-wdp57g\\Debug\\cmTC_e476e.exe
         FinalizeBuildStatus:
-          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_6b4a6.dir\\Debug\\cmTC_6b4a6.tlog\\unsuccessfulbuild鈥濄€?
-          姝ｅ湪瀵光€渃mTC_6b4a6.dir\\Debug\\cmTC_6b4a6.tlog\\cmTC_6b4a6.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
-        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-vrlu6p\\cmTC_6b4a6.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
+          姝ｅ湪鍒犻櫎鏂囦欢鈥渃mTC_e476e.dir\\Debug\\cmTC_e476e.tlog\\unsuccessfulbuild鈥濄€?
+          姝ｅ湪瀵光€渃mTC_e476e.dir\\Debug\\cmTC_e476e.tlog\\cmTC_e476e.lastbuildstate鈥濇墽琛?Touch 浠诲姟銆?
+        宸插畬鎴愮敓鎴愰」鐩€淒:\\Coding\\Git_repositories\\SaveSheep\\Ubisoft-NEXT-2026\\UbisoftTorontoAPI_DEC102025Update\\build\\win64\\CMakeFiles\\CMakeScratch\\TryCompile-wdp57g\\cmTC_e476e.vcxproj鈥?榛樿鐩爣)鐨勬搷浣溿€?
         
         宸叉垚鍔熺敓鎴愩€?
             0 涓鍛?
             0 涓敊璇?
         
-        宸茬敤鏃堕棿 00:00:00.62
+        宸茬敤鏃堕棿 00:00:00.78
         
       exitCode: 0
   -

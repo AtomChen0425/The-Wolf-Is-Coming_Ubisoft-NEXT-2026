@@ -1,2 +1,26 @@
-﻿  LevelSystem.cpp
-  Game.vcxproj -> D:\Coding\Git_repositories\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\Game.exe
+﻿  Building Custom Rule D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/CMakeLists.txt
+  CameraSystem.cpp
+  CollisionSystem.cpp
+  ControlSystem.cpp
+  GameConfig.cpp
+  GenerateSystem.cpp
+  LevelSystem.cpp
+  MovementSystem.cpp
+  ParticleSystem.cpp
+  PhysicsSystem.cpp
+  RenderSystem.cpp
+  GameScenes.cpp
+  SceneManager.cpp
+  SheepSystem.cpp
+  WolfSystem.cpp
+  GameMain.cpp
+  ECSSystem.cpp
+  Mat4.cpp
+  Vec2.cpp
+  Collision.cpp
+  RenderHelper.cpp
+  Generating Code...
+  Compiling...
+  UISystem.cpp
+  Generating Code...
+  Game.vcxproj -> D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\Game.exe
