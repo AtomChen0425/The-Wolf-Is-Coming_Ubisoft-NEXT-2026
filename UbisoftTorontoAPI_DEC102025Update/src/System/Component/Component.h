@@ -209,7 +209,9 @@ struct WolfComponent {
     bool canJump = false;           // Can this wolf jump?
     float jumpCooldown = 0.0f;      // Cooldown for jumping
 };
-
+struct PointCollectorTag {
+    float pointsWorth = 100.0f;
+};
 enum class WeaponType {
     Pistol,
     MachineGun,

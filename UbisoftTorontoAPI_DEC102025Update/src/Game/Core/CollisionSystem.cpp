@@ -696,6 +696,8 @@ void CheckBulletDamageByGrid(EntityManager& registry) {
                 ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 5, Vec3{ 1.0f, 1.0f, 0.0f }, 150.0f);
 
                 if (enemyHealth.currentHealth <= 0) {
+					float enemyScore = enemyView.get<PointCollectorTag>(enemyId).pointsWorth;
+                    *playerScore += enemyScore;
                     ParticleSystem::CreateExplosion(registry, enemyTransform.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
                     EnemyToRemove.push_back({ enemyId, registry.getEntityVersion(enemyId) });
                 }
@@ -719,6 +721,8 @@ void CheckBulletDamageByGrid(EntityManager& registry) {
                             hp.currentHealth -= bullet.damage; 
 
                             if (hp.currentHealth <= 0) {
+                                float enemyScore = enemyView.get<PointCollectorTag>(otherId).pointsWorth;
+                                *playerScore += enemyScore;
                                 ParticleSystem::CreateExplosion(registry, otherT.pos, 20, Vec3{ 1.0f, 0.0f, 0.0f }, 200.0f);
                                 EnemyToRemove.push_back({ otherId, registry.getEntityVersion(otherId) });
                             }
@@ -739,7 +743,7 @@ void CheckBulletDamageByGrid(EntityManager& registry) {
         registry.destroyEntity(e);
     }
     for (Entity& e : EnemyToRemove) {
-        *playerScore += 100;
+        
         registry.destroyEntity(e);
     }
 }

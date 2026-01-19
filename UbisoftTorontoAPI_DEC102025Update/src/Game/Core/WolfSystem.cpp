@@ -134,6 +134,7 @@ namespace WolfSystem {
         float maxSpeed = config.wolfBasicSpeed;
         float detectionRange = config.wolfBasicDetectionRange;
         bool canJump = false;
+		float pointsWorth = 100;
         CSimpleSprite* pSprite = nullptr;
         const float animationSpeed = 1.0f / 10.0f;
         // Configure stats based on wolf type
@@ -163,6 +164,7 @@ namespace WolfSystem {
             pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
             pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
             pSprite->SetScale(0.3f);
+			pointsWorth += 20;
             break;
         case WolfType::Magic:
             // Has Magic wand, slower movement
@@ -178,6 +180,7 @@ namespace WolfSystem {
             pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
             pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
             pSprite->SetScale(0.3f);
+            pointsWorth += 25;
             break;
         case WolfType::Tank:
             // High health, very slow
@@ -193,6 +196,7 @@ namespace WolfSystem {
             pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
             pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
             pSprite->SetScale(0.3f);
+            pointsWorth += 50;
             break;
 
         case WolfType::Fast:
@@ -209,6 +213,7 @@ namespace WolfSystem {
             pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
             pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
             pSprite->SetScale(0.3f);
+            pointsWorth += 40;
             break;
 
         case WolfType::Hunter:
@@ -226,6 +231,7 @@ namespace WolfSystem {
             pSprite->CreateAnimation(ANIM_RIGHT, animationSpeed, { 0,1 });
             pSprite->CreateAnimation(ANIM_FORWARDS, animationSpeed, { 0,1 });
             pSprite->SetScale(0.3f);
+            pointsWorth += 45;
             break;
         }
         size *= 2.0f;
@@ -233,12 +239,12 @@ namespace WolfSystem {
         // Add components
         registry.addComponent(wolf, Transform3D{
             Vec3{x, config.wolfSpawnYPosition, z},
-            size, size*2.0f, size,
+            size, size*3.0f, size,
             r, g, b
             });
         registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
         registry.addComponent(wolf, WolfTag{});
-
+		registry.addComponent(wolf, PointCollectorTag{ pointsWorth });
         WolfComponent wolfComp;
         wolfComp.type = type;
         wolfComp.chaseForce = chaseForce;

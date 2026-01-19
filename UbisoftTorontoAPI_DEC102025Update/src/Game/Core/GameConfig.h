@@ -270,9 +270,6 @@ struct GameConfig {
     float sheepSeparationSizeMultiplier;  // Minimum safe distance multiplier
     float sheepSeparationRepulsionStrength;  // Repulsion strength for very close neighbors
 
-    // Spatial grid optimization
-    float spatialGridCellSize;  // Cell size for spatial grid optimization
-
     // Particle trail parameters (for sheep bullets)
     float sheepBulletTrailEmissionRate;
     float sheepBulletTrailMinSize;

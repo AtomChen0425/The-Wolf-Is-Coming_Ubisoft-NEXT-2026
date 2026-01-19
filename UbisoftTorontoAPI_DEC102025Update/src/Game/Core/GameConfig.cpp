@@ -283,13 +283,6 @@ GameConfig::GameConfig() {
     Bind("sheepSeparationSizeMultiplier", sheepSeparationSizeMultiplier, 0.55f);
     Bind("sheepSeparationRepulsionStrength", sheepSeparationRepulsionStrength, 2.0f);
 
-    // ==========================================
-    // 10. System
-    // ==========================================
-    Header("Optimization");
-    Bind("spatialGridCellSize", spatialGridCellSize, 80.0f);
-
-
     Header("Particle Trails");
     Bind("sheepBulletTrailEmissionRate", sheepBulletTrailEmissionRate, 50.0f);
     Bind("sheepBulletTrailMinSize", sheepBulletTrailMinSize, 0.0f);

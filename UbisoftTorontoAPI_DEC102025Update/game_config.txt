@@ -10,8 +10,8 @@ rotationSpeed=2
 
 # Camera Controls
 mouseSensitivity=0.007
-maxPitch=1.4
-minPitch=-1.4
+maxPitch=0.8
+minPitch=-0.8
 
 # Map Generation
 blockSize=100
@@ -249,7 +249,7 @@ sheepAnimationSpeed=0.0666667
 sheepViewRadius=470
 sheepMaxSpeed=250
 sheepMaxForce=170
-sheepSeparationWeight=1.5
+sheepSeparationWeight=2
 sheepAlignmentWeight=1
 sheepCohesionWeight=1
 sheepTargetWeight=5
@@ -269,8 +269,6 @@ sheepVelocityDamping=0.98
 sheepSeparationSizeMultiplier=0.55
 sheepSeparationRepulsionStrength=2
 
-# Optimization
-spatialGridCellSize=80
 
 
 # Particle trails
