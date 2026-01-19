@@ -8,12 +8,6 @@
 namespace LevelSystem {
     // Upgrade types available
     enum class UpgradeType {
-        // Player attribute upgrades
-        HealthBoost,
-        SpeedBoost,
-        JumpBoost,
-        GravityReduction,
-        BulletSpeed,
 
         // Entity upgrades
         AddSheep,  // Add more sheep

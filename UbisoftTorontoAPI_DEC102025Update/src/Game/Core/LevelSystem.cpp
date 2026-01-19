@@ -92,11 +92,6 @@ namespace LevelSystem {
     void GenerateRandomUpgrades(UpgradeType upgradeOptions[3]) {
         // Generate 3 random unique upgrades
         std::vector<UpgradeType> allUpgrades = {
-            /*         UpgradeType::HealthBoost,
-                     UpgradeType::SpeedBoost,
-                     UpgradeType::JumpBoost,
-                     UpgradeType::GravityReduction,
-                     UpgradeType::BulletSpeed,*/
                      UpgradeType::AddSheep,
                      UpgradeType::PlayerMachineGun,
                      UpgradeType::PlayerCannon,
@@ -256,47 +251,10 @@ namespace LevelSystem {
             }*/
             return;
         }
-
-        // Find player and apply stat upgrade
-        View<PlayerTag, PlayerStats> view(registry);
-
-        for (EntityID id : view) {
-            auto& stats = view.get<PlayerStats>(id);
-
-            switch (type) {
-            case UpgradeType::HealthBoost:
-                stats.healthBonus += config.healthUpgradeAmount;
-                break;
-
-            case UpgradeType::SpeedBoost:
-                stats.speedBonus += config.speedUpgradeAmount;
-                break;
-
-            case UpgradeType::JumpBoost:
-                stats.jumpBonus += config.jumpUpgradeAmount;
-                break;
-
-            case UpgradeType::GravityReduction:
-                stats.gravityBonus += config.gravityUpgradeAmount;
-                break;
-
-            case UpgradeType::BulletSpeed:
-                stats.bulletSpeedBonus += config.bulletSpeedUpgradeAmount;
-                break;
-
-            default:
-                break;
-            }
-        }
     }
 
     const char* GetUpgradeName(UpgradeType type) {
         switch (type) {
-        case UpgradeType::HealthBoost: return "Health Boost";
-        case UpgradeType::SpeedBoost: return "Speed Boost";
-        case UpgradeType::JumpBoost: return "Jump Boost";
-        case UpgradeType::GravityReduction: return "Gravity Reduction";
-        case UpgradeType::BulletSpeed: return "Bullet Speed";
         case UpgradeType::AddSheep: return "Add Sheep";
         case UpgradeType::PlayerMachineGun: return "Player Machine Gun";
         case UpgradeType::PlayerCannon: return "Player Cannon";
@@ -311,11 +269,6 @@ namespace LevelSystem {
         static char sheepDesc[64];
 
         switch (type) {
-        case UpgradeType::HealthBoost: return "Increase max health +20";
-        case UpgradeType::SpeedBoost: return "Movement speed +50";
-        case UpgradeType::JumpBoost: return "Jump velocity +100";
-        case UpgradeType::GravityReduction: return "Lighter jumps (gravity -100)";
-        case UpgradeType::BulletSpeed: return "Bullet speed +100";
         case UpgradeType::AddSheep:
             snprintf(sheepDesc, sizeof(sheepDesc), "Add %d more sheep", config.sheepAddedPerUpgrade);
             return sheepDesc;
