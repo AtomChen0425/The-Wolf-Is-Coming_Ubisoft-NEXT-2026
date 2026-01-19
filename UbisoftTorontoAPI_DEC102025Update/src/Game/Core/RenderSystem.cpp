@@ -420,13 +420,14 @@ void RenderSystem::RenderSpriteByPos(Transform3D& t, SpriteComponent& spr, Camer
     const float centerY = camera.screenHeight / 2.0f;
 
     const float finalScreenX = rotatedX * (fov / pitchedZ) + centerX;
-    const float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
+    float finalScreenY = pitchedY * (fov / pitchedZ) + centerY;
 
     float spriteNativeWidth = spr.sprite->GetWidth(); 
-
+	float spriteNativeHeight = spr.sprite->GetHeight();
     float perspectiveFactor = fov / pitchedZ;
     if (spriteNativeWidth > 0.0f) {
         float scale = (t.width / spriteNativeWidth) * perspectiveFactor * 3;
+		finalScreenY += spriteNativeHeight * 0.2f * scale; // Adjust Y to account for sprite height
         spr.sprite->SetScale(scale);
     }
     // Shadow on ground (y = 0 in world space)
@@ -437,7 +438,7 @@ void RenderSystem::RenderSpriteByPos(Transform3D& t, SpriteComponent& spr, Camer
     if (groundPitchedZ > nearZ) {
         const float shadowScreenY = groundPitchedY * (fov / groundPitchedZ) + centerY;
         const float shadowScreenX = finalScreenX; // Same X as sprite
-        gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.5f);
+        gRenderHelper->DrawShadow(shadowScreenX, shadowScreenY, t.width * 0.8f);
     }
 
     // Set sprite position and draw

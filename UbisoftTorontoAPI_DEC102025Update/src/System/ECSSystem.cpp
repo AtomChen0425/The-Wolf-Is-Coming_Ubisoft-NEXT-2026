@@ -16,7 +16,7 @@
 #include "../ContestAPI/app.h"
 #include "Component/Component.h"
 #include "../Game/Core/Scene/GameScenes.h"
-
+CSimpleSprite* backgroundSprite;
 EngineSystem::EngineSystem()
     : registry(std::make_unique<EntityManager>()), gameState(GameState::StartScreen)
 {
@@ -41,6 +41,11 @@ void EngineSystem::InitializeScenes() {
 }
 
 void EngineSystem::InitializeGame() {
+    
+	backgroundSprite = App::CreateSprite("./data/TestData/PlayingBackground2.png", 1, 2);
+    backgroundSprite->SetPosition(camera.screenWidth/2, camera.screenHeight/2);
+    backgroundSprite->CreateAnimation(0, 1.0f/2.0f, { 0,1});
+    backgroundSprite->SetScale(0.45f);
     // Initialize the game world without starting gameplay
     registry = std::make_unique<EntityManager>();
     generationTimers.gSpawnTimerMs = 0.0f;
@@ -87,6 +92,8 @@ void EngineSystem::ResetGame() {
 }
 
 void EngineSystem::Update(const float deltaTimeMs) {
+    backgroundSprite->Update(deltaTimeMs);
+	backgroundSprite->SetAnimation(0);
     if (!registry) return;
     generationTimers.gSpawnTimerMs += deltaTimeMs;
 
@@ -215,6 +222,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
 }
 
 void EngineSystem::Render() {
+    backgroundSprite->Draw();
     if (!registry) return;
 
     // Update camera position for all states to ensure proper view

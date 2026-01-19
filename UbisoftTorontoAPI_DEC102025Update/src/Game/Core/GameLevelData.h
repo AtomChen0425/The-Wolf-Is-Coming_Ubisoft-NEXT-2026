@@ -68,19 +68,19 @@ struct GameLevelData {
         }
         if (currentRound > 10) {
             sniperWolfSpawnIntervalMs *= 0.9f;
-			sniperWolfSpawnIntervalMs = std::max(minWolfSpawnIntervalMs, sniperWolfSpawnIntervalMs);
+			sniperWolfSpawnIntervalMs = (std::max)(minWolfSpawnIntervalMs, sniperWolfSpawnIntervalMs);
         }
         if (currentRound > 12) {
             tankWolfSpawnIntervalMs *= 0.9f;
-            tankWolfSpawnIntervalMs = std::max(minWolfSpawnIntervalMs, tankWolfSpawnIntervalMs);
+            tankWolfSpawnIntervalMs = (std::max)(minWolfSpawnIntervalMs, tankWolfSpawnIntervalMs);
         }
         if (currentRound > 15) {
             fastWolfSpawnIntervalMs *= 0.9f;
-            fastWolfSpawnIntervalMs = std::max(minWolfSpawnIntervalMs, fastWolfSpawnIntervalMs);
+            fastWolfSpawnIntervalMs = (std::max)(minWolfSpawnIntervalMs, fastWolfSpawnIntervalMs);
         }
         if (currentRound > 18) {
             hunterWolfSpawnIntervalMs *= 0.9f;
-            hunterWolfSpawnIntervalMs = std::max(minWolfSpawnIntervalMs, hunterWolfSpawnIntervalMs);
+            hunterWolfSpawnIntervalMs = (std::max)(minWolfSpawnIntervalMs, hunterWolfSpawnIntervalMs);
         }
     }
 
