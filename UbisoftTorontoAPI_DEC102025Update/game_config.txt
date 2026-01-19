@@ -153,10 +153,10 @@ wolfHunterChaseForce=550
 wolfHunterDetectionRange=300
 wolfHunterSize=20
 wolfHunterJumpCooldown=3
-wolfHunterJumpVelocity=350
+wolfHunterJumpVelocity=400
 wolfHunterJumpBoost=200
 wolfHunterJumpMinDistance=80
-wolfHunterJumpMaxDistance=200
+wolfHunterJumpMaxDistance=2000
 
 # Wolf weapon - Sniper gun
 wolfSniperGunDamage=8

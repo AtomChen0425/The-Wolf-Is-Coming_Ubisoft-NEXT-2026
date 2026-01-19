@@ -228,12 +228,12 @@ namespace WolfSystem {
             pSprite->SetScale(0.3f);
             break;
         }
-        size *= 1.5f;
+        size *= 2.0f;
         registry.addComponent(wolf, SpriteComponent{ pSprite, 0 });
         // Add components
         registry.addComponent(wolf, Transform3D{
             Vec3{x, config.wolfSpawnYPosition, z},
-            size, size, size,
+            size, size*2.0f, size,
             r, g, b
             });
         registry.addComponent(wolf, Velocity3D{ Vec3{0,0,0} });
@@ -405,7 +405,7 @@ namespace WolfSystem {
                 chaseForce.z *= forceMagnitude;
             }
             else {
-                // Too close, slow down or circle
+                // Too close, slow down 
                 chaseForce.x = vel.x * -0.5f;  // Damping force
                 chaseForce.z = vel.z * -0.5f;
             }
@@ -441,15 +441,13 @@ namespace WolfSystem {
                 bool isOnGround = (pos.y <= 25.0f);  // Ground level + small tolerance
 
                 if (isOnGround && foundTarget) {
-                    // Jump conditions:
-                    // 1. Target is at medium distance (not too close, not too far)
-                    // 2. Moving toward target (chasing)
-                    float jumpMinDist = 80.0f;   // Don't jump if too close
-                    float jumpMaxDist = 2000.0f;  // Don't jump if too far
+
+                    float jumpMinDist =config.wolfHunterJumpMinDistance;   // Don't jump if too close
+                    float jumpMaxDist = config.wolfHunterJumpMaxDistance;  // Don't jump if too far
 
                     if (nearestDist >= jumpMinDist && nearestDist <= jumpMaxDist) {
-                        // Apply upward velocity for jump
-                        vel.y = 450.0f;  // Jump velocity (matches player-like jump)
+
+                        vel.y = config.wolfHunterJumpVelocity;  // Jump velocity (matches player-like jump)
 
                         // Also add forward momentum in chase direction
                         Vec3 jumpDir = WolfNorm({ nearestTarget.x - pos.x, 0, nearestTarget.z - pos.z });
@@ -457,7 +455,7 @@ namespace WolfSystem {
                         vel.z += jumpDir.z * 200.0f;
 
                         // Set cooldown (3 seconds = 3 * 100 / 100 = 3.0)
-                        params.jumpCooldown = 3.0f;
+                        params.jumpCooldown = config.wolfHunterJumpCooldown;
                     }
                 }
             }
@@ -480,8 +478,6 @@ namespace WolfSystem {
             v.vel.y = vel.y;
             v.vel.z = vel.z;
 
-            // Simple rotation toward movement direction (optional, for visual feedback)
-            // Could be expanded to actually rotate the wolf model
         }
     }
 }
