@@ -152,7 +152,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         if (roundComplete && gameState == GameState::Playing) {
             sceneManager.SwitchToScene("UpgradeScene");
             gameState = GameState::Upgrading;
-            return;  // Don't continue game logic this frame
+            return;  
         }
         // Generate chunks based on player position
         View<PlayerTag, Transform3D> playerView(*registry);
@@ -165,7 +165,7 @@ void EngineSystem::Update(const float deltaTimeMs) {
         ControlSystem::Update(*registry, deltaTimeMs, nextSpawnZ, camera, settings);
         // Update sheep behavior
         SheepSystem::Update(*registry, deltaTimeMs);
-        SheepSystem::SheepShoot(*registry, deltaTimeMs);
+        //SheepSystem::SheepShoot(*registry, deltaTimeMs);
 
         WolfSystem::Update(*registry, deltaTimeMs);
 

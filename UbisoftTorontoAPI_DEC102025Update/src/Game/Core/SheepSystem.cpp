@@ -211,6 +211,7 @@ namespace SheepSystem {
     }
 
     void Update(EntityManager& registry, float dtMs) {
+        SheepShoot(registry, dtMs);
         float dt = dtMs / 10.0f;
         if (dt <= 0) return;
 

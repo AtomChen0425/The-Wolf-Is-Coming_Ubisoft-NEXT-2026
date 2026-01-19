@@ -412,6 +412,10 @@ void CheckPhysicsCollisionsWithMap(EntityManager& registry) {
             physicsTag.isOnGround = false;
             continue; 
         }
+        if (vel.y == 0) {
+            physicsTag.isOnGround = true;
+            continue; 
+		}
         physicsTag.isOnGround = false;
 
         Vec3 entityMin(pos.x - entityTransform.width / 2,

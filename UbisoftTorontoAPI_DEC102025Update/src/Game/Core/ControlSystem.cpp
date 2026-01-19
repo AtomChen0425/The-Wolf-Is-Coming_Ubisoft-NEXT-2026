@@ -32,7 +32,7 @@ void PlayerControl3D(EntityManager& registry, float dt, float& nextSpawnZ, Camer
             forwardSpeed += stats.speedBonus;
             strafeSpeed += stats.speedBonus;
             jumpVelocity += stats.jumpBonus;
-            gravity += stats.gravityBonus;  // Note: gravityBonus is negative, so this reduces gravity
+            gravity += stats.gravityBonus; 
             bulletSpeed += stats.bulletSpeedBonus;
         }
 

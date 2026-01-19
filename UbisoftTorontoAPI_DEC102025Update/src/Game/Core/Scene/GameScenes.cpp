@@ -15,7 +15,7 @@ void StartScene::OnEnter() {
     uiManager.Clear();
 
     // Title
-    uiManager.AddText("3D RUNNER GAME", -80, -100, 1.0f, 1.0f, 1.0f, UIAlignment::MiddleCenter);
+    uiManager.AddText("Save Sheeps!", -80, -100, 1.0f, 1.0f, 1.0f, UIAlignment::MiddleCenter);
 
     // Instructions
     uiManager.AddText("Press SPACE to Start", -100, -50, 1.0f, 1.0f, 0.0f, UIAlignment::MiddleCenter);
