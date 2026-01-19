@@ -289,8 +289,6 @@ GameConfig::GameConfig() {
     Header("Optimization");
     Bind("spatialGridCellSize", spatialGridCellSize, 80.0f);
 
-    Header("Enemy AI");
-    Bind("maxBulletDistance", maxBulletDistance, 5000.0f);
 
     Header("Particle Trails");
     Bind("sheepBulletTrailEmissionRate", sheepBulletTrailEmissionRate, 50.0f);

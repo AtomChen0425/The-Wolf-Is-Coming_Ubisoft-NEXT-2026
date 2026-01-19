@@ -37,7 +37,7 @@ struct SpatialGrid {
     }
 };
 
-inline float Mag(const Vec3& v) { return std::sqrt(v.x * v.x + v.z * v.z); } // 
+inline float Mag(const Vec3& v) { return std::sqrt(v.x * v.x + v.z * v.z); } // 2D magnitude (x,z)
 inline Vec3 Norm(const Vec3& v) {
     float m = Mag(v);
     if (m > 0.0001f) return { v.x / m, 0, v.z / m };
@@ -231,7 +231,7 @@ namespace SheepSystem {
         }
 
         // 
-        static SpatialGrid grid(80.0f); // 
+        static SpatialGrid grid(120.0f); // 
         grid.Clear();
         View<SheepTag, Transform3D, Velocity3D, SheepComponent> sheepView(registry);
 
@@ -318,7 +318,6 @@ namespace SheepSystem {
                 forceCoh.z -= pos.z;
                 forceCoh = Norm(forceCoh);
 
-                // Separation 
             }
 
 			// 4. Target: follow player
@@ -368,11 +367,8 @@ namespace SheepSystem {
                 forceTar.z * params.targetWeight +
                 forceFear.z * params.fearWeight;
 
-
             Limit(totalForce, params.maxForce);
 
-            // 
-            // Vel += Force * dt
             vel.x += totalForce.x * dt;
             vel.z += totalForce.z * dt;
 
@@ -387,10 +383,6 @@ namespace SheepSystem {
             v.vel.x = vel.x;
             v.vel.z = vel.z;
 
-            // 
-            if (Mag(vel) > 1.0f) {
-
-            }
         }
     }
 }

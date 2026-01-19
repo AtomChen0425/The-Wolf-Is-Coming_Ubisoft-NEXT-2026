@@ -246,15 +246,15 @@ sheepSpriteScale=0.3
 sheepAnimationSpeed=0.0666667
 
 # Sheep Boids behavior
-sheepViewRadius=270
+sheepViewRadius=470
 sheepMaxSpeed=250
-sheepMaxForce=140
-sheepSeparationWeight=2
+sheepMaxForce=170
+sheepSeparationWeight=1.5
 sheepAlignmentWeight=1
 sheepCohesionWeight=1
 sheepTargetWeight=5
 sheepFearWeight=8
-sheepEnemyDetectRange=170
+sheepEnemyDetectRange=270
 
 # Sheep shooting
 sheepWeaponArcAngle=4.71239
@@ -272,8 +272,6 @@ sheepSeparationRepulsionStrength=2
 # Optimization
 spatialGridCellSize=80
 
-# Enemy AI
-maxBulletDistance=5000
 
 # Particle trails
 sheepBulletTrailEmissionRate=50

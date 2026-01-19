@@ -273,9 +273,6 @@ struct GameConfig {
     // Spatial grid optimization
     float spatialGridCellSize;  // Cell size for spatial grid optimization
 
-    // Enemy AI parameters
-    float maxBulletDistance;  // Maximum distance bullets can travel from origin
-
     // Particle trail parameters (for sheep bullets)
     float sheepBulletTrailEmissionRate;
     float sheepBulletTrailMinSize;

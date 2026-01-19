@@ -8,7 +8,7 @@
 
 using EntityID = uint64_t;
 using EntityVersion = uint64_t;
-constexpr std::size_t MAX_ENTITY = 1 << 20;
+constexpr std::size_t MAX_ENTITY = 50000;
 constexpr uint64_t NULL_INDEX = static_cast<uint64_t>(-1); 
 
 struct Entity {
