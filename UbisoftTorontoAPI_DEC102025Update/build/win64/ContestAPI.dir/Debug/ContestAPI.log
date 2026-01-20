@@ -1,10 +1,6 @@
-﻿  Building Custom Rule D:/Coding/Git_repositories/SaveSheep/Ubisoft-NEXT-2026/UbisoftTorontoAPI_DEC102025Update/CMakeLists.txt
-  SimpleController.cpp
-  SimpleSound.cpp
+﻿  SimpleController.cpp
   SimpleSprite.cpp
   app.cpp
   main.cpp
-  miniaudio.cpp
-  stb_image.cpp
   Generating Code...
   ContestAPI.vcxproj -> D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\build\win64\Debug\ContestAPI.lib

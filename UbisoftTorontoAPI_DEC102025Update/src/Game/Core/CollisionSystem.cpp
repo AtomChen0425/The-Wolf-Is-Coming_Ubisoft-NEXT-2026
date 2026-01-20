@@ -2,6 +2,7 @@
 #include "../../System/Component/Component.h"
 #include "../../System/Physic/Collision.h"
 #include "../../Game/Core/ParticleSystem.h"
+#include "../ContestAPI/app.h"
 #include "WolfSystem.h"
 #include <cmath>
 #include "../System/Math/Math.h"
@@ -690,6 +691,7 @@ void CheckBulletDamageByGrid(EntityManager& registry) {
                     auto& enemyVel = enemyView.get<Velocity3D>(enemyId).vel;
                     Vec3 enemyDirection = Normalize3D(enemyVel);
                     enemyVel = enemyDirection * (-bullet.knockback);
+                    App::PlayAudio("data/TestData/hitHurt.wav", false);
                 }
 
                 enemyHealth.currentHealth -= bullet.damage;
@@ -705,7 +707,7 @@ void CheckBulletDamageByGrid(EntityManager& registry) {
 
                 if (bullet.explosionRadius > 0.0f) {
                     ParticleSystem::CreateExplosion(registry, bulletTransform.pos, 50, Vec3{ 1, 0.5f, 0 }, 100.0f);
-
+                    App::PlayAudio("data/TestData/explosion.wav", false);
                     static std::vector<EntityID> explosionVictims;
                     explosionVictims.clear();
 

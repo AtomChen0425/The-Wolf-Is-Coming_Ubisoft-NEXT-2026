@@ -196,6 +196,8 @@ void FireControl(EntityManager& registry, float dt) {
                     registry.addComponent(bullet, Velocity3D{ bulletDirection * weapon.projectileSpeed });
                     registry.addComponent(bullet, TrailEmitter{ 50.0f, 0.0f, 300.0f, 5.0f, 1.0f, 0.5f, 0.0f });
                     weapon.currentCooldown = weapon.fireRate;
+                    if (i==0){ App::PlayAudio("data/TestData/Shoot.wav", false); }
+                    
                 }
             }
             else {
