@@ -324,7 +324,6 @@ bool GameConfig::LoadFromFile(const std::string& filename) {
         }
     }
 
-    //std::cout << "Config loaded from: " << filename << std::endl;
     return true;
 }
 

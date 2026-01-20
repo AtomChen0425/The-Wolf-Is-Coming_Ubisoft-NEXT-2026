@@ -70,7 +70,7 @@ static bool ProjectToScreenWithDepth(float wx, float wy, float wz, const Camera3
     outY = pitchedY * (fov / pitchedZ) + centerY;
 
     // Depth: map pitchedZ into 0..1 for GL_LESS depth test.
-    const float farZ = 3000.0f; // tune to your world scale
+    const float farZ = 3000.0f; //
     float zn = (pitchedZ - nearZ) / (farZ - nearZ);
     if (zn < 0.0f) zn = 0.0f;
     if (zn > 1.0f) zn = 1.0f;
@@ -113,8 +113,7 @@ void RenderHelper::DrawShadow(float x, float y, float ShadowSize)
     App::DrawLine(x, y - ShadowSize / 2, x, y + ShadowSize / 2, 0, 0, 0);
 }
 
-// Draw a 3D sphere using triangles
-// This is a simple implementation using latitude/longitude segments
+
 void RenderHelper::DrawSphere(float centerX, float centerY, float centerZ, float radius, float r, float g, float b, int segments)
 {
     // Segment count constraints for performance and quality balance
@@ -129,7 +128,6 @@ void RenderHelper::DrawSphere(float centerX, float centerY, float centerZ, float
     const int lonSegments = segments * 2;
 
     // Generate sphere vertices using spherical coordinates
-    // We'll render the sphere as a series of triangle strips
     for (int lat = 0; lat < latSegments; ++lat) {
         float theta1 = static_cast<float>(lat) * PI / latSegments;
         float theta2 = static_cast<float>(lat + 1) * PI / latSegments;

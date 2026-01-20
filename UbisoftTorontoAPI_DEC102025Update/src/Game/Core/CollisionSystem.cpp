@@ -779,7 +779,7 @@ void CheckWolfEatSheep(EntityManager& registry) {
     }
 }
 
-void CheckWolfHeartsPlayer(EntityManager& registry) {
+void CheckWolfBitePlayer(EntityManager& registry) {
     View<WolfTag, Transform3D> wolfView(registry);
     View<PlayerTag, Transform3D, Health> playerView(registry);
     /* static std::vector<Entity> playersToRemove;
@@ -957,5 +957,5 @@ void CollisionSystem::Update(EntityManager& registry) {
     CheckBulletDamageByGrid(registry);
     CheckEnemyBulletCollision(registry);
     CheckWolfEatSheep(registry);
-    CheckWolfHeartsPlayer(registry);
+    CheckWolfBitePlayer(registry);
 }
