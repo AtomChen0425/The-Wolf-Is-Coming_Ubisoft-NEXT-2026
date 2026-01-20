@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CollisionSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\ControlSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GameConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\LevelSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\PhysicsSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\GameScenes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\SheepSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\WolfSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\GameMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\ECSSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Mat4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Vec2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Physic\Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Render\RenderHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CameraSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\CollisionSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\ControlSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GameConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GameLevelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\GenerateSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\LevelSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\MovementSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\PhysicsSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\RenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\GameScenes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\Scene\SceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\SheepSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\Game\Core\WolfSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Component\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\ECS\ECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\ECSSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Mat4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Vec2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Vec3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Math\Vec4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Physic\Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\Render\RenderHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\src\System\UI\UISystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Coding\Git_repositories\SaveSheep\Ubisoft-NEXT-2026\UbisoftTorontoAPI_DEC102025Update\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{19837B3F-2FC7-3F60-B1DA-31C5F78662BF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{F92C88F3-B767-316C-986F-42D5BDA1056E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,14 @@
+.vs
+build/
+*.user
+*.suo
+*.vcxproj.filters
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+*.o
+*.a
+*.dylib
+*.dll
+*.exe
+*.app

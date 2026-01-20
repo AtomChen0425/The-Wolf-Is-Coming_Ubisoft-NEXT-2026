@@ -1,0 +1,243 @@
+#pragma once
+#include "../../ContestAPI/SimpleSprite.h"
+#include "../Math/Vec2.h"
+#include "../Math/Vec3.h"
+#include "../Game/Core/GameConfig.h"
+#include <vector>
+
+enum {
+    ANIM_FORWARDS,
+    ANIM_BACKWARDS,
+    ANIM_LEFT,
+    ANIM_RIGHT,
+};
+
+// 2D Position component
+struct Position {
+    Vec2 pos;
+};
+
+// 2D Velocity component
+struct Velocity {
+    Vec2 vel;
+};
+
+// Sprite component (uses Contest API sprites)
+struct SpriteComponent {
+    CSimpleSprite* sprite;
+    int currentAnimID; // Track current animation
+};
+// Tag components
+struct PlayerTag {
+    bool isOnGround;
+    float rotationYaw;
+    int score;
+    float rotationPitch;
+    float shootCooldown = 100.0f;
+};
+struct PhysicsTag { bool isOnGround; };
+struct EnemyTag {};
+struct AnimalTag {};
+
+// 2D Rigid body component
+struct RigidBody {
+    float mass;
+    float radius;
+    Vec2 force;
+};
+
+// Health component
+struct Health {
+    int currentHealth;
+    int maxHealth;
+};
+
+// 3D Velocity component
+struct Velocity3D {
+    Vec3 vel;
+};
+
+// 3D Transform component
+struct Transform3D {
+    Vec3 pos;
+    float width, height, depth; // Size of the object
+    float r, g, b;              // Color (normalized 0.0-1.0 range)
+};
+
+// 3D Collider component for collision detection
+struct Collider3D {
+    float width, height, depth; // Size of the collider box
+    bool isFloor;               // True if this is a floor object
+    bool isWall;                // True if this is a wall object
+};
+
+// Map block tag
+struct MapBlockTag {};
+
+
+// Block types for map generation
+enum class BlockType {
+    Empty = 0,      // No block
+    Floor = 1,      // Normal floor block
+    Wall = 2,       // Wall that blocks the player
+    TallBlock = 3,  // Tall obstacle block
+    ScorePoint = 4  // Collectible score point
+};
+
+// Map template for procedural generation
+struct MapTemplate {
+    int width;      // Width in blocks
+    int depth;      // Depth in blocks
+    std::vector<BlockType> blocks; // Block data (row-major: z * width + x)
+
+    MapTemplate() : width(0), depth(0) {}
+
+    MapTemplate(int w, int d) : width(w), depth(d) {
+        blocks.resize(w * d, BlockType::Empty);
+    }
+
+    BlockType getBlock(int x, int z) const {
+        if (!isValidPosition(x, z)) return BlockType::Empty;
+        return blocks[z * width + x];
+    }
+
+    void setBlock(int x, int z, BlockType type) {
+        if (!isValidPosition(x, z)) return;
+        blocks[z * width + x] = type;
+    }
+
+private:
+    bool isValidPosition(int x, int z) const {
+        return x >= 0 && x < width && z >= 0 && z < depth;
+    }
+};
+
+// Score point component for collectibles
+struct ScorePointTag {
+    int points;
+    bool collected;
+};
+
+// Bullet/Projectile component
+struct Bullet {
+    Vec3 direction;           // Direction vector (normalized)
+    float speed;              // Movement speed
+    float lifetime;           // How long the bullet lives (milliseconds)
+    float damage;             // Damage dealt on hit
+    bool isPlayerBullet;      // true if fired by player, false if fired by enemy
+
+    float explosionRadius;   //if > 0, bullet causes area damage
+    float size;
+    float knockback;
+};
+struct EnemyBulletTag {};
+struct MagicTag {};
+struct ParticleTag {};
+
+struct ParticlePhysics {
+    Vec3 velocity;
+    float life;       // remaining life
+    float maxLife;    // total life
+    float gravity;     
+};
+
+struct TrailEmitter {
+    float interval;
+    float timeSinceLast;
+    float particleLife;
+    float size;
+    float r, g, b;
+};
+
+// Upgrade point component for roguelike progression
+struct UpgradePointTag {
+    bool collected;
+};
+
+// Player stats component for tracking upgrades
+struct PlayerStats {
+    float healthBonus = 0.0f;      // Additional max health from upgrades
+    float speedBonus = 0.0f;       // Additional movement speed from upgrades
+    float jumpBonus = 0.0f;        // Additional jump velocity from upgrades
+    float gravityBonus = 0.0f;     // Gravity reduction from upgrades (negative = lighter)
+    float bulletSpeedBonus = 0.0f; // Additional bullet speed from upgrades
+};
+
+// Chunk identifier for map generation
+struct ChunkTag {
+    int chunkX;  // Chunk X coordinate
+    int chunkZ;  // Chunk Z coordinate
+};
+
+struct SheepTag {};
+
+// Boids behavior component for sheep
+struct SheepComponent {
+    float separationWeight = config.sheepSeparationWeight; // Weight for separation behavior
+    float alignmentWeight = config.sheepAlignmentWeight;   // Weight for alignment behavior
+    float cohesionWeight = config.sheepCohesionWeight;    // Weight for cohesion behavior
+    float targetWeight = config.sheepTargetWeight;      // Weight for targeting behavior
+    float fearWeight = config.sheepFearWeight;        // Weight for fear behavior
+
+    float viewRadius = config.sheepViewRadius;      // View radius for detecting other entities
+    float enemyDetectRange = config.sheepEnemyDetectRange; // Range to detect enemies
+    float maxSpeed = config.sheepMaxSpeed;        // Maximum speed
+    float maxForce = config.sheepMaxForce;       // Maximum steering force
+};
+
+struct WolfTag {};
+
+// Wolf type enum - different wolf variants
+enum class WolfType {
+    Basic,          // Standard wolf - balanced stats
+    Sniper,         // Has gun, moves slow, normal health
+    Tank,           // High health, slow movement
+    Fast,           // Fast movement, can jump
+    Hunter,          // Fast with jumping ability
+    Magic           // Uses magic projectiles
+};
+
+// Wolf behavior component - wolves chase nearest player or sheep
+struct WolfComponent {
+    WolfType type = WolfType::Basic;  // Type of wolf
+
+    float chaseForce = 200.0f;      // Force applied when chasing
+    float maxSpeed = 300.0f;        // Maximum movement speed
+    float detectionRange = 400.0f;  // Range to detect and chase targets
+    float minChaseDistance = 10.0f; // Stop chasing when this close to target
+
+    bool canJump = false;           // Can this wolf jump?
+    float jumpCooldown = 0.0f;      // Cooldown for jumping
+};
+struct PointCollectorTag {
+    float pointsWorth = 100.0f;
+};
+enum class WeaponType {
+    Pistol,
+    MachineGun,
+    Cannon,
+    MagicWand
+};
+
+struct Weapon {
+    WeaponType type;
+    std::string name;
+
+
+    float damage;
+    float fireRate;
+    float currentCooldown;
+
+    float projectileSpeed;
+    float projectileSize;
+    float projectileLife;
+    float explosionRadius;
+
+    float r, g, b;
+
+    float knockback = 1.0f;
+};
+
+struct WeaponInventory {
+    std::vector<Weapon> weapons;
+};

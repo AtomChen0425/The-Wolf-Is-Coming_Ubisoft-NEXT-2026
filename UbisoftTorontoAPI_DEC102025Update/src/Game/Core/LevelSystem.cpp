@@ -1,0 +1,282 @@
+#include "LevelSystem.h"
+#include "../../System/ECS/ECS.h"
+#include "../../System/Component/Component.h"
+#include "SheepSystem.h"
+#include "../../System/Math/Math.h"
+#include "GenerateSystem.h"
+#include "../ContestAPI/app.h"
+#include <vector>
+#include <algorithm>
+
+namespace LevelSystem {
+
+    bool Update(GameLevelData& levelData, float deltaTimeMs, GenerationTimer& generationTimers, EntityManager& registry) {
+        // Update timers
+        levelData.totalGameTimeMs += deltaTimeMs;
+        levelData.currentRoundTimeMs += deltaTimeMs;
+        // Spawn different wolf types at different intervals
+        // Basic wolves (use existing spawn interval from level data)
+        if (generationTimers.gSpawnTimerMs >= levelData.currentWolfSpawnIntervalMs) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Basic);
+            generationTimers.gSpawnTimerMs = 0.0f;
+        }
+
+        // Sniper wolves (slower spawn rate)
+        if (generationTimers.sniperWolfSpawnTimer >= levelData.sniperWolfSpawnIntervalMs && levelData.currentRound > 3) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Sniper);
+            generationTimers.sniperWolfSpawnTimer = 0.0f;
+        }
+
+        // Tank wolves (slowest spawn rate)
+        if (generationTimers.tankWolfSpawnTimer >= levelData.tankWolfSpawnIntervalMs && levelData.currentRound > 5) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Tank);
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Magic);
+            generationTimers.tankWolfSpawnTimer = 0.0f;
+        }
+
+        // Fast wolves (faster spawn rate)
+        if (generationTimers.fastWolfSpawnTimer >= levelData.fastWolfSpawnIntervalMs && levelData.currentRound > 9) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Fast);
+            generationTimers.fastWolfSpawnTimer = 0.0f;
+        }
+
+        // Hunter wolves (moderate spawn rate)
+        if (generationTimers.hunterWolfSpawnTimer >= levelData.hunterWolfSpawnIntervalMs && levelData.currentRound > 12) {
+            GenerateSystem::GenerateWolfOfType(registry, WolfType::Hunter);
+            generationTimers.hunterWolfSpawnTimer = 0.0f;
+        }
+        // Check if round is complete
+        if (levelData.IsRoundComplete()) {
+            return true;  // Signal that round is complete
+        }
+
+        return false;
+    }
+
+    int GetSheepCount(EntityManager& registry) {
+        static std::vector<Entity> TargetToRemove;
+        TargetToRemove.clear();
+        int count = 0;
+        View<SheepTag> sheepView(registry);
+        for (auto id : sheepView) {
+            auto& sheepTransform = sheepView.get<Transform3D>(id);
+            if (sheepTransform.pos.y < -600.0f)
+            {
+                TargetToRemove.push_back({ id, registry.getEntityVersion(id) });
+                continue;
+            }// Only count sheep that are above -500 in Y
+            count++;
+        }
+        for (auto e : TargetToRemove) {
+            registry.destroyEntity(e);
+        }
+        return count;
+    }
+
+    bool CheckGameOver(EntityManager& registry) {
+        // Game is over if there are no sheep left
+        View<PlayerTag, Transform3D> playerView(registry);
+        for (auto id : playerView) {
+            auto& playerPos = playerView.get<Transform3D>(id).pos;
+            auto& playerHealth = playerView.get<Health>(id);
+            if (playerPos.y < -500.0f) {
+                return true; // Game over if player falls below -500
+            }
+            if (playerHealth.currentHealth <= 0) {
+                return true; // Game over if player health is 0
+            }
+        }
+        return GetSheepCount(registry) == 0;
+    }
+
+    void GenerateRandomUpgrades(UpgradeType upgradeOptions[3]) {
+        // Generate 3 random unique upgrades
+        std::vector<UpgradeType> allUpgrades = {
+                     UpgradeType::AddSheep,
+                     UpgradeType::PlayerMachineGun,
+                     UpgradeType::PlayerCannon,
+                     UpgradeType::SheepMachineGun,
+                     UpgradeType::SheepCannon
+        };
+
+        // Simple shuffle for 3 picks
+        for (int i = 0; i < 3; i++) {
+            int randomIndex = i + (int)(Rand01() * (allUpgrades.size() - i));
+            upgradeOptions[i] = allUpgrades[randomIndex];
+            // Swap to avoid duplicates
+            std::swap(allUpgrades[i], allUpgrades[randomIndex]);
+        }
+    }
+
+    void ApplyUpgrade(EntityManager& registry, UpgradeType type) {
+        // Handle AddSheep separately (doesn't need player stats)
+        if (type == UpgradeType::AddSheep) {
+            // Add sheep near the player
+            View<PlayerTag, Transform3D> playerView(registry);
+            for (EntityID id : playerView) {
+                auto& playerTransform = playerView.get<Transform3D>(id);
+                // Spawn new sheep near the player's position
+                SheepSystem::InitSheep(registry,
+                    playerTransform.pos.x,
+                    playerTransform.pos.z + config.sheepSpawnOffsetZ,
+                    config.sheepAddedPerUpgrade);
+                break;  // Only need to do this once
+            }
+            return;
+        }
+
+        // Handle player weapon upgrades
+        if (type == UpgradeType::PlayerMachineGun || type == UpgradeType::PlayerCannon) {
+            View<PlayerTag, WeaponInventory> playerView(registry);
+            for (EntityID id : playerView) {
+                auto& inventory = playerView.get<WeaponInventory>(id);
+
+                Weapon weapon;
+                if (type == UpgradeType::PlayerMachineGun) {
+                    weapon.type = WeaponType::MachineGun;
+                    weapon.name = "Machine Gun";
+                    weapon.damage = config.playerMachineGunDamage;
+                    weapon.fireRate = config.playerMachineGunFireRate;
+                    weapon.currentCooldown = 0.0f;
+                    weapon.projectileSpeed = config.playerMachineGunProjectileSpeed;
+                    weapon.projectileSize = config.playerMachineGunProjectileSize;
+                    weapon.projectileLife = config.playerMachineGunProjectileLife;
+                    weapon.explosionRadius = config.playerMachineGunExplosionRadius;
+                    weapon.knockback = config.playerMachineGunKnockback;
+                    weapon.r = config.playerMachineGunColorR;
+                    weapon.g = config.playerMachineGunColorG;
+                    weapon.b = config.playerMachineGunColorB;
+                }
+                else {  // PlayerCannon
+                    weapon.type = WeaponType::Cannon;
+                    weapon.name = "Cannon";
+                    weapon.damage = config.playerCannonDamage;
+                    weapon.fireRate = config.playerCannonFireRate;
+                    weapon.currentCooldown = 0.0f;
+                    weapon.projectileSpeed = config.playerCannonProjectileSpeed;
+                    weapon.projectileSize = config.playerCannonProjectileSize;
+                    weapon.projectileLife = config.playerCannonProjectileLife;
+                    weapon.explosionRadius = config.playerCannonExplosionRadius;
+                    weapon.knockback = config.playerCannonKnockback;
+                    weapon.r = config.playerCannonColorR;
+                    weapon.g = config.playerCannonColorG;
+                    weapon.b = config.playerCannonColorB;
+                }
+                inventory.weapons.push_back(weapon);
+                break;
+            }
+            return;
+        }
+
+        // Handle sheep weapon upgrades
+        if (type == UpgradeType::SheepMachineGun || type == UpgradeType::SheepCannon) {
+            View<SheepTag, WeaponInventory> sheepView(registry);
+
+            Weapon weapon;
+            if (type == UpgradeType::SheepMachineGun) {
+                weapon.type = WeaponType::MachineGun;
+                weapon.name = "Sheep MG";
+                weapon.damage = config.sheepMachineGunDamage;
+                weapon.fireRate = config.sheepMachineGunFireRate;
+                weapon.currentCooldown = 0.0f;
+                weapon.projectileSpeed = config.sheepMachineGunProjectileSpeed;
+                weapon.projectileSize = config.sheepMachineGunProjectileSize;
+                weapon.projectileLife = config.sheepMachineGunProjectileLife;
+                weapon.explosionRadius = config.sheepMachineGunExplosionRadius;
+                weapon.knockback = config.sheepMachineGunKnockback;
+                weapon.r = config.sheepMachineGunColorR;
+                weapon.g = config.sheepMachineGunColorG;
+                weapon.b = config.sheepMachineGunColorB;
+            }
+            else {  // SheepCannon
+                weapon.type = WeaponType::Cannon;
+                weapon.name = "Sheep Cannon";
+                weapon.damage = config.sheepCannonDamage;
+                weapon.fireRate = config.sheepCannonFireRate;
+                weapon.currentCooldown = 0.0f;
+                weapon.projectileSpeed = config.sheepCannonProjectileSpeed;
+                weapon.projectileSize = config.sheepCannonProjectileSize;
+                weapon.projectileLife = config.sheepCannonProjectileLife;
+                weapon.explosionRadius = config.sheepCannonExplosionRadius;
+                weapon.knockback = config.sheepCannonKnockback;
+                weapon.r = config.sheepCannonColorR;
+                weapon.g = config.sheepCannonColorG;
+                weapon.b = config.sheepCannonColorB;
+            }
+
+            // Add weapon to 10% of sheep
+            CSimpleSprite* pSprite2 = App::CreateSprite("data/TestData/Sheep2.png", 2, 1);
+
+            // 
+            const float speed = 1.0f / 15.0f;
+            pSprite2->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_LEFT, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_RIGHT, speed, { 0,1 });
+            pSprite2->CreateAnimation(ANIM_FORWARDS, speed, { 0,1 });
+            pSprite2->SetScale(0.3f);
+            // 
+            std::vector<EntityID> sheepIds;
+            for (EntityID id : sheepView) {
+                sheepIds.push_back(id);
+            }
+
+            const int total = static_cast<int>(sheepIds.size());
+            if (total <= 0) {
+                return;
+            }
+
+            
+            for (size_t i = 0; i + 1 < sheepIds.size(); ++i) {
+                const size_t j = i + static_cast<size_t>(Rand01() * static_cast<float>(sheepIds.size() - i));
+                std::swap(sheepIds[i], sheepIds[j]);
+            }
+
+            const int toGive = std::max(1, static_cast<int>(total * 0.1f));
+
+            for (int i = 0; i < toGive; ++i) {
+                auto& inventory = sheepView.get<WeaponInventory>(sheepIds[static_cast<size_t>(i)]);
+				auto& sheepSprite = sheepView.get<SpriteComponent>(sheepIds[static_cast<size_t>(i)]);
+				sheepSprite.sprite = pSprite2;
+                inventory.weapons.push_back(weapon);
+            }
+            /*int sheepCount = 0;
+            for (EntityID id : sheepView) {
+                auto& inventory = sheepView.get<WeaponInventory>(id);
+                sheepCount++;
+                inventory.weapons.push_back(weapon);
+                if (sheepCount > static_cast<int>(GetSheepCount(registry) * 0.1f)) {
+                    break;
+                }
+
+            }*/
+            return;
+        }
+    }
+
+    const char* GetUpgradeName(UpgradeType type) {
+        switch (type) {
+        case UpgradeType::AddSheep: return "Add Sheep";
+        case UpgradeType::PlayerMachineGun: return "Player Machine Gun";
+        case UpgradeType::PlayerCannon: return "Player Cannon";
+        case UpgradeType::SheepMachineGun: return "Sheep Machine Gun";
+        case UpgradeType::SheepCannon: return "Sheep Cannon";
+        default: return "Unknown";
+        }
+    }
+
+    const char* GetUpgradeDescription(UpgradeType type) {
+        // Static buffers for dynamic descriptions
+        static char sheepDesc[64];
+
+        switch (type) {
+        case UpgradeType::AddSheep:
+            snprintf(sheepDesc, sizeof(sheepDesc), "Add %d more sheep", config.sheepAddedPerUpgrade);
+            return sheepDesc;
+        case UpgradeType::PlayerMachineGun: return "Give yourself a machine gun";
+        case UpgradeType::PlayerCannon: return "Give yourself a cannon";
+        case UpgradeType::SheepMachineGun: return "Arm 10% sheep with machine guns";
+        case UpgradeType::SheepCannon: return "Arm 10% sheep with cannons";
+        default: return "Unknown effect";
+        }
+    }
+}
