@@ -1,0 +1,280 @@
+# Game Configuration File
+# Player Physics
+gravity=-980
+jumpVelocity=300
+forwardSpeed=200
+strafeSpeed=300
+acceleration=2000
+damping=8
+rotationSpeed=2
+
+# Camera Controls
+mouseSensitivity=0.007
+maxPitch=0.8
+minPitch=-0.8
+
+# Map Generation
+blockSize=100
+renderDistance=1000
+deleteDistance=1000
+roadWidth=5
+wallHeight=100
+
+# Map Generation Probabilities
+normalFloorChance=0.6
+obstacleChance=0.15
+scorePointChance=0.15
+upgradePointChance=0.05
+gapChance=0.1
+gapFloorChance=0.3
+
+# Chunk Generation
+chunkSize=5
+chunkRenderRadius=3
+
+# Block Heights
+floorHeight=40
+tallBlockHeight=60
+scorePointHeight=30
+
+# Bullet Physics
+bulletSpeed=600
+
+# Player Spawn
+playerSpawnX=0
+playerSpawnY=0
+playerSpawnZ=0
+
+# Rendering
+fov=600
+nearZ=1
+farZ=3000
+
+# Colors (RGB values, 0.0 to 1.0)
+# Player Color
+playerColorR=1
+playerColorG=0
+playerColorB=0
+
+# Bullet Color
+bulletColorR=0.5
+bulletColorG=0
+bulletColorB=0.5
+
+# Floor Colors (Alternating)
+floorColor1R=0.2
+floorColor1G=0.6
+floorColor1B=0.2
+floorColor2R=0.3
+floorColor2G=0.8
+floorColor2B=0.3
+
+# Wall Color
+wallColorR=0.6
+wallColorG=0.3
+wallColorB=0.1
+
+# Tall Block Color
+tallBlockColorR=0.1
+tallBlockColorG=0.3
+tallBlockColorB=0.9
+
+# Score Point Color
+scorePointColorR=1
+scorePointColorG=1
+scorePointColorB=0
+
+# Upgrade Point Color
+upgradePointColorR=1
+upgradePointColorG=0.5
+upgradePointColorB=0
+
+# Upgrade Values
+healthUpgradeAmount=20
+speedUpgradeAmount=50
+jumpUpgradeAmount=100
+gravityUpgradeAmount=-100
+bulletSpeedUpgradeAmount=100
+
+# Level/Round system parameters
+roundDurationMs=10000
+baseWolfSpawnIntervalMs=1500
+wolfSpawnReductionPerRound=100
+minWolfSpawnIntervalMs=1000
+sheepAddedPerUpgrade=10
+sheepSpawnOffsetZ=100
+
+# Wolf type spawn intervals (different wolves spawn at different rates)
+sniperWolfSpawnIntervalMs=8000
+tankWolfSpawnIntervalMs=12000
+fastWolfSpawnIntervalMs=5000
+hunterWolfSpawnIntervalMs=10000
+
+# Wolf stats - Basic
+wolfBasicHealth=100
+wolfBasicSpeed=300
+wolfBasicChaseForce=550
+wolfBasicDetectionRange=300
+wolfBasicSize=20
+
+# Wolf stats - Sniper
+wolfSniperHealth=100
+wolfSniperSpeed=150
+wolfSniperChaseForce=300
+wolfSniperDetectionRange=400
+wolfSniperSize=20
+
+# Wolf stats - Magic
+wolfMagicHealth=100
+wolfMagicSpeed=100
+wolfMagicChaseForce=300
+wolfMagicDetectionRange=400
+wolfMagicSize=20
+
+
+# Wolf stats - Tank
+wolfTankHealth=600
+wolfTankSpeed=100
+wolfTankChaseForce=400
+wolfTankDetectionRange=250
+wolfTankSize=30
+
+# Wolf stats - Fast
+wolfFastHealth=70
+wolfFastSpeed=500
+wolfFastChaseForce=600
+wolfFastDetectionRange=350
+wolfFastSize=15
+
+# Wolf stats - Hunter
+wolfHunterHealth=100
+wolfHunterSpeed=450
+wolfHunterChaseForce=550
+wolfHunterDetectionRange=300
+wolfHunterSize=20
+wolfHunterJumpCooldown=3
+wolfHunterJumpVelocity=400
+wolfHunterJumpBoost=200
+wolfHunterJumpMinDistance=80
+wolfHunterJumpMaxDistance=2000
+
+# Wolf weapon - Sniper gun
+wolfSniperGunDamage=8
+wolfSniperGunFireRate=50
+wolfSniperGunProjectileSpeed=600
+wolfSniperGunProjectileSize=10
+wolfSniperGunProjectileLife=8000
+wolfSniperGunKnockback=15
+
+# Wolf weapon - Magic Wand
+wolfMagicWandDamage=10
+wolfMagicWandFireRate=30
+wolfMagicWandProjectileSpeed=400
+wolfMagicWandProjectileSize=12
+wolfMagicWandProjectileLife=8500
+wolfMagicWandKnockback=10
+
+
+# Player weapon - Machine Gun
+playerMachineGunDamage=10
+playerMachineGunFireRate=70
+playerMachineGunProjectileSpeed=500
+playerMachineGunProjectileSize=5
+playerMachineGunProjectileLife=2000
+playerMachineGunExplosionRadius=0
+playerMachineGunKnockback=100
+playerMachineGunColorR=1
+playerMachineGunColorG=1
+playerMachineGunColorB=0
+
+# Player weapon - Cannon
+playerCannonDamage=50
+playerCannonFireRate=1000
+playerCannonProjectileSpeed=300
+playerCannonProjectileSize=15
+playerCannonProjectileLife=3000
+playerCannonExplosionRadius=50
+playerCannonKnockback=500
+playerCannonColorR=1
+playerCannonColorG=0.5
+playerCannonColorB=0
+
+# Sheep weapon - Machine Gun
+sheepMachineGunDamage=5
+sheepMachineGunFireRate=70
+sheepMachineGunProjectileSpeed=400
+sheepMachineGunProjectileSize=3
+sheepMachineGunProjectileLife=2000
+sheepMachineGunExplosionRadius=0
+sheepMachineGunKnockback=50
+sheepMachineGunColorR=0.5
+sheepMachineGunColorG=1
+sheepMachineGunColorB=0.5
+
+# Sheep weapon - Cannon
+sheepCannonDamage=30
+sheepCannonFireRate=1000
+sheepCannonProjectileSpeed=250
+sheepCannonProjectileSize=10
+sheepCannonProjectileLife=3000
+sheepCannonExplosionRadius=50
+sheepCannonKnockback=300
+sheepCannonColorR=0.5
+sheepCannonColorG=1
+sheepCannonColorB=1
+
+# Wolf spawn settings
+wolfSpawnRadius=1700
+wolfSpawnYPosition=20
+wolfSpawnMinX=-200
+wolfSpawnMaxX=200
+wolfSpawnMinZ=-50
+wolfSpawnMaxZ=-30
+
+# Sheep spawn settings
+sheepSpawnRadius=100
+sheepInitialCount=30
+sheepSpawnYPosition=30
+sheepSpawnOffsetMin=-100
+sheepSpawnOffsetMax=100
+sheepSize=15
+sheepColorR=0.9
+sheepColorG=0.9
+sheepColorB=0.9
+sheepSpriteScale=0.3
+sheepAnimationSpeed=0.0666667
+
+# Sheep Boids behavior
+sheepViewRadius=470
+sheepMaxSpeed=250
+sheepMaxForce=170
+sheepSeparationWeight=2
+sheepAlignmentWeight=1
+sheepCohesionWeight=1
+sheepTargetWeight=5
+sheepFearWeight=8
+sheepEnemyDetectRange=270
+
+# Sheep shooting
+sheepWeaponArcAngle=4.71239
+sheepWeaponSpawnRadius=10
+
+# Sheep targeting
+sheepTargetFarDistance=60
+sheepTargetNearDistance=30
+
+# Sheep physics
+sheepVelocityDamping=0.98
+sheepSeparationSizeMultiplier=0.55
+sheepSeparationRepulsionStrength=2
+
+
+
+# Particle trails
+sheepBulletTrailEmissionRate=50
+sheepBulletTrailMinSize=0
+sheepBulletTrailMaxSize=150
+sheepBulletTrailLife=3
+sheepBulletTrailColorR=1
+sheepBulletTrailColorG=0.5
+sheepBulletTrailColorB=0
