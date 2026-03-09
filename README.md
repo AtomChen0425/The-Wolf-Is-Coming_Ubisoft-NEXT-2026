@@ -57,6 +57,6 @@ The core source code is located in the `src/Game` and `src/System` directories.
 
 * **`src/System/ECS/`**: The core Data-Oriented Entity-Component-System framework.
 * **`src/Game/Core/RenderSystem.cpp`**: The custom 3D projection and rendering pipeline.
-* **`src/Game/Core/SheepSystem.cpp` & `WolfSystem.cpp**`: AI behavior trees and Steering Behaviors.
+* **`src/Game/Core/SheepSystem.cpp` & `WolfSystem.cpp`**: AI behavior trees and Steering Behaviors.
 * **`src/System/Physic/Collision.cpp`**: Math library for spatial hashing and AABB intersection.
 * **`src/Game/Core/GenerateSystem.cpp`**: Chunk-based procedural map generation.
